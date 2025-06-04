@@ -20,31 +20,74 @@ const Navbar = () => {
   const navigationItems = [
     {
       title: 'About',
-      items: ['Our Story', 'Vision & Mission', 'Leadership', 'Infrastructure', 'Awards & Recognition']
+      items: [
+        { name: 'Our Story', path: '/about' },
+        { name: 'Vision & Mission', path: '/about#vision-mission' },
+        { name: 'Leadership', path: '#' },
+        { name: 'Infrastructure', path: '#' },
+        { name: 'Awards & Recognition', path: '#' }
+      ]
     },
     {
       title: 'NAAC',
-      items: ['B++ Accreditation', 'Quality Initiatives', 'Documents', 'Assessment Reports', 'Continuous Improvement']
+      items: [
+        { name: 'B++ Accreditation', path: '#' },
+        { name: 'Quality Initiatives', path: '#' },
+        { name: 'Documents', path: '#' },
+        { name: 'Assessment Reports', path: '#' },
+        { name: 'Continuous Improvement', path: '#' }
+      ]
     },
     {
       title: 'Departments',
-      items: ['Computer Science & Engineering', 'Mechanical Engineering', 'Electronics Engineering (VLSI)', 'AI & Machine Learning', 'AI & Data Science', 'Computer Engineering']
+      items: [
+        { name: 'Computer Science & Engineering', path: '#' },
+        { name: 'Mechanical Engineering', path: '#' },
+        { name: 'Electronics Engineering (VLSI)', path: '#' },
+        { name: 'AI & Machine Learning', path: '#' },
+        { name: 'AI & Data Science', path: '#' },
+        { name: 'Computer Engineering', path: '#' }
+      ]
     },
     {
       title: 'Admissions',
-      items: ['UG Programs', 'Direct Second Year', 'Fee Structure', 'Scholarships', 'Application Process']
+      items: [
+        { name: 'UG Programs', path: '#' },
+        { name: 'Direct Second Year', path: '#' },
+        { name: 'Fee Structure', path: '#' },
+        { name: 'Scholarships', path: '#' },
+        { name: 'Application Process', path: '#' }
+      ]
     },
     {
       title: 'Placements',
-      items: ['Placement Records', 'Training Programs', 'Industry Partners', 'Career Services', 'Alumni Network']
+      items: [
+        { name: 'Placement Records', path: '#' },
+        { name: 'Training Programs', path: '#' },
+        { name: 'Industry Partners', path: '#' },
+        { name: 'Career Services', path: '#' },
+        { name: 'Alumni Network', path: '#' }
+      ]
     },
     {
       title: 'Life @ COE',
-      items: ['Campus Life', 'Sports & Recreation', 'Cultural Events', 'Student Clubs', 'Hostel Facilities']
+      items: [
+        { name: 'Campus Life', path: '#' },
+        { name: 'Sports & Recreation', path: '#' },
+        { name: 'Cultural Events', path: '#' },
+        { name: 'Student Clubs', path: '#' },
+        { name: 'Hostel Facilities', path: '#' }
+      ]
     },
     {
       title: 'Contact Us',
-      items: ['Campus Location', 'Administration', 'Helpdesk', 'Directions', 'Virtual Tour']
+      items: [
+        { name: 'Campus Location', path: '#' },
+        { name: 'Administration', path: '#' },
+        { name: 'Helpdesk', path: '#' },
+        { name: 'Directions', path: '#' },
+        { name: 'Virtual Tour', path: '#' }
+      ]
     }
   ];
 
@@ -106,11 +149,11 @@ const Navbar = () => {
                     <div className="absolute top-full left-0 w-64 bg-white shadow-xl rounded-lg py-3 z-50 border border-gray-100">
                       {item.items.map((subItem) => (
                         <Link
-                          key={subItem}
-                          to="#"
+                          key={subItem.name}
+                          to={subItem.path}
                           className="block px-4 py-3 text-gray-700 hover:bg-college-accent hover:text-white transition-all duration-200 border-l-4 border-transparent hover:border-college-accent"
                         >
-                          {subItem}
+                          {subItem.name}
                         </Link>
                       ))}
                     </div>
@@ -155,11 +198,11 @@ const Navbar = () => {
                   <div className="pl-6 space-y-1">
                     {item.items.map((subItem) => (
                       <Link
-                        key={subItem}
-                        to="#"
+                        key={subItem.name}
+                        to={subItem.path}
                         className="block px-3 py-2 text-gray-200 hover:text-college-accent hover:bg-white/5 rounded transition-colors duration-200"
                       >
-                        {subItem}
+                        {subItem.name}
                       </Link>
                     ))}
                   </div>
