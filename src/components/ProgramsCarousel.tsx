@@ -1,10 +1,11 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ChevronLeft, ChevronRight, Cpu, Settings, Monitor, Zap, Brain, Database } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 
 const ProgramsCarousel = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [isAutoSliding, setIsAutoSliding] = useState(true);
 
   const programs = [
     {
@@ -69,12 +70,33 @@ const ProgramsCarousel = () => {
     }
   ];
 
+  // Auto-slide functionality
+  useEffect(() => {
+    if (!isAutoSliding) return;
+
+    const interval = setInterval(() => {
+      setCurrentIndex((prev) => (prev + 1) % programs.length);
+    }, 4000); // Slide every 4 seconds
+
+    return () => clearInterval(interval);
+  }, [isAutoSliding, programs.length]);
+
   const nextProgram = () => {
     setCurrentIndex((prev) => (prev + 1) % programs.length);
+    setIsAutoSliding(false); // Pause auto-slide when user manually navigates
+    setTimeout(() => setIsAutoSliding(true), 8000); // Resume after 8 seconds
   };
 
   const prevProgram = () => {
     setCurrentIndex((prev) => (prev - 1 + programs.length) % programs.length);
+    setIsAutoSliding(false); // Pause auto-slide when user manually navigates
+    setTimeout(() => setIsAutoSliding(true), 8000); // Resume after 8 seconds
+  };
+
+  const goToSlide = (index: number) => {
+    setCurrentIndex(index);
+    setIsAutoSliding(false);
+    setTimeout(() => setIsAutoSliding(true), 8000);
   };
 
   return (
@@ -130,16 +152,29 @@ const ProgramsCarousel = () => {
             {/* Navigation Arrows */}
             <button
               onClick={prevProgram}
-              className="absolute left-0 top-1/2 transform -translate-y-1/2 bg-white shadow-lg rounded-full p-3 hover:bg-gray-50 transition-colors duration-200"
+              className="absolute left-0 top-1/2 transform -translate-y-1/2 bg-white shadow-lg rounded-full p-3 hover:bg-gray-50 transition-colors duration-200 z-10"
             >
               <ChevronLeft className="h-6 w-6 text-college-primary" />
             </button>
             <button
               onClick={nextProgram}
-              className="absolute right-0 top-1/2 transform -translate-y-1/2 bg-white shadow-lg rounded-full p-3 hover:bg-gray-50 transition-colors duration-200"
+              className="absolute right-0 top-1/2 transform -translate-y-1/2 bg-white shadow-lg rounded-full p-3 hover:bg-gray-50 transition-colors duration-200 z-10"
             >
               <ChevronRight className="h-6 w-6 text-college-primary" />
             </button>
+
+            {/* Desktop Indicators */}
+            <div className="flex justify-center mt-6 space-x-2">
+              {programs.map((_, index) => (
+                <button
+                  key={index}
+                  onClick={() => goToSlide(index)}
+                  className={`w-3 h-3 rounded-full transition-all duration-300 ${
+                    index === currentIndex ? 'bg-college-primary' : 'bg-gray-300'
+                  }`}
+                />
+              ))}
+            </div>
           </div>
 
           {/* Mobile View - Show 1 card at a time */}
@@ -197,7 +232,7 @@ const ProgramsCarousel = () => {
               {programs.map((_, index) => (
                 <button
                   key={index}
-                  onClick={() => setCurrentIndex(index)}
+                  onClick={() => goToSlide(index)}
                   className={`w-3 h-3 rounded-full transition-all duration-300 ${
                     index === currentIndex ? 'bg-college-primary' : 'bg-gray-300'
                   }`}

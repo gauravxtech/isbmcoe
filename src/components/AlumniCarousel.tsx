@@ -1,223 +1,160 @@
 
-import React, { useState } from 'react';
-import { ChevronLeft, ChevronRight, Star } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { ChevronLeft, ChevronRight, Star, Quote } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 
 const AlumniCarousel = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [carouselType, setCarouselType] = useState('alumni');
+  const [isAutoScrolling, setIsAutoScrolling] = useState(true);
 
   const alumni = [
     {
       id: 1,
-      name: "Narayani Thakur",
-      company: "TATA Technologies",
-      role: "SAP Consultant",
-      batch: "2014",
-      branch: "IT",
-      image: "https://images.unsplash.com/photo-1494790108755-2616b612b77c?w=150&h=150&fit=crop&crop=face",
-      testimonial: "ISBM gave me the foundation to excel in the tech industry."
+      name: "Priya Sharma",
+      batch: "2020",
+      position: "Software Engineer",
+      company: "Google",
+      image: "/lovable-uploads/18fee38c-1acf-462a-825a-cda10c5e7381.png",
+      testimonial: "ISBM COE provided me with the technical foundation and practical skills that helped me secure my dream job at Google. The faculty's mentorship was invaluable.",
+      rating: 5
     },
     {
       id: 2,
-      name: "Ameya Deokar",
-      company: "Ebara Corporation",
-      role: "Corporate Strategy Specialist",
-      batch: "2014",
-      branch: "Mechanical",
-      image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face",
-      testimonial: "The practical approach to learning shaped my career."
+      name: "Rahul Patel",
+      batch: "2019",
+      position: "Data Scientist",
+      company: "Microsoft",
+      image: "/lovable-uploads/30216b9d-1287-4b01-8ab1-8429e5f6f329.png",
+      testimonial: "The AI and Machine Learning program at ISBM COE is world-class. The hands-on projects and industry exposure prepared me perfectly for my role at Microsoft.",
+      rating: 5
     },
     {
       id: 3,
-      name: "Swapnil Belorkar",
-      company: "Mastercard",
-      role: "Software Engineer II",
-      batch: "2016",
-      branch: "Computer",
-      image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face",
-      testimonial: "Best decision was choosing ISBM for my engineering."
+      name: "Anita Desai",
+      batch: "2021",
+      position: "Product Manager",
+      company: "Amazon",
+      image: "/lovable-uploads/a07dab32-a06d-4aa9-ab59-2d061f93201f.png",
+      testimonial: "ISBM COE not only taught me technical skills but also leadership and communication skills that are essential in my current role as a Product Manager.",
+      rating: 5
     },
     {
       id: 4,
-      name: "Komal Detake",
-      company: "Tata Communications",
-      role: "Associate Engineer",
-      batch: "2021",
-      branch: "Computer",
-      image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop&crop=face",
-      testimonial: "The faculty support and infrastructure are world-class."
+      name: "Vikram Singh",
+      batch: "2018",
+      position: "Senior Developer",
+      company: "Tesla",
+      image: "/lovable-uploads/b592b170-56b4-4e52-b3ff-c4f500363b94.png",
+      testimonial: "The practical approach to learning and the state-of-the-art labs at ISBM COE gave me a competitive edge in the industry.",
+      rating: 5
     },
     {
       id: 5,
-      name: "Prasad Bagul",
-      company: "Cummins India",
-      role: "Senior Design Engineer",
-      batch: "2017",
-      branch: "Mechanical",
-      image: "https://images.unsplash.com/photo-1560250097-0b93528c311a?w=150&h=150&fit=crop&crop=face",
-      testimonial: "Excellent learning environment with industry exposure."
-    },
-    {
-      id: 6,
-      name: "Gourang Amrujkar",
-      company: "Qualcomm",
-      role: "Staff Demand Analyst",
-      batch: "2016",
-      branch: "Mechanical",
-      image: "https://images.unsplash.com/photo-1519345182560-3f2917c472ef?w=150&h=150&fit=crop&crop=face",
-      testimonial: "Great platform for career growth and development."
+      name: "Sneha Reddy",
+      batch: "2020",
+      position: "AI Research Engineer",
+      company: "NVIDIA",
+      image: "/lovable-uploads/c63a8ec4-3adb-47a0-9e29-d081de2cff06.png",
+      testimonial: "The research opportunities and mentorship at ISBM COE helped me develop innovative solutions and land my dream job in AI research.",
+      rating: 5
     }
   ];
 
-  const entrepreneurs = [
-    {
-      id: 1,
-      name: "Hardik Patil",
-      company: "Stackmint Pvt.Ltd",
-      title: "Co-Founder",
-      batch: "2010-14",
-      branch: "Computer",
-      image: "https://images.unsplash.com/photo-1560250097-0b93528c311a?w=150&h=150&fit=crop&crop=face",
-      achievement: "Leading Tech Solutions Provider"
-    },
-    {
-      id: 2,
-      name: "Pratik Gokhale",
-      company: "GypsyDays",
-      title: "Founder",
-      batch: "2011-15",
-      branch: "Mechanical",
-      image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150&h=150&fit=crop&crop=face",
-      achievement: "Travel & Tourism Pioneer"
-    },
-    {
-      id: 3,
-      name: "Rahul Jayaswal",
-      company: "Stackmint Pvt.Ltd",
-      title: "Founder",
-      batch: "2011-15",
-      branch: "Mechanical",
-      image: "https://images.unsplash.com/photo-1519345182560-3f2917c472ef?w=150&h=150&fit=crop&crop=face",
-      achievement: "Innovation in Technology"
-    },
-    {
-      id: 4,
-      name: "Siddharth Paralikar",
-      company: "Siddharth Solar Tech",
-      title: "Founder",
-      batch: "2010-14",
-      branch: "Mechanical",
-      image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face",
-      achievement: "Renewable Energy Solutions"
-    }
-  ];
+  // Auto-scroll functionality
+  useEffect(() => {
+    if (!isAutoScrolling) return;
 
-  const currentData = carouselType === 'alumni' ? alumni : entrepreneurs;
-  const itemsPerPage = 3;
-  const maxIndex = Math.max(0, currentData.length - itemsPerPage);
+    const interval = setInterval(() => {
+      setCurrentIndex((prev) => (prev + 1) % alumni.length);
+    }, 5000); // Change slide every 5 seconds
+
+    return () => clearInterval(interval);
+  }, [isAutoScrolling, alumni.length]);
 
   const nextSlide = () => {
-    setCurrentIndex((prev) => Math.min(prev + 1, maxIndex));
+    setCurrentIndex((prev) => (prev + 1) % alumni.length);
+    setIsAutoScrolling(false);
+    setTimeout(() => setIsAutoScrolling(true), 10000); // Resume after 10 seconds
   };
 
   const prevSlide = () => {
-    setCurrentIndex((prev) => Math.max(prev - 1, 0));
+    setCurrentIndex((prev) => (prev - 1 + alumni.length) % alumni.length);
+    setIsAutoScrolling(false);
+    setTimeout(() => setIsAutoScrolling(true), 10000); // Resume after 10 seconds
+  };
+
+  const goToSlide = (index: number) => {
+    setCurrentIndex(index);
+    setIsAutoScrolling(false);
+    setTimeout(() => setIsAutoScrolling(true), 10000);
   };
 
   return (
-    <section className="py-16 bg-gray-50">
+    <section className="py-16 bg-gradient-to-br from-college-light to-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Header with Toggle */}
         <div className="text-center mb-12">
-          <h2 className="text-4xl font-bold text-college-dark mb-6">
+          <h2 className="text-4xl font-bold text-college-dark mb-4">
             Our Success Stories
           </h2>
-          
-          {/* Toggle Buttons */}
-          <div className="flex justify-center mb-8">
-            <div className="bg-white rounded-lg p-1 shadow-md">
-              <button
-                onClick={() => {
-                  setCarouselType('alumni');
-                  setCurrentIndex(0);
-                }}
-                className={`px-6 py-2 rounded-md font-semibold transition-all duration-300 ${
-                  carouselType === 'alumni'
-                    ? 'bg-college-primary text-white'
-                    : 'text-college-primary hover:bg-gray-100'
-                }`}
-              >
-                Top Alumni
-              </button>
-              <button
-                onClick={() => {
-                  setCarouselType('entrepreneurs');
-                  setCurrentIndex(0);
-                }}
-                className={`px-6 py-2 rounded-md font-semibold transition-all duration-300 ${
-                  carouselType === 'entrepreneurs'
-                    ? 'bg-college-primary text-white'
-                    : 'text-college-primary hover:bg-gray-100'
-                }`}
-              >
-                Entrepreneurs
-              </button>
-            </div>
-          </div>
+          <p className="text-lg text-gray-600 max-w-3xl mx-auto">
+            Hear from our distinguished alumni who are making their mark in leading 
+            technology companies worldwide.
+          </p>
         </div>
 
-        {/* Carousel */}
-        <div className="relative">
-          <div className="overflow-hidden">
+        <div className="relative max-w-4xl mx-auto">
+          {/* Main Carousel */}
+          <div className="overflow-hidden rounded-2xl">
             <div 
               className="flex transition-transform duration-500 ease-in-out"
-              style={{ transform: `translateX(-${currentIndex * (100 / itemsPerPage)}%)` }}
+              style={{ transform: `translateX(-${currentIndex * 100}%)` }}
             >
-              {currentData.map((person) => (
-                <div key={person.id} className="w-1/3 flex-shrink-0 px-3">
-                  <Card className="h-full hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2">
-                    <CardContent className="p-6 text-center">
-                      <div className="mb-6">
-                        <img
-                          src={person.image}
-                          alt={person.name}
-                          className="w-24 h-24 rounded-full mx-auto mb-4 object-cover"
-                        />
-                        <h3 className="text-xl font-bold text-college-dark mb-1">
-                          {person.name}
-                        </h3>
-                        <p className="text-college-primary font-semibold mb-1">
-                          {person.company}
-                        </p>
-                        <p className="text-gray-600 mb-3">
-                          {carouselType === 'alumni' ? person.role : person.title}
-                        </p>
-                        <div className="flex justify-center space-x-4 text-sm text-gray-500 mb-4">
-                          <span>Batch: {person.batch}</span>
-                          <span>•</span>
-                          <span>{person.branch}</span>
+              {alumni.map((alum) => (
+                <div key={alum.id} className="w-full flex-shrink-0">
+                  <Card className="mx-4 shadow-xl border-0 bg-gradient-to-br from-white to-gray-50">
+                    <CardContent className="p-8">
+                      <div className="flex flex-col md:flex-row items-center gap-8">
+                        {/* Profile Image */}
+                        <div className="flex-shrink-0">
+                          <div className="w-32 h-32 rounded-full overflow-hidden ring-4 ring-college-accent/20 shadow-lg">
+                            <img 
+                              src={alum.image} 
+                              alt={alum.name}
+                              className="w-full h-full object-cover"
+                            />
+                          </div>
                         </div>
-                      </div>
-                      
-                      {carouselType === 'alumni' ? (
-                        <div className="bg-gray-50 p-4 rounded-lg">
-                          <div className="flex justify-center mb-2">
-                            {[...Array(5)].map((_, i) => (
-                              <Star key={i} className="h-4 w-4 text-yellow-400 fill-current" />
+
+                        {/* Content */}
+                        <div className="flex-1 text-center md:text-left">
+                          <div className="mb-4">
+                            <Quote className="h-8 w-8 text-college-accent mx-auto md:mx-0 mb-4" />
+                            <p className="text-gray-700 text-lg leading-relaxed italic">
+                              "{alum.testimonial}"
+                            </p>
+                          </div>
+
+                          {/* Rating */}
+                          <div className="flex justify-center md:justify-start mb-4">
+                            {[...Array(alum.rating)].map((_, i) => (
+                              <Star key={i} className="h-5 w-5 text-yellow-400 fill-current" />
                             ))}
                           </div>
-                          <p className="text-gray-700 italic text-sm">
-                            "{person.testimonial}"
-                          </p>
+
+                          {/* Alumni Info */}
+                          <div>
+                            <h3 className="text-xl font-bold text-college-dark mb-1">
+                              {alum.name}
+                            </h3>
+                            <p className="text-college-primary font-semibold mb-1">
+                              {alum.position} at {alum.company}
+                            </p>
+                            <p className="text-gray-500">
+                              Batch of {alum.batch}
+                            </p>
+                          </div>
                         </div>
-                      ) : (
-                        <div className="bg-college-primary bg-opacity-10 p-4 rounded-lg">
-                          <p className="text-college-primary font-semibold">
-                            {person.achievement}
-                          </p>
-                        </div>
-                      )}
+                      </div>
                     </CardContent>
                   </Card>
                 </div>
@@ -228,31 +165,39 @@ const AlumniCarousel = () => {
           {/* Navigation Arrows */}
           <button
             onClick={prevSlide}
-            disabled={currentIndex === 0}
-            className="absolute left-0 top-1/2 transform -translate-y-1/2 bg-white shadow-lg rounded-full p-3 hover:bg-gray-50 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="absolute left-0 top-1/2 transform -translate-y-1/2 -translate-x-4 bg-white shadow-xl rounded-full p-3 hover:bg-gray-50 transition-all duration-200 hover:scale-110 z-10"
           >
             <ChevronLeft className="h-6 w-6 text-college-primary" />
           </button>
           <button
             onClick={nextSlide}
-            disabled={currentIndex >= maxIndex}
-            className="absolute right-0 top-1/2 transform -translate-y-1/2 bg-white shadow-lg rounded-full p-3 hover:bg-gray-50 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="absolute right-0 top-1/2 transform -translate-y-1/2 translate-x-4 bg-white shadow-xl rounded-full p-3 hover:bg-gray-50 transition-all duration-200 hover:scale-110 z-10"
           >
             <ChevronRight className="h-6 w-6 text-college-primary" />
           </button>
-        </div>
 
-        {/* Dots Indicator */}
-        <div className="flex justify-center mt-8 space-x-2">
-          {Array.from({ length: maxIndex + 1 }).map((_, index) => (
-            <button
-              key={index}
-              onClick={() => setCurrentIndex(index)}
-              className={`w-3 h-3 rounded-full transition-all duration-300 ${
-                index === currentIndex ? 'bg-college-primary' : 'bg-gray-300'
-              }`}
-            />
-          ))}
+          {/* Indicators */}
+          <div className="flex justify-center mt-8 space-x-3">
+            {alumni.map((_, index) => (
+              <button
+                key={index}
+                onClick={() => goToSlide(index)}
+                className={`w-4 h-4 rounded-full transition-all duration-300 ${
+                  index === currentIndex 
+                    ? 'bg-college-primary scale-125' 
+                    : 'bg-gray-300 hover:bg-gray-400'
+                }`}
+              />
+            ))}
+          </div>
+
+          {/* Auto-scroll indicator */}
+          <div className="flex justify-center mt-4">
+            <div className="flex items-center space-x-2 text-sm text-gray-500">
+              <div className={`w-2 h-2 rounded-full ${isAutoScrolling ? 'bg-green-400 animate-pulse' : 'bg-gray-400'}`}></div>
+              <span>{isAutoScrolling ? 'Auto-scrolling' : 'Paused'}</span>
+            </div>
+          </div>
         </div>
       </div>
     </section>

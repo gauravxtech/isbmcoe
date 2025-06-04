@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { ChevronDown, Menu, X } from 'lucide-react';
 import { Link } from 'react-router-dom';
@@ -145,16 +146,26 @@ const Navbar = () => {
                     <ChevronDown className="ml-1 h-4 w-4" />
                   </button>
                   {activeDropdown === item.title && (
-                    <div className="absolute top-full left-0 w-64 bg-white shadow-xl rounded-lg py-3 z-50 border border-gray-100">
-                      {item.items.map((subItem) => (
-                        <Link
-                          key={subItem.name}
-                          to={subItem.path}
-                          className="block px-4 py-3 text-gray-700 hover:bg-college-accent hover:text-white transition-all duration-200 border-l-4 border-transparent hover:border-college-accent"
-                        >
-                          {subItem.name}
-                        </Link>
-                      ))}
+                    <div className="absolute top-full left-0 w-72 bg-white shadow-2xl rounded-xl py-4 z-50 border-0 mt-2">
+                      <div className="px-4 py-2 border-b border-gray-100">
+                        <h3 className="font-semibold text-gray-800 text-sm uppercase tracking-wide">
+                          {item.title}
+                        </h3>
+                      </div>
+                      <div className="py-2">
+                        {item.items.map((subItem, index) => (
+                          <Link
+                            key={subItem.name}
+                            to={subItem.path}
+                            className="group flex items-center px-6 py-3 text-gray-700 hover:bg-gradient-to-r hover:from-college-accent/10 hover:to-college-primary/5 hover:text-college-primary transition-all duration-200 border-l-4 border-transparent hover:border-college-accent"
+                          >
+                            <div className="flex items-center justify-between w-full">
+                              <span className="font-medium">{subItem.name}</span>
+                              <div className="w-2 h-2 rounded-full bg-college-accent/30 opacity-0 group-hover:opacity-100 transition-opacity duration-200"></div>
+                            </div>
+                          </Link>
+                        ))}
+                      </div>
                     </div>
                   )}
                 </div>
