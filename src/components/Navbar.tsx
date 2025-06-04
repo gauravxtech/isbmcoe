@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { ChevronDown, Menu, X } from 'lucide-react';
 import { Link } from 'react-router-dom';
@@ -22,7 +21,7 @@ const Navbar = () => {
       title: 'About',
       items: [
         { name: 'Our Story', path: '/about' },
-        { name: 'Vision & Mission', path: '/about#vision-mission' },
+        { name: 'Vision & Mission', path: '/vision-mission' },
         { name: 'Leadership', path: '#' },
         { name: 'Infrastructure', path: '#' },
         { name: 'Awards & Recognition', path: '#' }
