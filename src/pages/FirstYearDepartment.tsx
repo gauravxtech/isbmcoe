@@ -5,6 +5,7 @@ import Footer from '@/components/Footer';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Separator } from '@/components/ui/separator';
 import { GraduationCap, Users, BookOpen, Award, Target, Eye } from 'lucide-react';
 
 const FirstYearDepartment = () => {
@@ -51,26 +52,28 @@ const FirstYearDepartment = () => {
       <Header />
       <Navbar />
       
-      {/* Hero Section with Breadcrumb */}
+      {/* Hero Section */}
       <div className="bg-gradient-to-r from-college-primary to-college-secondary py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
-            <nav className="text-sm text-white/80 mb-4">
+            <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
+              First Year Engineering Department
+            </h1>
+            <div className="w-24 h-1 bg-college-accent mx-auto mb-4"></div>
+            <nav className="text-sm text-white/80">
               <span className="hover:text-white cursor-pointer">Home</span>
               <span className="mx-2">|</span>
               <span className="hover:text-white cursor-pointer">Department</span>
               <span className="mx-2">|</span>
               <span className="text-white font-semibold">First Year Engineering Department</span>
             </nav>
-            <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
-              First Year Engineering Department
-            </h1>
-            <div className="w-24 h-1 bg-college-accent mx-auto"></div>
           </div>
         </div>
       </div>
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <Separator className="mb-8" />
+        
         <Tabs defaultValue="about" className="space-y-8">
           <TabsList className="grid w-full grid-cols-6 lg:w-auto lg:grid-cols-6">
             <TabsTrigger value="about">About</TabsTrigger>

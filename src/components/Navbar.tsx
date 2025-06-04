@@ -7,6 +7,7 @@ const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
+  const [dropdownTimeout, setDropdownTimeout] = useState<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -15,6 +16,21 @@ const Navbar = () => {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  const handleMouseEnter = (itemTitle: string) => {
+    if (dropdownTimeout) {
+      clearTimeout(dropdownTimeout);
+      setDropdownTimeout(null);
+    }
+    setActiveDropdown(itemTitle);
+  };
+
+  const handleMouseLeave = () => {
+    const timeout = setTimeout(() => {
+      setActiveDropdown(null);
+    }, 150);
+    setDropdownTimeout(timeout);
+  };
 
   const navigationItems = [
     {
@@ -138,15 +154,19 @@ const Navbar = () => {
                 <div
                   key={item.title}
                   className="relative group"
-                  onMouseEnter={() => setActiveDropdown(item.title)}
-                  onMouseLeave={() => setActiveDropdown(null)}
+                  onMouseEnter={() => handleMouseEnter(item.title)}
+                  onMouseLeave={handleMouseLeave}
                 >
                   <button className="flex items-center px-4 py-2 text-white hover:text-college-accent hover:bg-white/10 rounded-lg transition-all duration-200 font-medium">
                     {item.title}
                     <ChevronDown className="ml-1 h-4 w-4" />
                   </button>
                   {activeDropdown === item.title && (
-                    <div className="absolute top-full left-0 w-72 bg-white shadow-2xl rounded-xl py-2 z-50 border border-gray-200 mt-2">
+                    <div 
+                      className="absolute top-full left-0 w-72 bg-white shadow-2xl rounded-xl py-2 z-50 border border-gray-200 mt-2"
+                      onMouseEnter={() => handleMouseEnter(item.title)}
+                      onMouseLeave={handleMouseLeave}
+                    >
                       <div className="py-2">
                         {item.items.map((subItem, index) => (
                           <Link
