@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { ChevronDown, Menu, X } from 'lucide-react';
 import { Link } from 'react-router-dom';
@@ -41,6 +40,7 @@ const Navbar = () => {
     {
       title: 'Departments',
       items: [
+        { name: 'First Year Engineering', path: '/first-year-department' },
         { name: 'Computer Science & Engineering', path: '#' },
         { name: 'Mechanical Engineering', path: '#' },
         { name: 'Electronics Engineering (VLSI)', path: '#' },

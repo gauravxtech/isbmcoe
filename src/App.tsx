@@ -9,6 +9,7 @@ import About from "./pages/About";
 import VisionMission from "./pages/VisionMission";
 import Login from "./pages/Login";
 import ForgotPassword from "./pages/ForgotPassword";
+import FirstYearDepartment from "./pages/FirstYearDepartment";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -25,6 +26,7 @@ const App = () => (
           <Route path="/vision-mission" element={<VisionMission />} />
           <Route path="/login" element={<Login />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/first-year-department" element={<FirstYearDepartment />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
