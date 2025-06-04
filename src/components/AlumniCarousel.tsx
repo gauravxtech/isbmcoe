@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { ChevronLeft, ChevronRight, Star, Quote } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
@@ -189,14 +188,6 @@ const AlumniCarousel = () => {
                 }`}
               />
             ))}
-          </div>
-
-          {/* Auto-scroll indicator */}
-          <div className="flex justify-center mt-4">
-            <div className="flex items-center space-x-2 text-sm text-gray-500">
-              <div className={`w-2 h-2 rounded-full ${isAutoScrolling ? 'bg-green-400 animate-pulse' : 'bg-gray-400'}`}></div>
-              <span>{isAutoScrolling ? 'Auto-scrolling' : 'Paused'}</span>
-            </div>
           </div>
         </div>
       </div>
