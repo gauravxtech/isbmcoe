@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Award, Users, BookOpen, Globe, Target, TrendingUp, Calendar, MapPin } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -45,15 +44,6 @@ const About = () => {
     <div className="min-h-screen bg-gray-50">
       <Header />
       <Navbar />
-      
-      {/* Breadcrumb Navigation */}
-      <div className="bg-white py-3 border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <nav className="text-sm text-gray-600">
-            Home | About | Our Story
-          </nav>
-        </div>
-      </div>
 
       {/* Hero Section */}
       <section className="relative bg-gradient-to-r from-college-primary to-college-secondary py-16">
