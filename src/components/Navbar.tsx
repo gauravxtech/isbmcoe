@@ -146,12 +146,7 @@ const Navbar = () => {
                     <ChevronDown className="ml-1 h-4 w-4" />
                   </button>
                   {activeDropdown === item.title && (
-                    <div className="absolute top-full left-0 w-72 bg-white shadow-2xl rounded-xl py-4 z-50 border-0 mt-2">
-                      <div className="px-4 py-2 border-b border-gray-100">
-                        <h3 className="font-semibold text-gray-800 text-sm uppercase tracking-wide">
-                          {item.title}
-                        </h3>
-                      </div>
+                    <div className="absolute top-full left-0 w-72 bg-white shadow-2xl rounded-xl py-2 z-50 border border-gray-200 mt-2">
                       <div className="py-2">
                         {item.items.map((subItem, index) => (
                           <Link
