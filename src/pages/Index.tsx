@@ -1,5 +1,6 @@
 
 import React, { useEffect } from 'react';
+import Header from '@/components/Header';
 import Navbar from '@/components/Navbar';
 import HeroBanner from '@/components/HeroBanner';
 import ProgramsCarousel from '@/components/ProgramsCarousel';
@@ -36,7 +37,8 @@ const Index = () => {
   }, []);
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-college-light">
+      <Header />
       <Navbar />
       <main>
         <HeroBanner />

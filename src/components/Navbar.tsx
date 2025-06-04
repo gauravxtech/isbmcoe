@@ -11,7 +11,7 @@ const Navbar = () => {
 
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50);
+      setIsScrolled(window.scrollY > 100);
     };
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
@@ -20,60 +20,47 @@ const Navbar = () => {
   const navigationItems = [
     {
       title: 'About',
-      items: ['Our Story', 'Vision & Mission', 'Leadership', 'Infrastructure']
+      items: ['Our Story', 'Vision & Mission', 'Leadership', 'Infrastructure', 'Awards & Recognition']
     },
     {
       title: 'NAAC',
-      items: ['B++ Accreditation', 'Quality Initiatives', 'Documents', 'Assessment Reports']
+      items: ['B++ Accreditation', 'Quality Initiatives', 'Documents', 'Assessment Reports', 'Continuous Improvement']
     },
     {
-      title: 'Department',
-      items: ['Computer Science', 'Computer Engineering', 'Artificial Intelligence & ML', 'AI & Data Science', 'Mechanical Engineering', 'Electronics Engineering (VLSI)']
+      title: 'Departments',
+      items: ['Computer Science & Engineering', 'Mechanical Engineering', 'Electronics Engineering (VLSI)', 'AI & Machine Learning', 'AI & Data Science', 'Computer Engineering']
     },
     {
-      title: 'Admission',
-      items: ['UG Programs', 'Direct Second Year', 'Fee Structure', 'Scholarships']
+      title: 'Admissions',
+      items: ['UG Programs', 'Direct Second Year', 'Fee Structure', 'Scholarships', 'Application Process']
     },
     {
-      title: 'Placement',
-      items: ['Placement Records', 'Training Programs', 'Industry Partners', 'Career Services']
+      title: 'Placements',
+      items: ['Placement Records', 'Training Programs', 'Industry Partners', 'Career Services', 'Alumni Network']
     },
     {
       title: 'Life @ COE',
-      items: ['Campus Life', 'Sports', 'Cultural Events', 'Student Clubs']
+      items: ['Campus Life', 'Sports & Recreation', 'Cultural Events', 'Student Clubs', 'Hostel Facilities']
     },
     {
       title: 'Contact Us',
-      items: ['Campus Location', 'Administration', 'Helpdesk', 'Directions']
+      items: ['Campus Location', 'Administration', 'Helpdesk', 'Directions', 'Virtual Tour']
     }
   ];
 
   return (
-    <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-      isScrolled ? 'bg-college-primary shadow-lg' : 'bg-college-primary'
+    <nav className={`sticky top-0 z-50 transition-all duration-300 ${
+      isScrolled 
+        ? 'bg-college-primary/95 backdrop-blur-md shadow-lg' 
+        : 'bg-gradient-to-r from-college-primary to-college-secondary'
     }`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
-          {/* Logo and College Name */}
-          <div className="flex items-center space-x-4">
-            <div className="flex-shrink-0">
-              <img 
-                src="/lovable-uploads/18fee38c-1acf-462a-825a-cda10c5e7381.png" 
-                alt="ISBM College Logo" 
-                className="w-10 h-10"
-              />
-            </div>
-            <div className="hidden md:block">
-              <h1 className="text-white font-bold text-xl">ISBM College of Engineering</h1>
-              <div className="flex items-center space-x-2">
-                <p className="text-blue-200 text-xs">Affiliated to Savitribai Phule Pune University | AICTE Approved</p>
-                <img 
-                  src="/lovable-uploads/30216b9d-1287-4b01-8ab1-8429e5f6f329.png" 
-                  alt="NAAC B++ Accredited" 
-                  className="w-6 h-6"
-                />
-              </div>
-            </div>
+          {/* Home Link */}
+          <div className="flex items-center">
+            <Link to="/" className="text-white font-semibold hover:text-college-accent transition-colors duration-200">
+              Home
+            </Link>
           </div>
 
           {/* Desktop Navigation */}
@@ -85,17 +72,17 @@ const Navbar = () => {
                 onMouseEnter={() => setActiveDropdown(item.title)}
                 onMouseLeave={() => setActiveDropdown(null)}
               >
-                <button className="flex items-center px-3 py-2 text-white hover:text-blue-200 transition-colors duration-200">
+                <button className="flex items-center px-4 py-2 text-white hover:text-college-accent hover:bg-white/10 rounded-lg transition-all duration-200 font-medium">
                   {item.title}
                   <ChevronDown className="ml-1 h-4 w-4" />
                 </button>
                 {activeDropdown === item.title && (
-                  <div className="absolute top-full left-0 w-56 bg-white shadow-lg rounded-md py-2 z-50">
+                  <div className="absolute top-full left-0 w-64 bg-white shadow-xl rounded-lg py-3 z-50 border border-gray-100">
                     {item.items.map((subItem) => (
                       <Link
                         key={subItem}
                         to="#"
-                        className="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-college-primary transition-colors duration-200"
+                        className="block px-4 py-3 text-gray-700 hover:bg-college-accent hover:text-white transition-all duration-200 border-l-4 border-transparent hover:border-college-accent"
                       >
                         {subItem}
                       </Link>
@@ -106,10 +93,10 @@ const Navbar = () => {
             ))}
           </div>
 
-          {/* Apply Online Button */}
+          {/* Action Buttons */}
           <div className="hidden md:flex items-center space-x-4">
             <Button 
-              className="bg-college-accent hover:bg-orange-600 text-white font-semibold px-6 py-2 rounded-full transition-all duration-300 transform hover:scale-105"
+              className="bg-gradient-to-r from-college-accent to-college-warning hover:from-orange-600 hover:to-red-500 text-white font-semibold px-6 py-2 rounded-full transition-all duration-300 transform hover:scale-105 shadow-lg"
               onClick={() => window.open('#', '_blank')}
             >
               Apply Online
@@ -117,7 +104,7 @@ const Navbar = () => {
             <Link to="/login">
               <Button 
                 variant="outline" 
-                className="border-white text-white hover:bg-white hover:text-college-primary transition-all duration-300"
+                className="border-2 border-white text-white hover:bg-white hover:text-college-primary transition-all duration-300 rounded-full px-6"
               >
                 Login
               </Button>
@@ -128,7 +115,7 @@ const Navbar = () => {
           <div className="lg:hidden">
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="text-white hover:text-blue-200 transition-colors duration-200"
+              className="text-white hover:text-college-accent transition-colors duration-200 p-2"
             >
               {isMobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
             </button>
@@ -138,11 +125,11 @@ const Navbar = () => {
 
       {/* Mobile Navigation */}
       {isMobileMenuOpen && (
-        <div className="lg:hidden bg-college-primary border-t border-blue-700">
-          <div className="px-2 pt-2 pb-3 space-y-1">
+        <div className="lg:hidden bg-college-primary/95 backdrop-blur-md border-t border-white/20">
+          <div className="px-4 pt-2 pb-3 space-y-1 max-h-96 overflow-y-auto">
             {navigationItems.map((item) => (
               <div key={item.title} className="space-y-1">
-                <button className="flex items-center justify-between w-full px-3 py-2 text-white hover:text-blue-200 transition-colors duration-200">
+                <button className="flex items-center justify-between w-full px-3 py-3 text-white hover:text-college-accent hover:bg-white/10 rounded-lg transition-colors duration-200 font-medium">
                   {item.title}
                   <ChevronDown className="h-4 w-4" />
                 </button>
@@ -151,7 +138,7 @@ const Navbar = () => {
                     <Link
                       key={subItem}
                       to="#"
-                      className="block px-3 py-2 text-blue-200 hover:text-white transition-colors duration-200"
+                      className="block px-3 py-2 text-gray-200 hover:text-college-accent hover:bg-white/5 rounded transition-colors duration-200"
                     >
                       {subItem}
                     </Link>
@@ -159,15 +146,15 @@ const Navbar = () => {
                 </div>
               </div>
             ))}
-            <div className="pt-4 space-y-2">
+            <div className="pt-4 space-y-3">
               <Button 
-                className="w-full bg-college-accent hover:bg-orange-600 text-white font-semibold"
+                className="w-full bg-gradient-to-r from-college-accent to-college-warning hover:from-orange-600 hover:to-red-500 text-white font-semibold rounded-lg"
                 onClick={() => window.open('#', '_blank')}
               >
                 Apply Online
               </Button>
               <Link to="/login" className="block">
-                <Button variant="outline" className="w-full border-white text-white hover:bg-white hover:text-college-primary">
+                <Button variant="outline" className="w-full border-white text-white hover:bg-white hover:text-college-primary rounded-lg">
                   Login
                 </Button>
               </Link>
