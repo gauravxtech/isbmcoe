@@ -57,13 +57,22 @@ const Navbar = () => {
           {/* Logo and College Name */}
           <div className="flex items-center space-x-4">
             <div className="flex-shrink-0">
-              <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center">
-                <span className="text-college-primary font-bold text-lg">COE</span>
-              </div>
+              <img 
+                src="/lovable-uploads/18fee38c-1acf-462a-825a-cda10c5e7381.png" 
+                alt="ISBM College Logo" 
+                className="w-10 h-10"
+              />
             </div>
             <div className="hidden md:block">
               <h1 className="text-white font-bold text-xl">ISBM College of Engineering</h1>
-              <p className="text-blue-200 text-xs">Affiliated to Savitribai Phule Pune University | AICTE Approved | NAAC B++</p>
+              <div className="flex items-center space-x-2">
+                <p className="text-blue-200 text-xs">Affiliated to Savitribai Phule Pune University | AICTE Approved</p>
+                <img 
+                  src="/lovable-uploads/30216b9d-1287-4b01-8ab1-8429e5f6f329.png" 
+                  alt="NAAC B++ Accredited" 
+                  className="w-6 h-6"
+                />
+              </div>
             </div>
           </div>
 

@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import Navbar from '@/components/Navbar';
 import HeroBanner from '@/components/HeroBanner';
 import ProgramsCarousel from '@/components/ProgramsCarousel';
@@ -10,15 +10,42 @@ import NewsEvents from '@/components/NewsEvents';
 import Footer from '@/components/Footer';
 
 const Index = () => {
+  useEffect(() => {
+    // Add structured data for better SEO
+    const breadcrumbData = {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "https://isbmcoe.edu.in"
+        }
+      ]
+    };
+
+    const script = document.createElement('script');
+    script.type = 'application/ld+json';
+    script.text = JSON.stringify(breadcrumbData);
+    document.head.appendChild(script);
+
+    return () => {
+      document.head.removeChild(script);
+    };
+  }, []);
+
   return (
     <div className="min-h-screen">
       <Navbar />
-      <HeroBanner />
-      <ProgramsCarousel />
-      <CollegeOverview />
-      <AlumniCarousel />
-      <PlacementMetrics />
-      <NewsEvents />
+      <main>
+        <HeroBanner />
+        <ProgramsCarousel />
+        <CollegeOverview />
+        <AlumniCarousel />
+        <PlacementMetrics />
+        <NewsEvents />
+      </main>
       <Footer />
     </div>
   );
