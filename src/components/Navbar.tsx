@@ -119,13 +119,13 @@ const Navbar = () => {
               ))}
             </div>
 
-            {/* Apply Online Button */}
+            {/* Login Button */}
             <div className="hidden md:flex items-center">
               <Link to="/login">
                 <Button 
                   className="bg-gradient-to-r from-college-accent to-college-warning hover:from-orange-600 hover:to-red-500 text-white font-semibold px-8 py-3 rounded-full transition-all duration-300 transform hover:scale-105 shadow-lg text-lg"
                 >
-                  Apply Online
+                  Login
                 </Button>
               </Link>
             </div>
@@ -170,7 +170,7 @@ const Navbar = () => {
                   <Button 
                     className="w-full bg-gradient-to-r from-college-accent to-college-warning hover:from-orange-600 hover:to-red-500 text-white font-semibold rounded-lg"
                   >
-                    Apply Online
+                    Login
                   </Button>
                 </Link>
               </div>

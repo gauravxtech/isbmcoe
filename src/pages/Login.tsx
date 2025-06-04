@@ -68,10 +68,10 @@ const Login = () => {
         <Card className="shadow-2xl border-0">
           <CardHeader className="text-center pb-6">
             <CardTitle className="text-2xl font-bold text-college-primary">
-              Apply Online
+              Login Portal
             </CardTitle>
             <p className="text-gray-600 mt-2">
-              Student/Faculty Portal Login
+              Student/Faculty Portal Access
             </p>
           </CardHeader>
           <CardContent className="space-y-6">

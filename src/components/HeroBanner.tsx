@@ -11,7 +11,7 @@ const HeroBanner = () => {
       id: 1,
       title: "Excellence in Engineering Education",
       subtitle: "Shaping Future Engineers with Innovation and Technology",
-      image: "/lovable-uploads/college-campus-1.jpg",
+      image: "/lovable-uploads/a07dab32-a06d-4aa9-ab59-2d061f93201f.png",
       cta: "Explore Programs",
       highlight: "NAAC B++ Accredited"
     },
@@ -19,33 +19,33 @@ const HeroBanner = () => {
       id: 2,
       title: "World-Class Infrastructure", 
       subtitle: "State-of-the-art Labs and Modern Campus Facilities",
-      image: "/lovable-uploads/college-campus-2.jpg",
+      image: "/lovable-uploads/b592b170-56b4-4e52-b3ff-c4f500363b94.png",
       cta: "Campus Tour",
       highlight: "17 Acre Campus"
     },
     {
       id: 3,
+      title: "Industry Recognition",
+      subtitle: "Approved by AICTE, Affiliated to SPPU & Promoted by IIT-ians",
+      image: "/lovable-uploads/c63a8ec4-3adb-47a0-9e29-d081de2cff06.png",
+      cta: "Our Accreditations",
+      highlight: "Promoted by IIT-ians"
+    },
+    {
+      id: 4,
       title: "Industry-Ready Graduates",
-      subtitle: "95% Placement Rate with Top Companies",
+      subtitle: "75% Placement Rate with Top Companies",
       image: "https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=1920&q=80",
       cta: "Placement Records",
       highlight: "₹16 Lakhs Highest Package"
     },
     {
-      id: 4,
+      id: 5,
       title: "Research & Innovation",
       subtitle: "Pioneering Technology Solutions for Tomorrow",
       image: "https://images.unsplash.com/photo-1562774053-701939374585?auto=format&fit=crop&w=1920&q=80",
       cta: "Research Programs",
       highlight: "Leading Innovation"
-    },
-    {
-      id: 5,
-      title: "Global Recognition",
-      subtitle: "Alumni Making Impact Worldwide",
-      image: "https://images.unsplash.com/photo-1498243691581-b145c3f54a5a?auto=format&fit=crop&w=1920&q=80",
-      cta: "Alumni Network",
-      highlight: "Worldwide Alumni"
     }
   ];
 
@@ -174,7 +174,7 @@ const HeroBanner = () => {
           <Button className="bg-gradient-to-br from-college-primary to-college-secondary hover:scale-110 p-4 rounded-full shadow-xl transition-all duration-300 relative">
             <FileText className="h-6 w-6 text-white" />
             <span className="absolute right-full mr-3 top-1/2 transform -translate-y-1/2 bg-gray-800 text-white px-2 py-1 rounded text-sm opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
-              Download Brochure
+              Download Documents
             </span>
           </Button>
         </div>
@@ -192,7 +192,7 @@ const HeroBanner = () => {
           <Button className="bg-gradient-to-br from-college-success to-college-teal hover:scale-110 p-4 rounded-full shadow-xl transition-all duration-300 relative">
             <Download className="h-6 w-6 text-white" />
             <span className="absolute right-full mr-3 top-1/2 transform -translate-y-1/2 bg-gray-800 text-white px-2 py-1 rounded text-sm opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
-              Documents
+              Download Brochure
             </span>
           </Button>
         </div>
