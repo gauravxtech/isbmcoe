@@ -1,6 +1,8 @@
+
 import React from 'react';
 import { Award, Users, BookOpen, Globe, Target, TrendingUp, Calendar, MapPin } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Separator } from '@/components/ui/separator';
 import Header from '@/components/Header';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
@@ -44,12 +46,13 @@ const About = () => {
     <div className="min-h-screen bg-gray-50">
       <Header />
       <Navbar />
+      <Separator className="bg-gray-300" />
 
       {/* Hero Section */}
       <section className="relative bg-gradient-to-r from-college-primary to-college-secondary py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
-            <h1 className="text-4xl md:text-6xl font-bold text-white mb-6">
+            <h1 className="text-3xl md:text-4xl font-bold text-white mb-6">
               About ISBM College of Engineering
             </h1>
             <p className="text-xl text-blue-100 max-w-3xl mx-auto">
