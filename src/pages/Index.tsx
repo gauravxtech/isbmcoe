@@ -9,6 +9,7 @@ import AlumniCarousel from '@/components/AlumniCarousel';
 import PlacementMetrics from '@/components/PlacementMetrics';
 import NewsEvents from '@/components/NewsEvents';
 import Footer from '@/components/Footer';
+import Chatbot from '@/components/Chatbot';
 
 const Index = () => {
   useEffect(() => {
@@ -49,6 +50,7 @@ const Index = () => {
         <NewsEvents />
       </main>
       <Footer />
+      <Chatbot />
     </div>
   );
 };

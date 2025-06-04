@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { ChevronLeft, ChevronRight, Bell, FileText, Phone, Download, Star } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -10,15 +11,15 @@ const HeroBanner = () => {
       id: 1,
       title: "Excellence in Engineering Education",
       subtitle: "Shaping Future Engineers with Innovation and Technology",
-      image: "https://images.unsplash.com/photo-1562774053-701939374585?auto=format&fit=crop&w=1920&q=80",
+      image: "/lovable-uploads/college-campus-1.jpg",
       cta: "Explore Programs",
       highlight: "NAAC B++ Accredited"
     },
     {
       id: 2,
-      title: "World-Class Infrastructure",
+      title: "World-Class Infrastructure", 
       subtitle: "State-of-the-art Labs and Modern Campus Facilities",
-      image: "https://images.unsplash.com/photo-1498243691581-b145c3f54a5a?auto=format&fit=crop&w=1920&q=80",
+      image: "/lovable-uploads/college-campus-2.jpg",
       cta: "Campus Tour",
       highlight: "17 Acre Campus"
     },
@@ -29,20 +30,23 @@ const HeroBanner = () => {
       image: "https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=1920&q=80",
       cta: "Placement Records",
       highlight: "₹16 Lakhs Highest Package"
+    },
+    {
+      id: 4,
+      title: "Research & Innovation",
+      subtitle: "Pioneering Technology Solutions for Tomorrow",
+      image: "https://images.unsplash.com/photo-1562774053-701939374585?auto=format&fit=crop&w=1920&q=80",
+      cta: "Research Programs",
+      highlight: "Leading Innovation"
+    },
+    {
+      id: 5,
+      title: "Global Recognition",
+      subtitle: "Alumni Making Impact Worldwide",
+      image: "https://images.unsplash.com/photo-1498243691581-b145c3f54a5a?auto=format&fit=crop&w=1920&q=80",
+      cta: "Alumni Network",
+      highlight: "Worldwide Alumni"
     }
-  ];
-
-  const announcements = [
-    "🎓 Admissions Open for 2024-25 | Last Date: 30th June 2024",
-    "🏆 International Conference on Multidisciplinary Emerging Trends in Engineering (ICMETET 2024)",
-    "⭐ NAAC B++ Accredited Institution | Best Engineering College Award"
-  ];
-
-  const affiliations = [
-    { name: "SPPU", logo: "SPPU", fullName: "Savitribai Phule Pune University" },
-    { name: "AICTE", logo: "AICTE", fullName: "All India Council for Technical Education" },
-    { name: "NAAC B++", logo: "NAAC", fullName: "National Assessment and Accreditation Council" },
-    { name: "DTE", logo: "DTE", fullName: "Directorate of Technical Education" }
   ];
 
   useEffect(() => {
@@ -62,20 +66,6 @@ const HeroBanner = () => {
 
   return (
     <div className="relative">
-      {/* Announcement Bar */}
-      <div className="bg-gradient-to-r from-college-accent to-college-warning text-white py-3 px-4 overflow-hidden">
-        <div className="flex animate-slide-in">
-          <div className="flex items-center space-x-8 whitespace-nowrap">
-            <Bell className="h-5 w-5 flex-shrink-0 animate-float" />
-            {announcements.map((announcement, index) => (
-              <span key={index} className="font-medium text-lg">
-                {announcement}
-              </span>
-            ))}
-          </div>
-        </div>
-      </div>
-
       {/* Main Banner */}
       <div className="relative h-[70vh] overflow-hidden">
         {banners.map((banner, index) => (
@@ -178,17 +168,34 @@ const HeroBanner = () => {
         </div>
       </div>
 
-      {/* Floating Side Buttons */}
-      <div className="fixed right-6 top-1/2 transform -translate-y-1/2 z-40 space-y-4">
-        <Button className="bg-gradient-to-br from-college-primary to-college-secondary hover:scale-110 p-4 rounded-full shadow-xl transition-all duration-300 group">
-          <FileText className="h-5 w-5 text-white group-hover:animate-pulse" />
-        </Button>
-        <Button className="bg-gradient-to-br from-college-accent to-college-warning hover:scale-110 p-4 rounded-full shadow-xl transition-all duration-300 group">
-          <Phone className="h-5 w-5 text-white group-hover:animate-pulse" />
-        </Button>
-        <Button className="bg-gradient-to-br from-college-success to-college-teal hover:scale-110 p-4 rounded-full shadow-xl transition-all duration-300 group">
-          <Download className="h-5 w-5 text-white group-hover:animate-pulse" />
-        </Button>
+      {/* Floating Vertical Action Buttons */}
+      <div className="fixed right-6 top-1/2 transform -translate-y-1/2 z-40 flex flex-col space-y-4">
+        <div className="group">
+          <Button className="bg-gradient-to-br from-college-primary to-college-secondary hover:scale-110 p-4 rounded-full shadow-xl transition-all duration-300 relative">
+            <FileText className="h-6 w-6 text-white" />
+            <span className="absolute right-full mr-3 top-1/2 transform -translate-y-1/2 bg-gray-800 text-white px-2 py-1 rounded text-sm opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+              Download Brochure
+            </span>
+          </Button>
+        </div>
+        
+        <div className="group">
+          <Button className="bg-gradient-to-br from-college-accent to-college-warning hover:scale-110 p-4 rounded-full shadow-xl transition-all duration-300 relative">
+            <Phone className="h-6 w-6 text-white" />
+            <span className="absolute right-full mr-3 top-1/2 transform -translate-y-1/2 bg-gray-800 text-white px-2 py-1 rounded text-sm opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+              Call Now
+            </span>
+          </Button>
+        </div>
+        
+        <div className="group">
+          <Button className="bg-gradient-to-br from-college-success to-college-teal hover:scale-110 p-4 rounded-full shadow-xl transition-all duration-300 relative">
+            <Download className="h-6 w-6 text-white" />
+            <span className="absolute right-full mr-3 top-1/2 transform -translate-y-1/2 bg-gray-800 text-white px-2 py-1 rounded text-sm opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+              Documents
+            </span>
+          </Button>
+        </div>
       </div>
     </div>
   );

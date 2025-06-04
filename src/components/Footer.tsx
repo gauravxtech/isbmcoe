@@ -27,18 +27,22 @@ const Footer = () => {
   ];
 
   return (
-    <footer className="bg-college-dark text-white">
+    <footer className="bg-college-primary text-white">
       {/* Main Footer Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {/* ISBM Info */}
           <div>
             <div className="flex items-center space-x-3 mb-6">
-              <div className="w-10 h-10 bg-college-accent rounded-full flex items-center justify-center">
-                <span className="text-white font-bold text-lg">COE</span>
+              <div className="w-16 h-16 bg-white rounded-lg p-2 flex items-center justify-center">
+                <img 
+                  src="/lovable-uploads/18fee38c-1acf-462a-825a-cda10c5e7381.png" 
+                  alt="ISBM College Logo" 
+                  className="w-full h-full object-contain"
+                />
               </div>
               <div>
-                <h3 className="font-bold text-lg">ISBM College</h3>
+                <h3 className="font-bold text-lg text-white">ISBM College</h3>
                 <p className="text-sm text-gray-300">of Engineering</p>
               </div>
             </div>
@@ -66,7 +70,7 @@ const Footer = () => {
 
           {/* Our Campuses */}
           <div>
-            <h4 className="font-semibold text-lg mb-6">Our Campuses</h4>
+            <h4 className="font-semibold text-lg mb-6 text-white">Our Campuses</h4>
             <ul className="space-y-3">
               {campuses.map((campus, index) => (
                 <li key={index}>
@@ -81,7 +85,7 @@ const Footer = () => {
 
           {/* Academic Programs */}
           <div>
-            <h4 className="font-semibold text-lg mb-6">Academic Programs</h4>
+            <h4 className="font-semibold text-lg mb-6 text-white">Academic Programs</h4>
             <ul className="space-y-3">
               {programs.map((program, index) => (
                 <li key={index}>
@@ -98,7 +102,7 @@ const Footer = () => {
 
           {/* Other Links & Social */}
           <div>
-            <h4 className="font-semibold text-lg mb-6">Other Links</h4>
+            <h4 className="font-semibold text-lg mb-6 text-white">Other Links</h4>
             <ul className="space-y-3 mb-6">
               {otherLinks.map((link, index) => (
                 <li key={index}>
@@ -114,21 +118,21 @@ const Footer = () => {
 
             {/* Social Links */}
             <div>
-              <h5 className="font-medium mb-4">Social Media</h5>
+              <h5 className="font-medium mb-4 text-white">Social Media</h5>
               <div className="flex space-x-3">
-                <a href="#" className="bg-college-primary hover:bg-blue-700 p-2 rounded-full transition-colors duration-200">
+                <a href="#" className="bg-blue-600 hover:bg-blue-700 p-2 rounded-full transition-colors duration-200">
                   <Facebook className="h-4 w-4" />
                 </a>
-                <a href="#" className="bg-college-primary hover:bg-blue-700 p-2 rounded-full transition-colors duration-200">
+                <a href="#" className="bg-blue-400 hover:bg-blue-500 p-2 rounded-full transition-colors duration-200">
                   <Twitter className="h-4 w-4" />
                 </a>
-                <a href="#" className="bg-college-primary hover:bg-blue-700 p-2 rounded-full transition-colors duration-200">
+                <a href="#" className="bg-blue-700 hover:bg-blue-800 p-2 rounded-full transition-colors duration-200">
                   <Linkedin className="h-4 w-4" />
                 </a>
-                <a href="#" className="bg-college-primary hover:bg-blue-700 p-2 rounded-full transition-colors duration-200">
+                <a href="#" className="bg-pink-600 hover:bg-pink-700 p-2 rounded-full transition-colors duration-200">
                   <Instagram className="h-4 w-4" />
                 </a>
-                <a href="#" className="bg-college-primary hover:bg-blue-700 p-2 rounded-full transition-colors duration-200">
+                <a href="#" className="bg-red-600 hover:bg-red-700 p-2 rounded-full transition-colors duration-200">
                   <Youtube className="h-4 w-4" />
                 </a>
               </div>
@@ -138,13 +142,13 @@ const Footer = () => {
       </div>
 
       {/* Bottom Footer */}
-      <div className="border-t border-gray-700">
+      <div className="border-t border-gray-600">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
-            <div className="text-sm text-gray-400">
-              © 2025 ISBM COE | All Rights Reserved.
+            <div className="text-sm text-gray-300">
+              © 2025 ISBM COE | Developed by Innovara Dynamics
             </div>
-            <div className="text-sm text-gray-400 text-center">
+            <div className="text-sm text-gray-300 text-center">
               <div className="mb-2">Institution Code: 6622</div>
               <div className="flex flex-wrap justify-center space-x-4 text-xs">
                 <span>AICTE F. NO. West/1-4351941/2010/New</span>

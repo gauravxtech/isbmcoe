@@ -6,7 +6,6 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Checkbox } from '@/components/ui/checkbox';
 
 const Login = () => {
@@ -14,7 +13,6 @@ const Login = () => {
   const [formData, setFormData] = useState({
     email: '',
     password: '',
-    role: '',
     captcha: '',
     rememberMe: false
   });
@@ -24,7 +22,7 @@ const Login = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!formData.email || !formData.password || !formData.role) {
+    if (!formData.email || !formData.password) {
       alert('Please fill in all required fields');
       return;
     }
@@ -35,20 +33,7 @@ const Login = () => {
     }
 
     console.log('Login attempt:', formData);
-    
-    switch (formData.role) {
-      case 'admin':
-        navigate('/admin-dashboard');
-        break;
-      case 'faculty':
-        navigate('/faculty-dashboard');
-        break;
-      case 'student':
-        navigate('/student-dashboard');
-        break;
-      default:
-        navigate('/');
-    }
+    navigate('/dashboard');
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -82,31 +67,15 @@ const Login = () => {
 
         <Card className="shadow-2xl border-0">
           <CardHeader className="text-center pb-6">
-            <CardTitle className="text-2xl font-bold text-college-dark">
-              Welcome Back
+            <CardTitle className="text-2xl font-bold text-college-primary">
+              Apply Online
             </CardTitle>
             <p className="text-gray-600 mt-2">
-              Sign in to access your dashboard
+              Student/Faculty Portal Login
             </p>
           </CardHeader>
           <CardContent className="space-y-6">
             <form onSubmit={handleSubmit} className="space-y-6">
-              <div className="space-y-2">
-                <Label htmlFor="role" className="text-sm font-medium text-gray-700">
-                  Login As *
-                </Label>
-                <Select onValueChange={(value) => setFormData(prev => ({ ...prev, role: value }))}>
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Select your role" />
-                  </SelectTrigger>
-                  <SelectContent className="bg-white z-50">
-                    <SelectItem value="student">Student</SelectItem>
-                    <SelectItem value="faculty">Faculty</SelectItem>
-                    <SelectItem value="admin">System Administrator</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
               <div className="space-y-2">
                 <Label htmlFor="email" className="text-sm font-medium text-gray-700">
                   Email Address *
@@ -204,13 +173,10 @@ const Login = () => {
 
             <div className="text-center space-y-4 pt-6 border-t">
               <p className="text-sm text-gray-600">
-                New to ISBM? 
-                <Link 
-                  to="/register" 
-                  className="text-college-primary hover:text-blue-800 font-semibold ml-1 transition-colors duration-200"
-                >
-                  Create Account
-                </Link>
+                Note: Accounts are created by college administration only.
+              </p>
+              <p className="text-xs text-gray-500">
+                For new account requests, please contact the admissions office.
               </p>
             </div>
           </CardContent>
