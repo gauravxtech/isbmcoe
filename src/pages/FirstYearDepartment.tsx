@@ -1,4 +1,3 @@
-
 import React from 'react';
 import Header from '@/components/Header';
 import Navbar from '@/components/Navbar';
@@ -52,28 +51,26 @@ const FirstYearDepartment = () => {
       <Header />
       <Navbar />
       
-      {/* Breadcrumb */}
-      <div className="bg-white border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <nav className="text-sm text-gray-600">
-            <span className="hover:text-college-primary cursor-pointer">Home</span>
-            <span className="mx-2">|</span>
-            <span className="hover:text-college-primary cursor-pointer">Department</span>
-            <span className="mx-2">|</span>
-            <span className="text-college-primary font-semibold">First Year Engineering Department</span>
-          </nav>
+      {/* Hero Section with Breadcrumb */}
+      <div className="bg-gradient-to-r from-college-primary to-college-secondary py-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center">
+            <nav className="text-sm text-white/80 mb-4">
+              <span className="hover:text-white cursor-pointer">Home</span>
+              <span className="mx-2">|</span>
+              <span className="hover:text-white cursor-pointer">Department</span>
+              <span className="mx-2">|</span>
+              <span className="text-white font-semibold">First Year Engineering Department</span>
+            </nav>
+            <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
+              First Year Engineering Department
+            </h1>
+            <div className="w-24 h-1 bg-college-accent mx-auto"></div>
+          </div>
         </div>
       </div>
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Page Header */}
-        <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-college-dark mb-4">
-            First Year Engineering Department
-          </h1>
-          <div className="w-24 h-1 bg-college-accent mx-auto"></div>
-        </div>
-
         <Tabs defaultValue="about" className="space-y-8">
           <TabsList className="grid w-full grid-cols-6 lg:w-auto lg:grid-cols-6">
             <TabsTrigger value="about">About</TabsTrigger>
