@@ -10,6 +10,8 @@ import VisionMission from "./pages/VisionMission";
 import Login from "./pages/Login";
 import ForgotPassword from "./pages/ForgotPassword";
 import FirstYearDepartment from "./pages/FirstYearDepartment";
+import ComputerEngineeringDepartment from "./pages/ComputerEngineeringDepartment";
+import AIMLDepartment from "./pages/AIMLDepartment";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -27,6 +29,8 @@ const App = () => (
           <Route path="/login" element={<Login />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/first-year-department" element={<FirstYearDepartment />} />
+          <Route path="/computer-engineering-department" element={<ComputerEngineeringDepartment />} />
+          <Route path="/aiml-department" element={<AIMLDepartment />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

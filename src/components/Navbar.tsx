@@ -57,12 +57,12 @@ const Navbar = () => {
       title: 'Departments',
       items: [
         { name: 'First Year Engineering', path: '/first-year-department' },
-        { name: 'Computer Science & Engineering', path: '#' },
+        { name: 'Computer Engineering', path: '/computer-engineering-department' },
+        { name: 'AI & Machine Learning', path: '/aiml-department' },
         { name: 'Mechanical Engineering', path: '#' },
         { name: 'Electronics Engineering (VLSI)', path: '#' },
-        { name: 'AI & Machine Learning', path: '#' },
         { name: 'AI & Data Science', path: '#' },
-        { name: 'Computer Engineering', path: '#' }
+        { name: 'Computer Science & Engineering', path: '#' }
       ]
     },
     {
