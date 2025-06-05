@@ -59,9 +59,9 @@ const Navbar = () => {
         { name: 'First Year Engineering', path: '/first-year-department' },
         { name: 'Computer Engineering', path: '/computer-engineering-department' },
         { name: 'AI & Machine Learning', path: '/aiml-department' },
-        { name: 'Mechanical Engineering', path: '#' },
-        { name: 'Electronics Engineering (VLSI)', path: '#' },
-        { name: 'AI & Data Science', path: '#' },
+        { name: 'AI & Data Science', path: '/aids-department' },
+        { name: 'Mechanical Engineering', path: '/mechanical-department' },
+        { name: 'Electronics Engineering (VLSI)', path: '/etc-department' },
         { name: 'Computer Science & Engineering', path: '#' }
       ]
     },
