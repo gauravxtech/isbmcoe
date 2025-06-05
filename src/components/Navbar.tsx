@@ -62,6 +62,8 @@ const Navbar = () => {
         { name: 'AI & Data Science', path: '/aids-department' },
         { name: 'Mechanical Engineering', path: '/mechanical-department' },
         { name: 'Electronics Engineering (VLSI)', path: '/etc-department' },
+        { name: 'Bachelor of Business Administration (BBA)', path: '/bba-department' },
+        { name: 'Bachelor of Computer Application (BCA)', path: '/bca-department' },
         { name: 'Computer Science & Engineering', path: '#' }
       ]
     },

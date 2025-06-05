@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -14,6 +15,8 @@ import AIMLDepartment from "./pages/AIMLDepartment";
 import AIDSDepartment from "./pages/AIDSDepartment";
 import MechanicalDepartment from "./pages/MechanicalDepartment";
 import ETCDepartment from "./pages/ETCDepartment";
+import BBADepartment from "./pages/BBADepartment";
+import BCADepartment from "./pages/BCADepartment";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -36,6 +39,8 @@ const App = () => (
           <Route path="/aids-department" element={<AIDSDepartment />} />
           <Route path="/mechanical-department" element={<MechanicalDepartment />} />
           <Route path="/etc-department" element={<ETCDepartment />} />
+          <Route path="/bba-department" element={<BBADepartment />} />
+          <Route path="/bca-department" element={<BCADepartment />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
