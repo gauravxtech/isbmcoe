@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { ChevronDown, Menu, X } from 'lucide-react';
 import { Link } from 'react-router-dom';
@@ -119,16 +120,17 @@ const Navbar = () => {
   return (
     <>
       {/* Auto-scrolling Marquee */}
-      <div className="bg-gradient-to-r from-college-accent to-college-warning text-white py-2 overflow-hidden">
-        <div className="whitespace-nowrap animate-marquee">
+      <div className="bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 text-white py-3 overflow-hidden relative">
+        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent"></div>
+        <div className="whitespace-nowrap animate-marquee relative z-10">
           <span className="inline-block">
             {announcements.map((announcement, index) => (
-              <span key={index} className="mx-8 font-medium">
+              <span key={index} className="mx-8 font-medium text-sm md:text-base">
                 {announcement}
               </span>
             ))}
             {announcements.map((announcement, index) => (
-              <span key={`repeat-${index}`} className="mx-8 font-medium">
+              <span key={`repeat-${index}`} className="mx-8 font-medium text-sm md:text-base">
                 {announcement}
               </span>
             ))}
@@ -136,65 +138,79 @@ const Navbar = () => {
         </div>
       </div>
 
-      <nav className={`sticky top-0 z-50 transition-all duration-300 ${
+      <nav className={`sticky top-0 z-50 transition-all duration-500 ${
         isScrolled 
-          ? 'bg-college-primary/95 backdrop-blur-md shadow-lg' 
-          : 'bg-gradient-to-r from-college-primary to-college-secondary'
+          ? 'bg-white/95 backdrop-blur-lg shadow-xl border-b border-gray-200/20' 
+          : 'bg-gradient-to-r from-slate-900 via-blue-900 to-indigo-900'
       }`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
-            {/* Home Link */}
-            <div className="flex items-center">
-              <Link to="/" className="text-white font-semibold hover:text-college-accent transition-colors duration-200">
+            {/* Home Link - Left aligned */}
+            <div className="flex-shrink-0">
+              <Link 
+                to="/" 
+                className={`text-lg font-bold transition-all duration-300 hover:scale-105 ${
+                  isScrolled 
+                    ? 'text-slate-800 hover:text-blue-600' 
+                    : 'text-white hover:text-blue-300'
+                }`}
+              >
                 Home
               </Link>
             </div>
 
-            {/* Desktop Navigation */}
-            <div className="hidden lg:flex items-center space-x-1">
-              {navigationItems.map((item) => (
-                <div
-                  key={item.title}
-                  className="relative group"
-                  onMouseEnter={() => handleMouseEnter(item.title)}
-                  onMouseLeave={handleMouseLeave}
-                >
-                  <button className="flex items-center px-4 py-2 text-white hover:text-college-accent hover:bg-white/10 rounded-lg transition-all duration-200 font-medium">
-                    {item.title}
-                    <ChevronDown className="ml-1 h-4 w-4" />
-                  </button>
-                  {activeDropdown === item.title && (
-                    <div 
-                      className="absolute top-full left-0 w-72 bg-white shadow-2xl rounded-xl py-2 z-50 border border-gray-200 mt-2"
-                      onMouseEnter={() => handleMouseEnter(item.title)}
-                      onMouseLeave={handleMouseLeave}
-                    >
-                      <div className="py-2">
-                        {item.items.map((subItem, index) => (
-                          <Link
-                            key={subItem.name}
-                            to={subItem.path}
-                            className="group flex items-center px-6 py-3 text-gray-700 hover:bg-gradient-to-r hover:from-college-accent/10 hover:to-college-primary/5 hover:text-college-primary transition-all duration-200 border-l-4 border-transparent hover:border-college-accent"
-                          >
-                            <div className="flex items-center justify-between w-full">
-                              <span className="font-medium">{subItem.name}</span>
-                              <div className="w-2 h-2 rounded-full bg-college-accent/30 opacity-0 group-hover:opacity-100 transition-opacity duration-200"></div>
-                            </div>
-                          </Link>
-                        ))}
+            {/* Desktop Navigation - Center aligned with equal spacing */}
+            <div className="hidden lg:flex items-center justify-center flex-1 mx-8">
+              <div className="flex items-center space-x-8">
+                {navigationItems.map((item) => (
+                  <div
+                    key={item.title}
+                    className="relative group"
+                    onMouseEnter={() => handleMouseEnter(item.title)}
+                    onMouseLeave={handleMouseLeave}
+                  >
+                    <button className={`flex items-center px-4 py-2 rounded-lg font-medium text-sm transition-all duration-300 transform hover:scale-105 ${
+                      isScrolled
+                        ? 'text-slate-700 hover:text-blue-600 hover:bg-blue-50'
+                        : 'text-white hover:text-blue-300 hover:bg-white/10'
+                    }`}>
+                      {item.title}
+                      <ChevronDown className={`ml-1 h-4 w-4 transition-transform duration-300 ${
+                        activeDropdown === item.title ? 'rotate-180' : ''
+                      }`} />
+                    </button>
+                    {activeDropdown === item.title && (
+                      <div 
+                        className="absolute top-full left-0 w-80 bg-white shadow-2xl rounded-2xl py-3 z-50 border border-gray-100 mt-2 animate-fade-in"
+                        onMouseEnter={() => handleMouseEnter(item.title)}
+                        onMouseLeave={handleMouseLeave}
+                      >
+                        <div className="py-2">
+                          {item.items.map((subItem, index) => (
+                            <Link
+                              key={subItem.name}
+                              to={subItem.path}
+                              className="group flex items-center px-6 py-3 text-slate-700 hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 hover:text-blue-700 transition-all duration-300 border-l-4 border-transparent hover:border-blue-500 relative overflow-hidden"
+                            >
+                              <div className="absolute inset-0 bg-gradient-to-r from-blue-500/0 to-indigo-500/0 group-hover:from-blue-500/5 group-hover:to-indigo-500/5 transition-all duration-300"></div>
+                              <div className="flex items-center justify-between w-full relative z-10">
+                                <span className="font-medium">{subItem.name}</span>
+                                <div className="w-2 h-2 rounded-full bg-blue-500/30 opacity-0 group-hover:opacity-100 transition-all duration-300 transform group-hover:scale-110"></div>
+                              </div>
+                            </Link>
+                          ))}
+                        </div>
                       </div>
-                    </div>
-                  )}
-                </div>
-              ))}
+                    )}
+                  </div>
+                ))}
+              </div>
             </div>
 
-            {/* Login Button */}
-            <div className="hidden md:flex items-center">
+            {/* Login Button - Right aligned */}
+            <div className="hidden md:flex items-center flex-shrink-0">
               <Link to="/login">
-                <Button 
-                  className="bg-gradient-to-r from-college-accent to-college-warning hover:from-orange-600 hover:to-red-500 text-white font-semibold px-8 py-3 rounded-full transition-all duration-300 transform hover:scale-105 shadow-lg text-lg"
-                >
+                <Button className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold px-8 py-3 rounded-full transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl text-base">
                   Login
                 </Button>
               </Link>
@@ -204,7 +220,11 @@ const Navbar = () => {
             <div className="lg:hidden">
               <button
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                className="text-white hover:text-college-accent transition-colors duration-200 p-2"
+                className={`p-2 rounded-lg transition-all duration-300 transform hover:scale-110 ${
+                  isScrolled 
+                    ? 'text-slate-800 hover:bg-slate-100' 
+                    : 'text-white hover:bg-white/10'
+                }`}
               >
                 {isMobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
               </button>
@@ -214,11 +234,11 @@ const Navbar = () => {
 
         {/* Mobile Navigation */}
         {isMobileMenuOpen && (
-          <div className="lg:hidden bg-college-primary/95 backdrop-blur-md border-t border-white/20">
+          <div className="lg:hidden bg-white/95 backdrop-blur-lg border-t border-gray-200/20 animate-slide-up">
             <div className="px-4 pt-2 pb-3 space-y-1 max-h-96 overflow-y-auto">
               {navigationItems.map((item) => (
                 <div key={item.title} className="space-y-1">
-                  <button className="flex items-center justify-between w-full px-3 py-3 text-white hover:text-college-accent hover:bg-white/10 rounded-lg transition-colors duration-200 font-medium">
+                  <button className="flex items-center justify-between w-full px-4 py-3 text-slate-700 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all duration-300 font-medium">
                     {item.title}
                     <ChevronDown className="h-4 w-4" />
                   </button>
@@ -227,7 +247,8 @@ const Navbar = () => {
                       <Link
                         key={subItem.name}
                         to={subItem.path}
-                        className="block px-3 py-2 text-gray-200 hover:text-college-accent hover:bg-white/5 rounded transition-colors duration-200"
+                        className="block px-4 py-2 text-slate-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all duration-300"
+                        onClick={() => setIsMobileMenuOpen(false)}
                       >
                         {subItem.name}
                       </Link>
@@ -235,11 +256,9 @@ const Navbar = () => {
                   </div>
                 </div>
               ))}
-              <div className="pt-4">
-                <Link to="/login">
-                  <Button 
-                    className="w-full bg-gradient-to-r from-college-accent to-college-warning hover:from-orange-600 hover:to-red-500 text-white font-semibold rounded-lg"
-                  >
+              <div className="pt-4 px-4">
+                <Link to="/login" onClick={() => setIsMobileMenuOpen(false)}>
+                  <Button className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold rounded-lg py-3">
                     Login
                   </Button>
                 </Link>
