@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { MapPin, Clock, Car, Bus, Train, Plane } from 'lucide-react';
+import Header from '../components/Header';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -58,20 +59,23 @@ const CampusLocation = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white">
+    <div className="min-h-screen bg-gray-50">
+      <Header />
       <Navbar />
       
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Header */}
-        <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-college-primary mb-4">
+      {/* Hero Section */}
+      <div className="bg-gradient-to-r from-college-primary to-college-secondary py-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <h1 className="text-4xl md:text-5xl font-bold text-white mb-6">
             Campus Location
           </h1>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+          <p className="text-xl text-white/90 max-w-3xl mx-auto">
             Visit our state-of-the-art campus located in the heart of Pune's educational corridor
           </p>
         </div>
+      </div>
 
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Campus Overview */}
         <Card className="mb-8">
           <CardHeader>

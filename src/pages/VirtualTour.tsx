@@ -1,6 +1,6 @@
-
 import React, { useState } from 'react';
 import { Play, Pause, RotateCcw, Maximize, Camera, MapPin, Navigation } from 'lucide-react';
+import Header from '../components/Header';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -80,10 +80,23 @@ const VirtualTour = () => {
   const currentLocation = tourLocations.find(loc => loc.id === selectedLocation);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white">
+    <div className="min-h-screen bg-gray-50">
+      <Header />
       <Navbar />
       
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      {/* Hero Section */}
+      <div className="bg-gradient-to-r from-college-primary to-college-secondary py-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <h1 className="text-4xl md:text-5xl font-bold text-white mb-6">
+            Virtual Campus Tour
+          </h1>
+          <p className="text-xl text-white/90 max-w-3xl mx-auto">
+            Explore our beautiful campus from the comfort of your home with our interactive 360° virtual tour
+          </p>
+        </div>
+      </div>
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Header */}
         <div className="text-center mb-12">
           <h1 className="text-4xl font-bold text-college-primary mb-4">
