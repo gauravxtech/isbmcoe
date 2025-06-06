@@ -111,11 +111,11 @@ const Navbar = () => {
     {
       title: 'Placements',
       items: [
-        { name: 'Placement Records', path: '/placements' },
-        { name: 'Training Programs', path: '/placements' },
-        { name: 'Industry Partners', path: '/placements' },
-        { name: 'Career Services', path: '/placements' },
-        { name: 'Alumni Network', path: '#' }
+        { name: 'Placement Overview', path: '/placements' },
+        { name: 'Training Programs', path: '/placements/training-programs' },
+        { name: 'Industry Partners', path: '/placements/industry-partners' },
+        { name: 'Career Services', path: '/placements/career-services' },
+        { name: 'Alumni Network', path: '/placements/alumni-network' }
       ]
     },
     {
