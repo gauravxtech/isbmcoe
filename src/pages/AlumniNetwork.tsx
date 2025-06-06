@@ -66,7 +66,7 @@ const AlumniNetwork = () => {
     }
   ];
 
-  const alumni��yCompany = [
+  const alumniByCompany = [
     { company: "Google", count: "150+" },
     { company: "Microsoft", count: "120+" },
     { company: "Amazon", count: "180+" },
