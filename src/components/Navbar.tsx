@@ -1,5 +1,4 @@
-
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { ChevronDown, Menu, X } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -8,7 +7,9 @@ const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
+  const [activeMobileDropdown, setActiveMobileDropdown] = useState<string | null>(null);
   const [dropdownTimeout, setDropdownTimeout] = useState<NodeJS.Timeout | null>(null);
+  const mobileMenuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -17,6 +18,23 @@ const Navbar = () => {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (mobileMenuRef.current && !mobileMenuRef.current.contains(event.target as Node)) {
+        setIsMobileMenuOpen(false);
+        setActiveMobileDropdown(null);
+      }
+    };
+
+    if (isMobileMenuOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isMobileMenuOpen]);
 
   const handleMouseEnter = (itemTitle: string) => {
     if (dropdownTimeout) {
@@ -31,6 +49,15 @@ const Navbar = () => {
       setActiveDropdown(null);
     }, 150);
     setDropdownTimeout(timeout);
+  };
+
+  const toggleMobileDropdown = (itemTitle: string) => {
+    setActiveMobileDropdown(activeMobileDropdown === itemTitle ? null : itemTitle);
+  };
+
+  const closeMobileMenu = () => {
+    setIsMobileMenuOpen(false);
+    setActiveMobileDropdown(null);
   };
 
   const navigationItems = [
@@ -245,52 +272,59 @@ const Navbar = () => {
 
         {/* Mobile Navigation */}
         {isMobileMenuOpen && (
-          <div className="lg:hidden bg-college-primary/95 backdrop-blur-md border-t border-white/20">
+          <div ref={mobileMenuRef} className="lg:hidden bg-college-primary/95 backdrop-blur-md border-t border-white/20">
             <div className="px-4 pt-2 pb-3 space-y-1 max-h-96 overflow-y-auto">
               {navigationItems.map((item) => (
                 <div key={item.title} className="space-y-1">
-                  <button className="flex items-center justify-between w-full px-3 py-3 text-white hover:text-college-accent hover:bg-white/10 rounded-lg transition-colors duration-200 font-medium">
+                  <button 
+                    onClick={() => toggleMobileDropdown(item.title)}
+                    className="flex items-center justify-between w-full px-3 py-3 text-white hover:text-college-accent hover:bg-white/10 rounded-lg transition-colors duration-200 font-medium"
+                  >
                     {item.title}
-                    <ChevronDown className="h-4 w-4" />
+                    <ChevronDown className={`h-4 w-4 transition-transform duration-200 ${
+                      activeMobileDropdown === item.title ? 'rotate-180' : ''
+                    }`} />
                   </button>
-                  <div className="pl-6 space-y-1">
-                    {item.items.map((subItem) => (
-                      <div key={subItem.name}>
-                        {subItem.subItems ? (
-                          <div>
-                            <div className="block px-3 py-2 text-gray-200 hover:text-college-accent hover:bg-white/5 rounded transition-colors duration-200 text-sm font-medium">
+                  {activeMobileDropdown === item.title && (
+                    <div className="pl-6 space-y-1">
+                      {item.items.map((subItem) => (
+                        <div key={subItem.name}>
+                          {subItem.subItems ? (
+                            <div>
+                              <div className="block px-3 py-2 text-gray-200 hover:text-college-accent hover:bg-white/5 rounded transition-colors duration-200 text-sm font-medium">
+                                {subItem.name}
+                              </div>
+                              <div className="pl-4 space-y-1">
+                                {subItem.subItems.map((nestedItem) => (
+                                  <Link
+                                    key={nestedItem.name}
+                                    to={nestedItem.path}
+                                    className="block px-3 py-2 text-gray-300 hover:text-college-accent hover:bg-white/5 rounded transition-colors duration-200 text-xs"
+                                    onClick={closeMobileMenu}
+                                  >
+                                    {nestedItem.name}
+                                  </Link>
+                                ))}
+                              </div>
+                            </div>
+                          ) : (
+                            <Link
+                              key={subItem.name}
+                              to={subItem.path}
+                              className="block px-3 py-2 text-gray-200 hover:text-college-accent hover:bg-white/5 rounded transition-colors duration-200 text-sm"
+                              onClick={closeMobileMenu}
+                            >
                               {subItem.name}
-                            </div>
-                            <div className="pl-4 space-y-1">
-                              {subItem.subItems.map((nestedItem) => (
-                                <Link
-                                  key={nestedItem.name}
-                                  to={nestedItem.path}
-                                  className="block px-3 py-2 text-gray-300 hover:text-college-accent hover:bg-white/5 rounded transition-colors duration-200 text-xs"
-                                  onClick={() => setIsMobileMenuOpen(false)}
-                                >
-                                  {nestedItem.name}
-                                </Link>
-                              ))}
-                            </div>
-                          </div>
-                        ) : (
-                          <Link
-                            key={subItem.name}
-                            to={subItem.path}
-                            className="block px-3 py-2 text-gray-200 hover:text-college-accent hover:bg-white/5 rounded transition-colors duration-200 text-sm"
-                            onClick={() => setIsMobileMenuOpen(false)}
-                          >
-                            {subItem.name}
-                          </Link>
-                        )}
-                      </div>
-                    ))}
-                  </div>
+                            </Link>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
               ))}
               <div className="pt-4 border-t border-white/20">
-                <Link to="/login" onClick={() => setIsMobileMenuOpen(false)}>
+                <Link to="/login" onClick={closeMobileMenu}>
                   <Button 
                     className="w-full bg-gradient-to-r from-college-accent to-college-warning hover:from-orange-600 hover:to-red-500 text-white font-semibold rounded-lg"
                   >
