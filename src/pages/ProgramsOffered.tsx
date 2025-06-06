@@ -82,6 +82,17 @@ const ProgramsOffered = () => {
       <Navbar />
       <Separator className="bg-gray-300" />
 
+      {/* Breadcrumb */}
+      <div className="bg-white py-4 border-b">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <nav className="text-sm">
+            <span className="text-college-primary font-medium">Home</span>
+            <span className="mx-2 text-gray-400">|</span>
+            <span className="text-gray-600">Programs Offered</span>
+          </nav>
+        </div>
+      </div>
+
       {/* Hero Section */}
       <section className="relative bg-gradient-to-r from-college-primary to-college-secondary py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
