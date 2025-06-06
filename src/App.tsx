@@ -21,6 +21,7 @@ import ProgramsOffered from "./pages/ProgramsOffered";
 import FirstYearAdmission from "./pages/FirstYearAdmission";
 import DirectSecondYearAdmission from "./pages/DirectSecondYearAdmission";
 import FeesStructure from "./pages/FeesStructure";
+import Placements from "./pages/Placements";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -49,6 +50,7 @@ const App = () => (
           <Route path="/admissions/first-year" element={<FirstYearAdmission />} />
           <Route path="/admissions/direct-second-year" element={<DirectSecondYearAdmission />} />
           <Route path="/admissions/fees-structure" element={<FeesStructure />} />
+          <Route path="/placements" element={<Placements />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

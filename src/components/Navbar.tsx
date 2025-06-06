@@ -111,10 +111,10 @@ const Navbar = () => {
     {
       title: 'Placements',
       items: [
-        { name: 'Placement Records', path: '#' },
-        { name: 'Training Programs', path: '#' },
-        { name: 'Industry Partners', path: '#' },
-        { name: 'Career Services', path: '#' },
+        { name: 'Placement Records', path: '/placements' },
+        { name: 'Training Programs', path: '/placements' },
+        { name: 'Industry Partners', path: '/placements' },
+        { name: 'Career Services', path: '/placements' },
         { name: 'Alumni Network', path: '#' }
       ]
     },
