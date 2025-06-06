@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { ChevronDown, Menu, X } from 'lucide-react';
 import { Link } from 'react-router-dom';
@@ -143,57 +144,59 @@ const Navbar = () => {
       }`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
-            {/* Home Link */}
-            <div className="flex items-center">
-              <Link to="/" className="text-white font-semibold hover:text-college-accent transition-colors duration-200">
+            {/* Home Link - Left Aligned */}
+            <div className="flex-shrink-0">
+              <Link to="/" className="text-white font-semibold hover:text-college-accent transition-colors duration-200 text-lg">
                 Home
               </Link>
             </div>
 
-            {/* Desktop Navigation */}
-            <div className="hidden lg:flex items-center space-x-1">
-              {navigationItems.map((item) => (
-                <div
-                  key={item.title}
-                  className="relative group"
-                  onMouseEnter={() => handleMouseEnter(item.title)}
-                  onMouseLeave={handleMouseLeave}
-                >
-                  <button className="flex items-center px-4 py-2 text-white hover:text-college-accent hover:bg-white/10 rounded-lg transition-all duration-200 font-medium">
-                    {item.title}
-                    <ChevronDown className="ml-1 h-4 w-4" />
-                  </button>
-                  {activeDropdown === item.title && (
-                    <div 
-                      className="absolute top-full left-0 w-72 bg-white shadow-2xl rounded-xl py-2 z-50 border border-gray-200 mt-2"
-                      onMouseEnter={() => handleMouseEnter(item.title)}
-                      onMouseLeave={handleMouseLeave}
-                    >
-                      <div className="py-2">
-                        {item.items.map((subItem, index) => (
-                          <Link
-                            key={subItem.name}
-                            to={subItem.path}
-                            className="group flex items-center px-6 py-3 text-gray-700 hover:bg-gradient-to-r hover:from-college-accent/10 hover:to-college-primary/5 hover:text-college-primary transition-all duration-200 border-l-4 border-transparent hover:border-college-accent"
-                          >
-                            <div className="flex items-center justify-between w-full">
-                              <span className="font-medium">{subItem.name}</span>
-                              <div className="w-2 h-2 rounded-full bg-college-accent/30 opacity-0 group-hover:opacity-100 transition-opacity duration-200"></div>
-                            </div>
-                          </Link>
-                        ))}
+            {/* Desktop Navigation - Center */}
+            <div className="hidden lg:flex items-center justify-center flex-1 mx-8">
+              <div className="flex items-center space-x-6">
+                {navigationItems.map((item) => (
+                  <div
+                    key={item.title}
+                    className="relative group"
+                    onMouseEnter={() => handleMouseEnter(item.title)}
+                    onMouseLeave={handleMouseLeave}
+                  >
+                    <button className="flex items-center px-3 py-2 text-white hover:text-college-accent hover:bg-white/10 rounded-lg transition-all duration-200 font-medium whitespace-nowrap">
+                      {item.title}
+                      <ChevronDown className="ml-1 h-4 w-4" />
+                    </button>
+                    {activeDropdown === item.title && (
+                      <div 
+                        className="absolute top-full left-0 w-72 bg-white shadow-2xl rounded-xl py-2 z-50 border border-gray-200 mt-2"
+                        onMouseEnter={() => handleMouseEnter(item.title)}
+                        onMouseLeave={handleMouseLeave}
+                      >
+                        <div className="py-2">
+                          {item.items.map((subItem, index) => (
+                            <Link
+                              key={subItem.name}
+                              to={subItem.path}
+                              className="group flex items-center px-6 py-3 text-gray-700 hover:bg-gradient-to-r hover:from-college-accent/10 hover:to-college-primary/5 hover:text-college-primary transition-all duration-200 border-l-4 border-transparent hover:border-college-accent"
+                            >
+                              <div className="flex items-center justify-between w-full">
+                                <span className="font-medium">{subItem.name}</span>
+                                <div className="w-2 h-2 rounded-full bg-college-accent/30 opacity-0 group-hover:opacity-100 transition-opacity duration-200"></div>
+                              </div>
+                            </Link>
+                          ))}
+                        </div>
                       </div>
-                    </div>
-                  )}
-                </div>
-              ))}
+                    )}
+                  </div>
+                ))}
+              </div>
             </div>
 
-            {/* Login Button */}
-            <div className="hidden md:flex items-center">
+            {/* Login Button - Right Aligned */}
+            <div className="hidden md:flex items-center flex-shrink-0">
               <Link to="/login">
                 <Button 
-                  className="bg-gradient-to-r from-college-accent to-college-warning hover:from-orange-600 hover:to-red-500 text-white font-semibold px-8 py-3 rounded-full transition-all duration-300 transform hover:scale-105 shadow-lg text-lg"
+                  className="bg-gradient-to-r from-college-accent to-college-warning hover:from-orange-600 hover:to-red-500 text-white font-semibold px-6 py-2 rounded-full transition-all duration-300 transform hover:scale-105 shadow-lg"
                 >
                   Login
                 </Button>
@@ -201,7 +204,7 @@ const Navbar = () => {
             </div>
 
             {/* Mobile menu button */}
-            <div className="lg:hidden">
+            <div className="lg:hidden flex-shrink-0">
               <button
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                 className="text-white hover:text-college-accent transition-colors duration-200 p-2"
@@ -227,7 +230,8 @@ const Navbar = () => {
                       <Link
                         key={subItem.name}
                         to={subItem.path}
-                        className="block px-3 py-2 text-gray-200 hover:text-college-accent hover:bg-white/5 rounded transition-colors duration-200"
+                        className="block px-3 py-2 text-gray-200 hover:text-college-accent hover:bg-white/5 rounded transition-colors duration-200 text-sm"
+                        onClick={() => setIsMobileMenuOpen(false)}
                       >
                         {subItem.name}
                       </Link>
@@ -235,8 +239,8 @@ const Navbar = () => {
                   </div>
                 </div>
               ))}
-              <div className="pt-4">
-                <Link to="/login">
+              <div className="pt-4 border-t border-white/20">
+                <Link to="/login" onClick={() => setIsMobileMenuOpen(false)}>
                   <Button 
                     className="w-full bg-gradient-to-r from-college-accent to-college-warning hover:from-orange-600 hover:to-red-500 text-white font-semibold rounded-lg"
                   >

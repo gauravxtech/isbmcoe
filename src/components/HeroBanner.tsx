@@ -67,7 +67,7 @@ const HeroBanner = () => {
   return (
     <div className="relative">
       {/* Main Banner */}
-      <div className="relative h-[70vh] overflow-hidden">
+      <div className="relative h-[60vh] sm:h-[70vh] overflow-hidden">
         {banners.map((banner, index) => (
           <div
             key={banner.id}
@@ -83,18 +83,18 @@ const HeroBanner = () => {
               <div className="relative z-10 flex items-center h-full">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
                   <div className="max-w-3xl text-white">
-                    <div className="inline-flex items-center bg-college-accent/90 px-4 py-2 rounded-full mb-6 animate-fade-in">
-                      <Star className="h-4 w-4 mr-2" />
-                      <span className="font-semibold">{banner.highlight}</span>
+                    <div className="inline-flex items-center bg-college-accent/90 px-3 sm:px-4 py-2 rounded-full mb-4 sm:mb-6 animate-fade-in">
+                      <Star className="h-3 w-3 sm:h-4 sm:w-4 mr-2" />
+                      <span className="font-semibold text-sm sm:text-base">{banner.highlight}</span>
                     </div>
-                    <h1 className="text-4xl md:text-6xl font-bold mb-6 animate-slide-up leading-tight">
+                    <h1 className="text-2xl sm:text-4xl md:text-6xl font-bold mb-4 sm:mb-6 animate-slide-up leading-tight">
                       {banner.title}
                     </h1>
-                    <p className="text-xl md:text-2xl mb-8 animate-slide-up opacity-90 leading-relaxed">
+                    <p className="text-lg sm:text-xl md:text-2xl mb-6 sm:mb-8 animate-slide-up opacity-90 leading-relaxed">
                       {banner.subtitle}
                     </p>
                     <Button 
-                      className="bg-gradient-to-r from-college-accent to-college-warning hover:from-orange-600 hover:to-red-500 text-white px-8 py-4 text-lg rounded-full transform transition-all duration-300 hover:scale-105 shadow-2xl animate-slide-up"
+                      className="bg-gradient-to-r from-college-accent to-college-warning hover:from-orange-600 hover:to-red-500 text-white px-6 sm:px-8 py-3 sm:py-4 text-base sm:text-lg rounded-full transform transition-all duration-300 hover:scale-105 shadow-2xl animate-slide-up"
                     >
                       {banner.cta}
                     </Button>
@@ -108,15 +108,15 @@ const HeroBanner = () => {
         {/* Navigation Arrows */}
         <button
           onClick={prevSlide}
-          className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-white bg-opacity-20 hover:bg-opacity-30 text-white p-2 rounded-full transition-all duration-300"
+          className="absolute left-2 sm:left-4 top-1/2 transform -translate-y-1/2 bg-white bg-opacity-20 hover:bg-opacity-30 text-white p-2 rounded-full transition-all duration-300"
         >
-          <ChevronLeft className="h-6 w-6" />
+          <ChevronLeft className="h-5 w-5 sm:h-6 sm:w-6" />
         </button>
         <button
           onClick={nextSlide}
-          className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-white bg-opacity-20 hover:bg-opacity-30 text-white p-2 rounded-full transition-all duration-300"
+          className="absolute right-2 sm:right-4 top-1/2 transform -translate-y-1/2 bg-white bg-opacity-20 hover:bg-opacity-30 text-white p-2 rounded-full transition-all duration-300"
         >
-          <ChevronRight className="h-6 w-6" />
+          <ChevronRight className="h-5 w-5 sm:h-6 sm:w-6" />
         </button>
 
         {/* Slide Indicators */}
@@ -125,7 +125,7 @@ const HeroBanner = () => {
             <button
               key={index}
               onClick={() => setCurrentSlide(index)}
-              className={`w-3 h-3 rounded-full transition-all duration-300 ${
+              className={`w-2 h-2 sm:w-3 sm:h-3 rounded-full transition-all duration-300 ${
                 index === currentSlide ? 'bg-white' : 'bg-white bg-opacity-50'
               }`}
             />
@@ -133,43 +133,45 @@ const HeroBanner = () => {
         </div>
       </div>
 
-      {/* Affiliation Badges */}
-      <div className="bg-white py-6 shadow-lg">
-        <div className="max-w-7xl mx-auto px-4 flex justify-center items-center space-x-12">
-          <div className="flex items-center space-x-3 group hover:scale-105 transition-transform duration-300">
-            <div className="w-14 h-14 bg-gradient-to-br from-college-primary to-college-secondary rounded-full flex items-center justify-center shadow-lg">
-              <span className="text-white font-bold text-sm">SPPU</span>
+      {/* Affiliation Badges - Responsive */}
+      <div className="bg-white py-4 sm:py-6 shadow-lg">
+        <div className="max-w-7xl mx-auto px-4">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 lg:gap-12">
+            <div className="flex items-center justify-center space-x-3 group hover:scale-105 transition-transform duration-300">
+              <div className="w-10 h-10 sm:w-14 sm:h-14 bg-gradient-to-br from-college-primary to-college-secondary rounded-full flex items-center justify-center shadow-lg flex-shrink-0">
+                <span className="text-white font-bold text-xs sm:text-sm">SPPU</span>
+              </div>
+              <div className="text-center sm:text-left">
+                <span className="text-college-primary font-bold text-sm sm:text-base block">Affiliated to</span>
+                <p className="text-xs sm:text-sm text-college-muted">Savitribai Phule Pune University</p>
+              </div>
             </div>
-            <div>
-              <span className="text-college-primary font-bold">Affiliated to</span>
-              <p className="text-sm text-college-muted">Savitribai Phule Pune University</p>
+            
+            <div className="flex items-center justify-center space-x-3 group hover:scale-105 transition-transform duration-300">
+              <div className="w-10 h-10 sm:w-14 sm:h-14 bg-gradient-to-br from-college-accent to-college-warning rounded-full flex items-center justify-center shadow-lg flex-shrink-0">
+                <span className="text-white font-bold text-xs sm:text-sm">AICTE</span>
+              </div>
+              <div className="text-center sm:text-left">
+                <span className="text-college-primary font-bold text-sm sm:text-base block">Approved by</span>
+                <p className="text-xs sm:text-sm text-college-muted">All India Council for Technical Education</p>
+              </div>
             </div>
-          </div>
-          
-          <div className="flex items-center space-x-3 group hover:scale-105 transition-transform duration-300">
-            <div className="w-14 h-14 bg-gradient-to-br from-college-accent to-college-warning rounded-full flex items-center justify-center shadow-lg">
-              <span className="text-white font-bold text-sm">AICTE</span>
-            </div>
-            <div>
-              <span className="text-college-primary font-bold">Approved by</span>
-              <p className="text-sm text-college-muted">All India Council for Technical Education</p>
-            </div>
-          </div>
-          
-          <div className="flex items-center space-x-3 group hover:scale-105 transition-transform duration-300">
-            <div className="w-14 h-14 bg-gradient-to-br from-college-success to-college-teal rounded-full flex items-center justify-center shadow-lg">
-              <span className="text-white font-bold text-sm">B++</span>
-            </div>
-            <div>
-              <span className="text-college-primary font-bold">NAAC Accredited</span>
-              <p className="text-sm text-college-muted">Grade B++ (2024)</p>
+            
+            <div className="flex items-center justify-center space-x-3 group hover:scale-105 transition-transform duration-300">
+              <div className="w-10 h-10 sm:w-14 sm:h-14 bg-gradient-to-br from-college-success to-college-teal rounded-full flex items-center justify-center shadow-lg flex-shrink-0">
+                <span className="text-white font-bold text-xs sm:text-sm">B++</span>
+              </div>
+              <div className="text-center sm:text-left">
+                <span className="text-college-primary font-bold text-sm sm:text-base block">NAAC Accredited</span>
+                <p className="text-xs sm:text-sm text-college-muted">Grade B++ (2024)</p>
+              </div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Floating Vertical Action Buttons */}
-      <div className="fixed right-6 top-1/2 transform -translate-y-1/2 z-40 flex flex-col space-y-4">
+      {/* Floating Vertical Action Buttons - Hidden on mobile to prevent overlap */}
+      <div className="hidden lg:flex fixed right-6 top-1/2 transform -translate-y-1/2 z-40 flex-col space-y-4">
         <div className="group">
           <Button className="bg-gradient-to-br from-college-primary to-college-secondary hover:scale-110 p-4 rounded-full shadow-xl transition-all duration-300 relative">
             <FileText className="h-6 w-6 text-white" />
