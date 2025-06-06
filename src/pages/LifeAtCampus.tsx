@@ -1,11 +1,11 @@
-
 import React from 'react';
-import { Users, Trophy, Music, Camera, BookOpen, Coffee, Heart, Calendar } from 'lucide-react';
+import { Users, Trophy, Music, Camera, BookOpen, Coffee, Heart, Calendar, ExternalLink } from 'lucide-react';
 import Header from '../components/Header';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 
 const LifeAtCampus = () => {
   const campusLifeHighlights = [
@@ -194,20 +194,29 @@ const LifeAtCampus = () => {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3">
+            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3 mb-6">
               {sportsActivities.map((sport, index) => (
                 <Badge key={index} variant="outline" className="text-center py-2">
                   {sport}
                 </Badge>
               ))}
             </div>
-            <div className="mt-6 p-4 bg-college-primary/5 rounded-lg">
+            <div className="mb-6 p-4 bg-college-primary/5 rounded-lg">
               <h4 className="font-semibold text-college-primary mb-2">Sports Facilities</h4>
               <p className="text-gray-600">
                 Our campus features a modern sports complex with indoor and outdoor facilities, 
                 including a gymnasium, swimming pool, tennis court, basketball courts, and a cricket ground. 
                 Regular coaching sessions and tournaments are organized throughout the year.
               </p>
+            </div>
+            <div className="text-center">
+              <Button 
+                onClick={() => window.open('https://sportscell.netlify.app/', '_blank')}
+                className="bg-college-primary hover:bg-college-primary/90 text-white"
+              >
+                <ExternalLink className="mr-2 h-4 w-4" />
+                Visit COE Sports Portal
+              </Button>
             </div>
           </CardContent>
         </Card>
