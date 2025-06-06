@@ -3,7 +3,9 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { Separator } from '@/components/ui/separator';
 import { Users, ChevronRight } from 'lucide-react';
+import Header from '@/components/Header';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 
@@ -76,110 +78,112 @@ const ProgramsOffered = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      <Header />
       <Navbar />
-      
-      {/* Breadcrumb */}
-      <div className="bg-white border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <nav className="flex items-center space-x-2 text-sm text-gray-600">
-            <Link to="/" className="hover:text-college-primary transition-colors">Home</Link>
-            <ChevronRight className="h-4 w-4" />
-            <span className="text-gray-400">Admissions</span>
-            <ChevronRight className="h-4 w-4" />
-            <span className="text-college-primary font-medium">Programs Offered</span>
-          </nav>
-        </div>
-      </div>
+      <Separator className="bg-gray-300" />
 
       {/* Hero Section */}
-      <div className="bg-gradient-to-r from-college-primary to-college-secondary py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h1 className="text-4xl md:text-5xl font-bold text-white mb-6">
-            Programs Offered
-          </h1>
-          <p className="text-xl text-white/90 max-w-3xl mx-auto">
-            Discover our comprehensive range of undergraduate programs designed to shape future leaders in technology and business
-          </p>
+      <section className="relative bg-gradient-to-r from-college-primary to-college-secondary py-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center">
+            <h1 className="text-3xl md:text-4xl font-bold text-white mb-6">
+              Programs Offered
+            </h1>
+            <p className="text-xl text-blue-100 max-w-3xl mx-auto">
+              Discover our comprehensive range of undergraduate programs designed to shape future leaders in technology and business
+            </p>
+          </div>
         </div>
-      </div>
+      </section>
 
       {/* Programs Grid */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {programs.map((program, index) => (
-            <Link 
-              key={index} 
-              to={program.path}
-              className="group block transform transition-all duration-300 hover:scale-105"
-            >
-              <Card className="h-full overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 border-0 bg-white">
-                <div className="relative overflow-hidden">
-                  <img 
-                    src={program.image} 
-                    alt={program.name}
-                    className="w-full h-48 object-cover transition-transform duration-300 group-hover:scale-110"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                  <div className="absolute top-4 right-4">
-                    <div className="bg-college-accent text-white px-3 py-1 rounded-full text-sm font-semibold flex items-center">
-                      <Users className="h-4 w-4 mr-1" />
-                      {program.intake}
+      <section className="py-16 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold text-college-dark mb-4">Academic Programs</h2>
+            <p className="text-gray-600 max-w-3xl mx-auto">
+              Choose from our diverse range of AICTE approved engineering and management programs, 
+              designed to meet industry demands and foster innovation.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {programs.map((program, index) => (
+              <Link 
+                key={index} 
+                to={program.path}
+                className="group block transform transition-all duration-300 hover:scale-105"
+              >
+                <Card className="h-full overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 border-0 bg-white">
+                  <div className="relative overflow-hidden">
+                    <img 
+                      src={program.image} 
+                      alt={program.name}
+                      className="w-full h-48 object-cover transition-transform duration-300 group-hover:scale-110"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                    <div className="absolute top-4 right-4">
+                      <div className="bg-college-accent text-white px-3 py-1 rounded-full text-sm font-semibold flex items-center">
+                        <Users className="h-4 w-4 mr-1" />
+                        {program.intake}
+                      </div>
                     </div>
                   </div>
-                </div>
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-lg font-bold text-college-primary group-hover:text-college-accent transition-colors duration-300">
-                    {program.name}
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="pt-0">
-                  <p className="text-gray-600 text-sm mb-4 line-clamp-2">
-                    {program.description}
-                  </p>
-                  <div className="flex items-center justify-between">
-                    <div className="text-sm text-gray-500">
-                      <span className="font-semibold">Sanctioned Intake:</span> {program.intake}
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-lg font-bold text-college-primary group-hover:text-college-accent transition-colors duration-300">
+                      {program.name}
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="pt-0">
+                    <p className="text-gray-600 text-sm mb-4 line-clamp-2">
+                      {program.description}
+                    </p>
+                    <div className="flex items-center justify-between">
+                      <div className="text-sm text-gray-500">
+                        <span className="font-semibold">Sanctioned Intake:</span> {program.intake}
+                      </div>
+                      <Button 
+                        variant="outline" 
+                        size="sm"
+                        className="group-hover:bg-college-primary group-hover:text-white group-hover:border-college-primary transition-all duration-300"
+                      >
+                        Learn More
+                        <ChevronRight className="h-4 w-4 ml-1 group-hover:translate-x-1 transition-transform duration-300" />
+                      </Button>
                     </div>
-                    <Button 
-                      variant="outline" 
-                      size="sm"
-                      className="group-hover:bg-college-primary group-hover:text-white group-hover:border-college-primary transition-all duration-300"
-                    >
-                      Learn More
-                      <ChevronRight className="h-4 w-4 ml-1 group-hover:translate-x-1 transition-transform duration-300" />
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            </Link>
-          ))}
+                  </CardContent>
+                </Card>
+              </Link>
+            ))}
+          </div>
         </div>
-      </div>
+      </section>
 
       {/* CTA Section */}
-      <div className="bg-gradient-to-r from-college-accent to-college-warning py-16">
+      <section className="py-16 bg-gray-50">
         <div className="max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
+          <h2 className="text-3xl font-bold text-college-dark mb-6">
             Ready to Start Your Journey?
           </h2>
-          <p className="text-xl text-white/90 mb-8">
-            Join thousands of successful graduates who started their careers at ISBM College of Engineering
+          <p className="text-gray-600 mb-8 max-w-2xl mx-auto">
+            Join thousands of successful graduates who started their careers at ISBM College of Engineering. 
+            Experience excellence in education with our industry-aligned curriculum and state-of-the-art facilities.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button 
-              className="bg-white text-college-primary hover:bg-gray-100 px-8 py-3 text-lg font-semibold"
+              className="bg-college-primary hover:bg-college-primary/90 text-white px-8 py-3 text-lg font-semibold"
             >
               Apply Now
             </Button>
             <Button 
               variant="outline"
-              className="border-white text-white hover:bg-white hover:text-college-primary px-8 py-3 text-lg font-semibold"
+              className="border-college-primary text-college-primary hover:bg-college-primary hover:text-white px-8 py-3 text-lg font-semibold"
             >
               Download Brochure
             </Button>
           </div>
         </div>
-      </div>
+      </section>
 
       <Footer />
     </div>
