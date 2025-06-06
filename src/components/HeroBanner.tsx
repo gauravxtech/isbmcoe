@@ -133,36 +133,72 @@ const HeroBanner = () => {
         </div>
       </div>
 
-      {/* Affiliation Badges */}
-      <div className="bg-white py-6 shadow-lg">
-        <div className="max-w-7xl mx-auto px-4 flex justify-center items-center space-x-12">
-          <div className="flex items-center space-x-3 group hover:scale-105 transition-transform duration-300">
-            <div className="w-14 h-14 bg-gradient-to-br from-college-primary to-college-secondary rounded-full flex items-center justify-center shadow-lg">
-              <span className="text-white font-bold text-sm">SPPU</span>
+      {/* Affiliation Badges - Improved Responsive Design */}
+      <div className="bg-white py-8 shadow-lg">
+        <div className="max-w-7xl mx-auto px-4">
+          {/* Desktop Layout */}
+          <div className="hidden md:flex justify-center items-center space-x-12">
+            <div className="flex items-center space-x-3 group hover:scale-105 transition-transform duration-300">
+              <div className="w-16 h-16 bg-gradient-to-br from-college-primary to-college-secondary rounded-full flex items-center justify-center shadow-lg">
+                <span className="text-white font-bold text-sm">SPPU</span>
+              </div>
+              <div>
+                <span className="text-college-primary font-bold text-lg">Affiliated to</span>
+                <p className="text-sm text-college-muted">Savitribai Phule Pune University</p>
+              </div>
             </div>
-            <div>
-              <span className="text-college-primary font-bold">Affiliated to</span>
-              <p className="text-sm text-college-muted">Savitribai Phule Pune University</p>
+            
+            <div className="flex items-center space-x-3 group hover:scale-105 transition-transform duration-300">
+              <div className="w-16 h-16 bg-gradient-to-br from-college-accent to-college-warning rounded-full flex items-center justify-center shadow-lg">
+                <span className="text-white font-bold text-sm">AICTE</span>
+              </div>
+              <div>
+                <span className="text-college-primary font-bold text-lg">Approved by</span>
+                <p className="text-sm text-college-muted">All India Council for Technical Education</p>
+              </div>
+            </div>
+            
+            <div className="flex items-center space-x-3 group hover:scale-105 transition-transform duration-300">
+              <div className="w-16 h-16 bg-gradient-to-br from-college-success to-college-teal rounded-full flex items-center justify-center shadow-lg">
+                <span className="text-white font-bold text-sm">B++</span>
+              </div>
+              <div>
+                <span className="text-college-primary font-bold text-lg">NAAC Accredited</span>
+                <p className="text-sm text-college-muted">Grade B++ (2024)</p>
+              </div>
             </div>
           </div>
-          
-          <div className="flex items-center space-x-3 group hover:scale-105 transition-transform duration-300">
-            <div className="w-14 h-14 bg-gradient-to-br from-college-accent to-college-warning rounded-full flex items-center justify-center shadow-lg">
-              <span className="text-white font-bold text-sm">AICTE</span>
+
+          {/* Mobile Layout */}
+          <div className="md:hidden space-y-6">
+            <div className="flex items-center space-x-4 bg-gradient-to-r from-college-primary/5 to-college-secondary/5 p-4 rounded-lg">
+              <div className="w-14 h-14 bg-gradient-to-br from-college-primary to-college-secondary rounded-full flex items-center justify-center shadow-lg flex-shrink-0">
+                <span className="text-white font-bold text-xs">SPPU</span>
+              </div>
+              <div className="flex-1">
+                <span className="text-college-primary font-bold block">Affiliated to</span>
+                <p className="text-xs text-college-muted">Savitribai Phule Pune University</p>
+              </div>
             </div>
-            <div>
-              <span className="text-college-primary font-bold">Approved by</span>
-              <p className="text-sm text-college-muted">All India Council for Technical Education</p>
+            
+            <div className="flex items-center space-x-4 bg-gradient-to-r from-college-accent/5 to-college-warning/5 p-4 rounded-lg">
+              <div className="w-14 h-14 bg-gradient-to-br from-college-accent to-college-warning rounded-full flex items-center justify-center shadow-lg flex-shrink-0">
+                <span className="text-white font-bold text-xs">AICTE</span>
+              </div>
+              <div className="flex-1">
+                <span className="text-college-primary font-bold block">Approved by</span>
+                <p className="text-xs text-college-muted">All India Council for Technical Education</p>
+              </div>
             </div>
-          </div>
-          
-          <div className="flex items-center space-x-3 group hover:scale-105 transition-transform duration-300">
-            <div className="w-14 h-14 bg-gradient-to-br from-college-success to-college-teal rounded-full flex items-center justify-center shadow-lg">
-              <span className="text-white font-bold text-sm">B++</span>
-            </div>
-            <div>
-              <span className="text-college-primary font-bold">NAAC Accredited</span>
-              <p className="text-sm text-college-muted">Grade B++ (2024)</p>
+            
+            <div className="flex items-center space-x-4 bg-gradient-to-r from-college-success/5 to-college-teal/5 p-4 rounded-lg">
+              <div className="w-14 h-14 bg-gradient-to-br from-college-success to-college-teal rounded-full flex items-center justify-center shadow-lg flex-shrink-0">
+                <span className="text-white font-bold text-xs">B++</span>
+              </div>
+              <div className="flex-1">
+                <span className="text-college-primary font-bold block">NAAC Accredited</span>
+                <p className="text-xs text-college-muted">Grade B++ (2024)</p>
+              </div>
             </div>
           </div>
         </div>
