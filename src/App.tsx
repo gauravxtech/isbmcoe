@@ -26,6 +26,11 @@ import TrainingPrograms from "./pages/TrainingPrograms";
 import IndustryPartners from "./pages/IndustryPartners";
 import CareerServices from "./pages/CareerServices";
 import AlumniNetwork from "./pages/AlumniNetwork";
+import CampusLocation from "./pages/CampusLocation";
+import Administration from "./pages/Administration";
+import Helpdesk from "./pages/Helpdesk";
+import Directions from "./pages/Directions";
+import VirtualTour from "./pages/VirtualTour";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -59,6 +64,11 @@ const App = () => (
           <Route path="/placements/industry-partners" element={<IndustryPartners />} />
           <Route path="/placements/career-services" element={<CareerServices />} />
           <Route path="/placements/alumni-network" element={<AlumniNetwork />} />
+          <Route path="/contact/campus-location" element={<CampusLocation />} />
+          <Route path="/contact/administration" element={<Administration />} />
+          <Route path="/contact/helpdesk" element={<Helpdesk />} />
+          <Route path="/contact/directions" element={<Directions />} />
+          <Route path="/contact/virtual-tour" element={<VirtualTour />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

@@ -131,11 +131,11 @@ const Navbar = () => {
     {
       title: 'Contact Us',
       items: [
-        { name: 'Campus Location', path: '#' },
-        { name: 'Administration', path: '#' },
-        { name: 'Helpdesk', path: '#' },
-        { name: 'Directions', path: '#' },
-        { name: 'Virtual Tour', path: '#' }
+        { name: 'Campus Location', path: '/contact/campus-location' },
+        { name: 'Administration', path: '/contact/administration' },
+        { name: 'Helpdesk', path: '/contact/helpdesk' },
+        { name: 'Directions', path: '/contact/directions' },
+        { name: 'Virtual Tour', path: '/contact/virtual-tour' }
       ]
     }
   ];
