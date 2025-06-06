@@ -31,6 +31,7 @@ import Administration from "./pages/Administration";
 import Helpdesk from "./pages/Helpdesk";
 import Directions from "./pages/Directions";
 import VirtualTour from "./pages/VirtualTour";
+import LifeAtCampus from "./pages/LifeAtCampus";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -69,6 +70,7 @@ const App = () => (
           <Route path="/contact/helpdesk" element={<Helpdesk />} />
           <Route path="/contact/directions" element={<Directions />} />
           <Route path="/contact/virtual-tour" element={<VirtualTour />} />
+          <Route path="/life-at-campus" element={<LifeAtCampus />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

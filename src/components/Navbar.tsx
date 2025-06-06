@@ -121,7 +121,7 @@ const Navbar = () => {
     {
       title: 'Life @ COE',
       items: [
-        { name: 'Campus Life', path: '#' },
+        { name: 'Campus Life', path: '/life-at-campus' },
         { name: 'Sports & Recreation', path: '#' },
         { name: 'Cultural Events', path: '#' },
         { name: 'Student Clubs', path: '#' },
