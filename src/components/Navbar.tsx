@@ -71,6 +71,7 @@ const Navbar = () => {
     {
       title: 'Admissions',
       items: [
+        { name: 'Programs Offered', path: '/programs-offered' },
         { name: 'UG Programs', path: '#' },
         { name: 'Direct Second Year', path: '#' },
         { name: 'Fee Structure', path: '#' },

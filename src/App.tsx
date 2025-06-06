@@ -17,6 +17,7 @@ import MechanicalDepartment from "./pages/MechanicalDepartment";
 import ETCDepartment from "./pages/ETCDepartment";
 import BBADepartment from "./pages/BBADepartment";
 import BCADepartment from "./pages/BCADepartment";
+import ProgramsOffered from "./pages/ProgramsOffered";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -33,6 +34,7 @@ const App = () => (
           <Route path="/vision-mission" element={<VisionMission />} />
           <Route path="/login" element={<Login />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/programs-offered" element={<ProgramsOffered />} />
           <Route path="/first-year-department" element={<FirstYearDepartment />} />
           <Route path="/computer-engineering-department" element={<ComputerEngineeringDepartment />} />
           <Route path="/aiml-department" element={<AIMLDepartment />} />
