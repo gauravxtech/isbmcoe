@@ -124,7 +124,12 @@ const Navbar = () => {
         { name: 'Campus Life', path: '/life-at-campus' },
         { name: 'Cultural Events', path: '/cultural-events' },
         { name: 'Sports & Recreation', path: '#' },
-        { name: 'Student Clubs', path: '#' },
+        { name: 'Student Associations', path: '#', subItems: [
+          { name: 'CESA', path: '/cesa' },
+          { name: 'MALSA', path: '/malsa' },
+          { name: 'AISA', path: '/aisa' },
+          { name: 'ETSA', path: '/etsa' }
+        ]},
         { name: 'Hostel Facilities', path: '/hostel' }
       ]
     },

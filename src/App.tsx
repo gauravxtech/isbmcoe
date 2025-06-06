@@ -34,6 +34,10 @@ import VirtualTour from "./pages/VirtualTour";
 import LifeAtCampus from "./pages/LifeAtCampus";
 import CulturalEvents from "./pages/CulturalEvents";
 import Hostel from "./pages/Hostel";
+import CESA from "./pages/CESA";
+import MALSA from "./pages/MALSA";
+import AISA from "./pages/AISA";
+import ETSA from "./pages/ETSA";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -75,6 +79,10 @@ const App = () => (
           <Route path="/life-at-campus" element={<LifeAtCampus />} />
           <Route path="/cultural-events" element={<CulturalEvents />} />
           <Route path="/hostel" element={<Hostel />} />
+          <Route path="/cesa" element={<CESA />} />
+          <Route path="/malsa" element={<MALSA />} />
+          <Route path="/aisa" element={<AISA />} />
+          <Route path="/etsa" element={<ETSA />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
