@@ -18,6 +18,9 @@ import ETCDepartment from "./pages/ETCDepartment";
 import BBADepartment from "./pages/BBADepartment";
 import BCADepartment from "./pages/BCADepartment";
 import ProgramsOffered from "./pages/ProgramsOffered";
+import FirstYearAdmission from "./pages/FirstYearAdmission";
+import DirectSecondYearAdmission from "./pages/DirectSecondYearAdmission";
+import FeesStructure from "./pages/FeesStructure";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -43,6 +46,9 @@ const App = () => (
           <Route path="/etc-department" element={<ETCDepartment />} />
           <Route path="/bba-department" element={<BBADepartment />} />
           <Route path="/bca-department" element={<BCADepartment />} />
+          <Route path="/admissions/first-year" element={<FirstYearAdmission />} />
+          <Route path="/admissions/direct-second-year" element={<DirectSecondYearAdmission />} />
+          <Route path="/admissions/fees-structure" element={<FeesStructure />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

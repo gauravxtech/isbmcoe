@@ -72,9 +72,11 @@ const Navbar = () => {
       title: 'Admissions',
       items: [
         { name: 'Programs Offered', path: '/programs-offered' },
-        { name: 'UG Programs', path: '#' },
-        { name: 'Direct Second Year', path: '#' },
-        { name: 'Fee Structure', path: '#' },
+        { name: 'UG Programs', path: '#', subItems: [
+          { name: 'First Year', path: '/admissions/first-year' },
+          { name: 'Direct Second Year', path: '/admissions/direct-second-year' }
+        ]},
+        { name: 'Fee Structure', path: '/admissions/fees-structure' },
         { name: 'Scholarships', path: '#' },
         { name: 'Application Process', path: '#' }
       ]
@@ -174,16 +176,41 @@ const Navbar = () => {
                       >
                         <div className="py-2">
                           {item.items.map((subItem, index) => (
-                            <Link
-                              key={subItem.name}
-                              to={subItem.path}
-                              className="group flex items-center px-6 py-3 text-gray-700 hover:bg-gradient-to-r hover:from-college-accent/10 hover:to-college-primary/5 hover:text-college-primary transition-all duration-200 border-l-4 border-transparent hover:border-college-accent"
-                            >
-                              <div className="flex items-center justify-between w-full">
-                                <span className="font-medium">{subItem.name}</span>
-                                <div className="w-2 h-2 rounded-full bg-college-accent/30 opacity-0 group-hover:opacity-100 transition-opacity duration-200"></div>
-                              </div>
-                            </Link>
+                            <div key={subItem.name}>
+                              {subItem.subItems ? (
+                                <div className="group/sub relative">
+                                  <div className="flex items-center justify-between px-6 py-3 text-gray-700 hover:bg-gradient-to-r hover:from-college-accent/10 hover:to-college-primary/5 hover:text-college-primary transition-all duration-200 border-l-4 border-transparent hover:border-college-accent cursor-pointer">
+                                    <span className="font-medium">{subItem.name}</span>
+                                    <ChevronDown className="h-4 w-4 rotate-[-90deg]" />
+                                  </div>
+                                  <div className="absolute left-full top-0 w-64 bg-white shadow-2xl rounded-xl py-2 z-50 border border-gray-200 ml-2 opacity-0 invisible group-hover/sub:opacity-100 group-hover/sub:visible transition-all duration-200">
+                                    {subItem.subItems.map((nestedItem, nestedIndex) => (
+                                      <Link
+                                        key={nestedItem.name}
+                                        to={nestedItem.path}
+                                        className="group flex items-center px-6 py-3 text-gray-700 hover:bg-gradient-to-r hover:from-college-accent/10 hover:to-college-primary/5 hover:text-college-primary transition-all duration-200 border-l-4 border-transparent hover:border-college-accent"
+                                      >
+                                        <div className="flex items-center justify-between w-full">
+                                          <span className="font-medium">{nestedItem.name}</span>
+                                          <div className="w-2 h-2 rounded-full bg-college-accent/30 opacity-0 group-hover:opacity-100 transition-opacity duration-200"></div>
+                                        </div>
+                                      </Link>
+                                    ))}
+                                  </div>
+                                </div>
+                              ) : (
+                                <Link
+                                  key={subItem.name}
+                                  to={subItem.path}
+                                  className="group flex items-center px-6 py-3 text-gray-700 hover:bg-gradient-to-r hover:from-college-accent/10 hover:to-college-primary/5 hover:text-college-primary transition-all duration-200 border-l-4 border-transparent hover:border-college-accent"
+                                >
+                                  <div className="flex items-center justify-between w-full">
+                                    <span className="font-medium">{subItem.name}</span>
+                                    <div className="w-2 h-2 rounded-full bg-college-accent/30 opacity-0 group-hover:opacity-100 transition-opacity duration-200"></div>
+                                  </div>
+                                </Link>
+                              )}
+                            </div>
                           ))}
                         </div>
                       </div>
@@ -228,14 +255,36 @@ const Navbar = () => {
                   </button>
                   <div className="pl-6 space-y-1">
                     {item.items.map((subItem) => (
-                      <Link
-                        key={subItem.name}
-                        to={subItem.path}
-                        className="block px-3 py-2 text-gray-200 hover:text-college-accent hover:bg-white/5 rounded transition-colors duration-200 text-sm"
-                        onClick={() => setIsMobileMenuOpen(false)}
-                      >
-                        {subItem.name}
-                      </Link>
+                      <div key={subItem.name}>
+                        {subItem.subItems ? (
+                          <div>
+                            <div className="block px-3 py-2 text-gray-200 hover:text-college-accent hover:bg-white/5 rounded transition-colors duration-200 text-sm font-medium">
+                              {subItem.name}
+                            </div>
+                            <div className="pl-4 space-y-1">
+                              {subItem.subItems.map((nestedItem) => (
+                                <Link
+                                  key={nestedItem.name}
+                                  to={nestedItem.path}
+                                  className="block px-3 py-2 text-gray-300 hover:text-college-accent hover:bg-white/5 rounded transition-colors duration-200 text-xs"
+                                  onClick={() => setIsMobileMenuOpen(false)}
+                                >
+                                  {nestedItem.name}
+                                </Link>
+                              ))}
+                            </div>
+                          </div>
+                        ) : (
+                          <Link
+                            key={subItem.name}
+                            to={subItem.path}
+                            className="block px-3 py-2 text-gray-200 hover:text-college-accent hover:bg-white/5 rounded transition-colors duration-200 text-sm"
+                            onClick={() => setIsMobileMenuOpen(false)}
+                          >
+                            {subItem.name}
+                          </Link>
+                        )}
+                      </div>
                     ))}
                   </div>
                 </div>
