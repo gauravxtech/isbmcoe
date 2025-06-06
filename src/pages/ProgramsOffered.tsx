@@ -77,35 +77,27 @@ const ProgramsOffered = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-college-light">
       <Header />
       <Navbar />
       <Separator className="bg-gray-300" />
-
-      {/* Breadcrumb */}
-      <div className="bg-white py-4 border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <nav className="text-sm">
-            <span className="text-college-primary font-medium">Home</span>
-            <span className="mx-2 text-gray-400">|</span>
-            <span className="text-gray-600">Programs Offered</span>
-          </nav>
-        </div>
-      </div>
-
-      {/* Hero Section */}
-      <section className="relative bg-gradient-to-r from-college-primary to-college-secondary py-16">
+      
+      {/* Hero Section with consistent styling */}
+      <div className="bg-gradient-to-r from-college-primary to-college-secondary py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
-            <h1 className="text-3xl md:text-4xl font-bold text-white mb-6">
+            <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
               Programs Offered
             </h1>
-            <p className="text-xl text-blue-100 max-w-3xl mx-auto">
-              Discover our comprehensive range of undergraduate programs designed to shape future leaders in technology and business
-            </p>
+            <div className="w-24 h-1 bg-college-accent mx-auto mb-4"></div>
+            <nav className="text-sm text-white/80">
+              <span className="hover:text-white cursor-pointer">Home</span>
+              <span className="mx-2">|</span>
+              <span className="text-white font-semibold">Programs Offered</span>
+            </nav>
           </div>
         </div>
-      </section>
+      </div>
 
       {/* Programs Grid */}
       <section className="py-16 bg-white">

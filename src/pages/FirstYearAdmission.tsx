@@ -1,142 +1,76 @@
+
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { Button } from '@/components/ui/button';
-import { FileText, Download, Users, CheckCircle } from 'lucide-react';
+import { FileText, Download, Users, CheckCircle, Calendar, BookOpen } from 'lucide-react';
 import Header from '@/components/Header';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 
 const FirstYearAdmission = () => {
-  const admissionStages = [
-    { stage: "Stage 1", title: "Online Registration", description: "(Most Important Step)" },
-    { stage: "Stage 2", title: "Confirmation of form at Facility Centers in person", description: "(FC'S)" },
-    { stage: "Stage 3", title: "Display of Provisional Merit List", description: "" },
-    { stage: "Stage 4", title: "Online option forms for CAP Rounds", description: "" },
-    { stage: "Stage 5", title: "Allotment & confirmation of Seat", description: "" },
-    { stage: "Stage 6", title: "Counseling Round", description: "" }
+  const admissionSteps = [
+    { step: "Step 1", title: "Online Application", description: "Fill out the online application form with all required details" },
+    { step: "Step 2", title: "Document Verification", description: "Submit all required documents for verification" },
+    { step: "Step 3", title: "Merit List", description: "Check your name in the published merit list" },
+    { step: "Step 4", title: "Counseling", description: "Attend counseling session as per scheduled date" },
+    { step: "Step 5", title: "Seat Allotment", description: "Get seat allotted based on merit and preferences" },
+    { step: "Step 6", title: "Fee Payment", description: "Pay the admission fees to confirm your seat" }
   ];
 
-  const documentCategories = [
-    {
-      category: "All Candidate",
-      documents: [
-        "Diploma Passing Certificate",
-        "College Leaving Certificate after passing H.S.C.",
-        "Certificate of Indian Nationality",
-        "Domicile certificate of candidate",
-        "Proforma-I on paper",
-        "Anti-ragging Affidavits"
-      ]
-    },
-    {
-      category: "SC/ST",
-      documents: [
-        "All above 1 to 6 documents &",
-        "Caste certificate",
-        "Caste/Tribe validity certificate (if not then Undertaking (Proforma H))"
-      ]
-    },
-    {
-      category: "VJ/DT/NT(A)/NT(B)/NT(C)/NT(D)/OBC/SBC",
-      documents: [
-        "All above 1 to 6 documents &",
-        "Non creamy layer certificate"
-      ]
-    },
-    {
-      category: "TFWS",
-      documents: [
-        "All above 1 to 6 documents &",
-        "Income certificate with parents annual income less than 4.5 Lakh"
-      ]
-    },
-    {
-      category: "Out of Maharashtra Students(OMS)",
-      documents: [
-        "All above 1 to 6 documents &",
-        "Migration Certificate",
-        "Domicile Certificate",
-        "Passing Certificate"
-      ]
-    },
-    {
-      category: "For Defense persons",
-      documents: [
-        "All above 1 to 6 documents &",
-        "Defense Service Certificate Pro forma – C",
-        "Domicile certificate of father/mother who is an Ex service personnel is domiciled in the State of Maharashtra"
-      ]
-    },
-    {
-      category: "For Physically Handicapped persons",
-      documents: [
-        "All above 1 to 6 documents &",
-        "Certificate in the pro forma–F/F-1 & Domicile certificate of candidate"
-      ]
-    },
-    {
-      category: "FOR J&K Migrant",
-      documents: [
-        "All above 1 to 6 documents &",
-        "Certificate of posting in case of defence and Government servants in proforma – J",
-        "Certificate for stay in refugee camp for those staying in refugee camp in proforma – K",
-        "Certificate stating that the candidate belongs to displaced family in proforma – L"
-      ]
-    }
+  const requiredDocuments = [
+    "SSC (10th) Mark Sheet and Passing Certificate",
+    "HSC (12th) Mark Sheet and Passing Certificate",
+    "JEE Main Score Card (if applicable)",
+    "MHT-CET Score Card",
+    "Transfer Certificate from previous institution",
+    "Migration Certificate (for students from other boards)",
+    "Caste Certificate (if applicable)",
+    "Non-Creamy Layer Certificate (for OBC candidates)",
+    "Income Certificate (for EWS/TFWS)",
+    "Domicile Certificate",
+    "Aadhaar Card",
+    "Passport size photographs",
+    "Anti-ragging affidavit"
+  ];
+
+  const importantDates = [
+    { event: "Online Application Starts", date: "June 1, 2024" },
+    { event: "Last Date for Application", date: "June 30, 2024" },
+    { event: "Merit List Declaration", date: "July 15, 2024" },
+    { event: "Counseling Begins", date: "July 20, 2024" },
+    { event: "Classes Commence", date: "August 15, 2024" }
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-college-light">
       <Header />
       <Navbar />
       <Separator className="bg-gray-300" />
 
-      {/* Breadcrumb */}
-      <div className="bg-white py-4 border-b">
+      {/* Hero Section with consistent styling */}
+      <div className="bg-gradient-to-r from-college-primary to-college-secondary py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <nav className="text-sm">
-            <span className="text-college-primary font-medium">Home</span>
-            <span className="mx-2 text-gray-400">|</span>
-            <span className="text-college-primary font-medium">Admissions</span>
-            <span className="mx-2 text-gray-400">|</span>
-            <span className="text-gray-600">First Year</span>
-          </nav>
+          <div className="text-center">
+            <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
+              First Year Admissions
+            </h1>
+            <div className="w-24 h-1 bg-college-accent mx-auto mb-4"></div>
+            <nav className="text-sm text-white/80">
+              <span className="hover:text-white cursor-pointer">Home</span>
+              <span className="mx-2">|</span>
+              <span className="hover:text-white cursor-pointer">Admissions</span>
+              <span className="mx-2">|</span>
+              <span className="text-white font-semibold">First Year</span>
+            </nav>
+          </div>
         </div>
       </div>
 
-      {/* Hero Section */}
-      <section className="relative bg-gradient-to-r from-college-primary to-college-secondary py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center">
-            <h1 className="text-3xl md:text-4xl font-bold text-white mb-6">
-              First Year Admissions
-            </h1>
-            <p className="text-xl text-blue-100 max-w-3xl mx-auto">
-              Complete guide for First Year Engineering admissions - eligibility, documents, and admission process
-            </p>
-          </div>
-        </div>
-      </section>
-
+      {/* Main Content */}
       <section className="py-16 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          {/* Navigation Tabs */}
-          <div className="flex flex-wrap gap-4 mb-8">
-            <Button className="bg-college-primary hover:bg-college-primary/90 text-white">
-              <CheckCircle className="h-4 w-4 mr-2" />
-              Eligibility Criteria
-            </Button>
-            <Button variant="outline" className="border-college-primary text-college-primary hover:bg-college-primary hover:text-white">
-              <FileText className="h-4 w-4 mr-2" />
-              Documents Needed
-            </Button>
-            <Button variant="outline" className="border-college-primary text-college-primary hover:bg-college-primary hover:text-white">
-              <Download className="h-4 w-4 mr-2" />
-              Information Brochure
-            </Button>
-          </div>
-
+          
           {/* Eligibility Criteria */}
           <Card className="mb-8">
             <CardHeader>
@@ -144,26 +78,26 @@ const FirstYearAdmission = () => {
                 <CheckCircle className="h-6 w-6 mr-3 text-college-accent" />
                 Eligibility Criteria
               </CardTitle>
-              <p className="text-gray-600">For Maharashtra State Candidate and Outside Maharashtra State Candidate</p>
+              <p className="text-gray-600">Minimum qualifications required for First Year Engineering admissions</p>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="bg-blue-50 p-4 rounded-lg">
                 <ul className="space-y-3 text-gray-700">
                   <li className="flex items-start">
                     <span className="text-college-accent font-bold mr-2">•</span>
-                    Candidate should be Indian national.
+                    Passed HSC (12th) examination with Physics, Chemistry, and Mathematics
                   </li>
                   <li className="flex items-start">
                     <span className="text-college-accent font-bold mr-2">•</span>
-                    Candidate should have passed HSC (Std.XII) exams of Maharashtra State Board of secondary and Higher Secondary Examination or its equivalent examination with subjects English, Physics, Mathematics and Chemistry/Biotechnology/Biology/Technical educational subjects.
+                    Minimum 50% marks in aggregate (45% for reserved categories)
                   </li>
                   <li className="flex items-start">
                     <span className="text-college-accent font-bold mr-2">•</span>
-                    Candidate Should have secured minimum 50% marks (minimum 45% marks in case of Backward Class categories and persons with disability candidates belonging to Maharashtra state only) in the subjects Physics, Mathematics and Chemistry/biotechnology/Biology/Technical Vocational subject added together.
+                    Valid MHT-CET or JEE Main score
                   </li>
                   <li className="flex items-start">
                     <span className="text-college-accent font-bold mr-2">•</span>
-                    Candidate should have obtained a valid score in MH - CET or JEE MAINS.
+                    Age limit: 25 years (30 years for reserved categories)
                   </li>
                 </ul>
               </div>
@@ -175,56 +109,68 @@ const FirstYearAdmission = () => {
             <CardHeader>
               <CardTitle className="text-2xl text-college-primary flex items-center">
                 <Users className="h-6 w-6 mr-3 text-college-accent" />
-                Admission Process Details
+                Admission Process
               </CardTitle>
+              <p className="text-gray-600">Step-by-step guide to the admission process</p>
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {admissionStages.map((item, index) => (
+                {admissionSteps.map((item, index) => (
                   <div key={index} className="bg-gradient-to-br from-college-primary/5 to-college-accent/5 p-4 rounded-lg border border-college-primary/20">
-                    <div className="text-college-primary font-bold text-lg mb-2">{item.stage}</div>
-                    <div className="text-gray-700 font-medium">{item.title}</div>
-                    {item.description && (
-                      <div className="text-sm text-gray-600 mt-1">{item.description}</div>
-                    )}
+                    <div className="text-college-primary font-bold text-lg mb-2">{item.step}</div>
+                    <div className="text-gray-700 font-medium text-sm mb-2">{item.title}</div>
+                    <div className="text-gray-600 text-xs">{item.description}</div>
                   </div>
                 ))}
-              </div>
-              <div className="mt-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
-                <p className="text-gray-700">
-                  <strong>For further details, please visit:</strong>
-                  <a href="http://www.dtemaharashtra.gov.in/" target="_blank" rel="noopener noreferrer" className="text-college-primary hover:text-college-accent ml-2 underline">
-                    http://www.dtemaharashtra.gov.in/
-                  </a>
-                </p>
               </div>
             </CardContent>
           </Card>
 
-          {/* Documents Required */}
+          {/* Important Dates */}
+          <Card className="mb-8">
+            <CardHeader>
+              <CardTitle className="text-2xl text-college-primary flex items-center">
+                <Calendar className="h-6 w-6 mr-3 text-college-accent" />
+                Important Dates
+              </CardTitle>
+              <p className="text-gray-600">Key dates for the admission process</p>
+            </CardHeader>
+            <CardContent>
+              <div className="grid gap-4">
+                {importantDates.map((item, index) => (
+                  <div key={index} className="flex justify-between items-center p-4 bg-gray-50 rounded-lg border">
+                    <span className="font-medium text-gray-700">{item.event}</span>
+                    <span className="text-college-primary font-semibold">{item.date}</span>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Required Documents */}
           <Card>
             <CardHeader>
               <CardTitle className="text-2xl text-college-primary flex items-center">
                 <FileText className="h-6 w-6 mr-3 text-college-accent" />
-                Documents Needed
+                Required Documents
               </CardTitle>
-              <p className="text-gray-600">Attested true copies (two sets) of documents required for different categories</p>
+              <p className="text-gray-600">List of documents needed for admission</p>
             </CardHeader>
             <CardContent>
-              <div className="space-y-6">
-                {documentCategories.map((category, index) => (
-                  <div key={index} className="border border-gray-200 rounded-lg p-4">
-                    <h3 className="text-lg font-bold text-college-primary mb-3">{category.category}</h3>
-                    <ul className="space-y-2">
-                      {category.documents.map((doc, docIndex) => (
-                        <li key={docIndex} className="flex items-start text-gray-700">
-                          <span className="text-college-accent font-bold mr-2 mt-1">•</span>
-                          <span>{doc}</span>
-                        </li>
-                      ))}
-                    </ul>
+              <div className="grid md:grid-cols-2 gap-4">
+                {requiredDocuments.map((doc, index) => (
+                  <div key={index} className="flex items-start p-3 bg-gray-50 rounded-lg">
+                    <span className="text-college-accent font-bold mr-3 mt-1">•</span>
+                    <span className="text-gray-700">{doc}</span>
                   </div>
                 ))}
+              </div>
+              
+              <div className="mt-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+                <p className="text-gray-700 font-medium">
+                  <strong>Note:</strong> All documents should be original along with attested photocopies. 
+                  Ensure all certificates are from recognized boards/universities.
+                </p>
               </div>
             </CardContent>
           </Card>
