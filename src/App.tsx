@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -9,6 +8,7 @@ import About from "./pages/About";
 import VisionMission from "./pages/VisionMission";
 import Login from "./pages/Login";
 import ForgotPassword from "./pages/ForgotPassword";
+import AdminDashboard from "./pages/AdminDashboard";
 import FirstYearDepartment from "./pages/FirstYearDepartment";
 import ComputerEngineeringDepartment from "./pages/ComputerEngineeringDepartment";
 import AIMLDepartment from "./pages/AIMLDepartment";
@@ -54,6 +54,7 @@ const App = () => (
           <Route path="/vision-mission" element={<VisionMission />} />
           <Route path="/login" element={<Login />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/admin/dashboard" element={<AdminDashboard />} />
           <Route path="/programs-offered" element={<ProgramsOffered />} />
           <Route path="/first-year-department" element={<FirstYearDepartment />} />
           <Route path="/computer-engineering-department" element={<ComputerEngineeringDepartment />} />
