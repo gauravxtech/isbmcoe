@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -9,6 +10,10 @@ import VisionMission from "./pages/VisionMission";
 import Login from "./pages/Login";
 import ForgotPassword from "./pages/ForgotPassword";
 import AdminDashboard from "./pages/AdminDashboard";
+import AdmissionInquiry from "./pages/AdmissionInquiry";
+import VisitorsBook from "./pages/VisitorsBook";
+import Complaints from "./pages/Complaints";
+import AllTeachers from "./pages/AllTeachers";
 import FirstYearDepartment from "./pages/FirstYearDepartment";
 import ComputerEngineeringDepartment from "./pages/ComputerEngineeringDepartment";
 import AIMLDepartment from "./pages/AIMLDepartment";
@@ -54,11 +59,79 @@ const App = () => (
           <Route path="/vision-mission" element={<VisionMission />} />
           <Route path="/login" element={<Login />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
+          
+          {/* Admin Dashboard Routes */}
           <Route path="/admin/dashboard" element={<AdminDashboard />} />
           <Route path="/admin/content" element={<AdminDashboard />} />
           <Route path="/admin/analytics" element={<AdminDashboard />} />
           <Route path="/admin/users" element={<AdminDashboard />} />
           <Route path="/admin/settings" element={<AdminDashboard />} />
+          
+          {/* Admin Front Office Routes */}
+          <Route path="/admin/admission-inquiry" element={<AdmissionInquiry />} />
+          <Route path="/admin/visitors" element={<VisitorsBook />} />
+          <Route path="/admin/complaints" element={<Complaints />} />
+          
+          {/* Admin Teacher Routes */}
+          <Route path="/admin/teachers" element={<AllTeachers />} />
+          <Route path="/admin/teachers/add" element={<AllTeachers />} />
+          <Route path="/admin/teachers/assign" element={<AllTeachers />} />
+          <Route path="/admin/teachers/timetable" element={<AllTeachers />} />
+          
+          {/* Admin Student Routes */}
+          <Route path="/admin/students" element={<AdminDashboard />} />
+          <Route path="/admin/students/add" element={<AdminDashboard />} />
+          <Route path="/admin/students/attendance" element={<AdminDashboard />} />
+          <Route path="/admin/students/info" element={<AdminDashboard />} />
+          
+          {/* Admin Course Routes */}
+          <Route path="/admin/courses" element={<AdminDashboard />} />
+          <Route path="/admin/courses/add" element={<AdminDashboard />} />
+          
+          {/* Admin Library Routes */}
+          <Route path="/admin/library/books" element={<AdminDashboard />} />
+          <Route path="/admin/library/issue" element={<AdminDashboard />} />
+          <Route path="/admin/library/members" element={<AdminDashboard />} />
+          
+          {/* Admin Department Routes */}
+          <Route path="/admin/departments" element={<AdminDashboard />} />
+          <Route path="/admin/departments/add" element={<AdminDashboard />} />
+          
+          {/* Admin Staff Routes */}
+          <Route path="/admin/staff" element={<AdminDashboard />} />
+          <Route path="/admin/staff/add" element={<AdminDashboard />} />
+          <Route path="/admin/staff/attendance" element={<AdminDashboard />} />
+          
+          {/* Admin Holiday Routes */}
+          <Route path="/admin/holidays" element={<AdminDashboard />} />
+          <Route path="/admin/holidays/add" element={<AdminDashboard />} />
+          
+          {/* Admin Fees Routes */}
+          <Route path="/admin/fees" element={<AdminDashboard />} />
+          <Route path="/admin/fees/collection" element={<AdminDashboard />} />
+          <Route path="/admin/fees/receipt" element={<AdminDashboard />} />
+          <Route path="/admin/fees/structure" element={<AdminDashboard />} />
+          
+          {/* Admin Classes Routes */}
+          <Route path="/admin/classes" element={<AdminDashboard />} />
+          <Route path="/admin/classes/timetable" element={<AdminDashboard />} />
+          
+          {/* Admin Hostel Routes */}
+          <Route path="/admin/hostel/rooms" element={<AdminDashboard />} />
+          <Route path="/admin/hostel/fees" element={<AdminDashboard />} />
+          
+          {/* Admin HR Routes */}
+          <Route path="/admin/hr/leave" element={<AdminDashboard />} />
+          <Route path="/admin/hr/payroll" element={<AdminDashboard />} />
+          <Route path="/admin/hr/employees" element={<AdminDashboard />} />
+          
+          {/* Admin Apps Routes */}
+          <Route path="/admin/apps/calendar" element={<AdminDashboard />} />
+          <Route path="/admin/apps/tasks" element={<AdminDashboard />} />
+          <Route path="/admin/apps/chat" element={<AdminDashboard />} />
+          <Route path="/admin/apps/email" element={<AdminDashboard />} />
+          
+          {/* Public Routes */}
           <Route path="/programs-offered" element={<ProgramsOffered />} />
           <Route path="/first-year-department" element={<FirstYearDepartment />} />
           <Route path="/computer-engineering-department" element={<ComputerEngineeringDepartment />} />
@@ -88,7 +161,8 @@ const App = () => (
           <Route path="/malsa" element={<MALSA />} />
           <Route path="/aisa" element={<AISA />} />
           <Route path="/etsa" element={<ETSA />} />
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+          
+          {/* Catch-all route for 404 */}
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>

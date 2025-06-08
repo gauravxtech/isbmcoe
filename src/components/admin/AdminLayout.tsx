@@ -59,8 +59,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
       name: 'Dashboard',
       icon: LayoutDashboard,
       items: [
-        { name: 'Dashboard 1', href: '/admin/dashboard', icon: LayoutDashboard },
-        { name: 'Dashboard 2', href: '/admin/dashboard-2', icon: BarChart3 },
+        { name: 'Overview', href: '/admin/dashboard', icon: LayoutDashboard },
         { name: 'Teacher Dashboard', href: '/admin/teacher-dashboard', icon: UserCheck },
         { name: 'Student Dashboard', href: '/admin/student-dashboard', icon: GraduationCap },
       ]
@@ -81,9 +80,9 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
       icon: UserCheck,
       items: [
         { name: 'All Teachers', href: '/admin/teachers', icon: Users },
-        { name: 'Add/Edit Teacher', href: '/admin/teachers/add', icon: UserCheck },
+        { name: 'Add Teacher', href: '/admin/teachers/add', icon: UserCheck },
         { name: 'Assign Class Teacher', href: '/admin/teachers/assign', icon: GraduationCap },
-        { name: 'Timetable', href: '/admin/teachers/timetable', icon: Calendar },
+        { name: 'Teacher Timetable', href: '/admin/teachers/timetable', icon: Calendar },
       ]
     },
     {
@@ -92,9 +91,9 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
       icon: GraduationCap,
       items: [
         { name: 'All Students', href: '/admin/students', icon: Users },
-        { name: 'Add/Edit Student', href: '/admin/students/add', icon: GraduationCap },
-        { name: 'Attendance', href: '/admin/students/attendance', icon: CheckSquare },
-        { name: 'Student Info', href: '/admin/students/info', icon: FileText },
+        { name: 'Add Student', href: '/admin/students/add', icon: GraduationCap },
+        { name: 'Student Attendance', href: '/admin/students/attendance', icon: CheckSquare },
+        { name: 'Student Information', href: '/admin/students/info', icon: FileText },
       ]
     },
     {
@@ -103,7 +102,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
       icon: BookOpen,
       items: [
         { name: 'All Courses', href: '/admin/courses', icon: BookOpen },
-        { name: 'Add/Edit Course', href: '/admin/courses/add', icon: FileText },
+        { name: 'Add Course', href: '/admin/courses/add', icon: FileText },
       ]
     },
     {
@@ -111,9 +110,9 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
       name: 'Library',
       icon: BookOpen,
       items: [
-        { name: 'All Assets', href: '/admin/library/assets', icon: BookOpen },
-        { name: 'Add/Edit Books', href: '/admin/library/books', icon: FileText },
-        { name: 'Book Status', href: '/admin/library/status', icon: CheckSquare },
+        { name: 'All Books', href: '/admin/library/books', icon: BookOpen },
+        { name: 'Book Issue/Return', href: '/admin/library/issue', icon: FileText },
+        { name: 'Library Members', href: '/admin/library/members', icon: Users },
       ]
     },
     {
@@ -122,7 +121,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
       icon: Building2,
       items: [
         { name: 'All Departments', href: '/admin/departments', icon: Building2 },
-        { name: 'Add/Edit Departments', href: '/admin/departments/add', icon: FileText },
+        { name: 'Add Department', href: '/admin/departments/add', icon: FileText },
       ]
     },
     {
@@ -131,7 +130,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
       icon: UsersRound,
       items: [
         { name: 'All Staff', href: '/admin/staff', icon: Users },
-        { name: 'Add/Edit Staff', href: '/admin/staff/add', icon: UserCheck },
+        { name: 'Add Staff', href: '/admin/staff/add', icon: UserCheck },
         { name: 'Staff Attendance', href: '/admin/staff/attendance', icon: CheckSquare },
       ]
     },
@@ -141,7 +140,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
       icon: Calendar,
       items: [
         { name: 'All Holidays', href: '/admin/holidays', icon: Calendar },
-        { name: 'Add/Edit Holiday', href: '/admin/holidays/add', icon: CalendarDays },
+        { name: 'Add Holiday', href: '/admin/holidays/add', icon: CalendarDays },
       ]
     },
     {
@@ -150,9 +149,9 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
       icon: DollarSign,
       items: [
         { name: 'All Fees', href: '/admin/fees', icon: DollarSign },
-        { name: 'Add/Edit Fees', href: '/admin/fees/add', icon: FileText },
+        { name: 'Fee Collection', href: '/admin/fees/collection', icon: FileText },
         { name: 'Fee Receipt', href: '/admin/fees/receipt', icon: FileText },
-        { name: 'Fee Discount/Types', href: '/admin/fees/discount', icon: DollarSign },
+        { name: 'Fee Structure', href: '/admin/fees/structure', icon: DollarSign },
       ]
     },
     {
@@ -160,8 +159,8 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
       name: 'Classes',
       icon: GraduationCap,
       items: [
-        { name: 'Class List', href: '/admin/classes', icon: GraduationCap },
-        { name: 'Timetable', href: '/admin/classes/timetable', icon: Calendar },
+        { name: 'All Classes', href: '/admin/classes', icon: GraduationCap },
+        { name: 'Class Timetable', href: '/admin/classes/timetable', icon: Calendar },
       ]
     },
     {
@@ -169,8 +168,8 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
       name: 'Hostel',
       icon: Home,
       items: [
-        { name: 'Room List', href: '/admin/hostel/rooms', icon: Home },
-        { name: 'Room Type', href: '/admin/hostel/room-types', icon: Building2 },
+        { name: 'Room Management', href: '/admin/hostel/rooms', icon: Home },
+        { name: 'Hostel Fees', href: '/admin/hostel/fees', icon: DollarSign },
       ]
     },
     {
@@ -178,11 +177,9 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
       name: 'HR Management',
       icon: Briefcase,
       items: [
-        { name: 'Leave Requests', href: '/admin/hr/leave-requests', icon: Calendar },
-        { name: 'Leave Balance', href: '/admin/hr/leave-balance', icon: BarChart3 },
-        { name: 'Holidays', href: '/admin/hr/holidays', icon: Calendar },
-        { name: 'Salary / Payslip', href: '/admin/hr/salary', icon: DollarSign },
-        { name: "Today's Attendance", href: '/admin/hr/attendance', icon: CheckSquare },
+        { name: 'Leave Management', href: '/admin/hr/leave', icon: Calendar },
+        { name: 'Payroll', href: '/admin/hr/payroll', icon: DollarSign },
+        { name: 'Employee Records', href: '/admin/hr/employees', icon: Users },
       ]
     },
   ];
@@ -334,7 +331,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
         {/* Top Header */}
         <header className="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700 px-6 py-4">
           <div className="flex items-center justify-between">
-            {/* Left: Logo + School Name */}
+            {/* Left: Logo + College Name */}
             <div className="flex items-center space-x-4">
               <img 
                 src="/lovable-uploads/18fee38c-1acf-462a-825a-cda10c5e7381.png" 
