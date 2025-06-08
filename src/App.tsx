@@ -10,6 +10,17 @@ import VisionMission from "./pages/VisionMission";
 import Login from "./pages/Login";
 import ForgotPassword from "./pages/ForgotPassword";
 import AdminDashboard from "./pages/AdminDashboard";
+import SuperAdminDashboard from "./pages/SuperAdminDashboard";
+import PrincipalDashboard from "./pages/PrincipalDashboard";
+import DeanDashboard from "./pages/DeanDashboard";
+import HODDashboard from "./pages/HODDashboard";
+import TeacherDashboard from "./pages/TeacherDashboard";
+import StudentDashboard from "./pages/StudentDashboard";
+import ParentDashboard from "./pages/ParentDashboard";
+import AccountantDashboard from "./pages/AccountantDashboard";
+import ReceptionDashboard from "./pages/ReceptionDashboard";
+import SecurityDashboard from "./pages/SecurityDashboard";
+import HostelDashboard from "./pages/HostelDashboard";
 import AdmissionInquiry from "./pages/AdmissionInquiry";
 import VisitorsBook from "./pages/VisitorsBook";
 import Complaints from "./pages/Complaints";
@@ -60,8 +71,21 @@ const App = () => (
           <Route path="/login" element={<Login />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
           
-          {/* Admin Dashboard Routes */}
+          {/* Role-based Dashboard Routes */}
+          <Route path="/admin/super-admin-dashboard" element={<SuperAdminDashboard />} />
           <Route path="/admin/dashboard" element={<AdminDashboard />} />
+          <Route path="/admin/principal-dashboard" element={<PrincipalDashboard />} />
+          <Route path="/admin/dean-dashboard" element={<DeanDashboard />} />
+          <Route path="/admin/hod-dashboard" element={<HODDashboard />} />
+          <Route path="/admin/teacher-dashboard" element={<TeacherDashboard />} />
+          <Route path="/admin/student-dashboard" element={<StudentDashboard />} />
+          <Route path="/admin/parent-dashboard" element={<ParentDashboard />} />
+          <Route path="/admin/accountant-dashboard" element={<AccountantDashboard />} />
+          <Route path="/admin/reception-dashboard" element={<ReceptionDashboard />} />
+          <Route path="/admin/security-dashboard" element={<SecurityDashboard />} />
+          <Route path="/admin/hostel-dashboard" element={<HostelDashboard />} />
+          
+          {/* Admin Management Routes */}
           <Route path="/admin/content" element={<AdminDashboard />} />
           <Route path="/admin/analytics" element={<AdminDashboard />} />
           <Route path="/admin/users" element={<AdminDashboard />} />
