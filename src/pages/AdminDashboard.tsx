@@ -1,9 +1,8 @@
 
 import React from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import AdminLayout from '@/components/admin/AdminLayout';
-import DashboardOverview from '@/components/admin/DashboardOverview';
+import SchoolDashboardOverview from '@/components/admin/SchoolDashboardOverview';
 import ContentManager from '@/components/admin/ContentManager';
 import AnalyticsPanel from '@/components/admin/AnalyticsPanel';
 import UserManager from '@/components/admin/UserManager';
@@ -21,21 +20,21 @@ const AdminDashboard = () => {
     <AdminLayout>
       <div className="space-y-6">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
-          <p className="text-gray-600">Welcome to ISBM College Admin Panel</p>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">School Management Dashboard</h1>
+          <p className="text-gray-600 dark:text-gray-400">Welcome to ISBM College Administrative Control Panel</p>
         </div>
 
         <Tabs defaultValue="overview" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-5">
-            <TabsTrigger value="overview">Overview</TabsTrigger>
-            <TabsTrigger value="content">Content</TabsTrigger>
-            <TabsTrigger value="analytics">Analytics</TabsTrigger>
-            <TabsTrigger value="users">Users</TabsTrigger>
-            <TabsTrigger value="settings">Settings</TabsTrigger>
+          <TabsList className="grid w-full grid-cols-5 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
+            <TabsTrigger value="overview" className="data-[state=active]:bg-college-primary data-[state=active]:text-white">Dashboard Overview</TabsTrigger>
+            <TabsTrigger value="content" className="data-[state=active]:bg-college-primary data-[state=active]:text-white">Content Management</TabsTrigger>
+            <TabsTrigger value="analytics" className="data-[state=active]:bg-college-primary data-[state=active]:text-white">Analytics & Reports</TabsTrigger>
+            <TabsTrigger value="users" className="data-[state=active]:bg-college-primary data-[state=active]:text-white">User Management</TabsTrigger>
+            <TabsTrigger value="settings" className="data-[state=active]:bg-college-primary data-[state=active]:text-white">System Settings</TabsTrigger>
           </TabsList>
 
           <TabsContent value="overview">
-            <DashboardOverview />
+            <SchoolDashboardOverview />
           </TabsContent>
 
           <TabsContent value="content">
