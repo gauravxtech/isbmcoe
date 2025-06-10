@@ -1,210 +1,281 @@
 
-import React, { useState, useEffect } from 'react';
-import { useAuth } from '@/contexts/AuthContext';
-import { useNavigate } from 'react-router-dom';
+import React, { useState } from 'react';
+import { Eye, EyeOff, Mail, Lock, ArrowLeft, User, GraduationCap, Shield, Building2, Users, CreditCard, Phone, Home, UserCheck } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { useSEO } from '@/hooks/useSEO';
+import { Badge } from '@/components/ui/badge';
+import { useAuth } from '@/contexts/AuthContext';
+import { useToast } from '@/hooks/use-toast';
 
 const Login = () => {
-  const { login, signUp, loading, isAuthenticated } = useAuth();
+  const [showPassword, setShowPassword] = useState(false);
+  const [formData, setFormData] = useState({
+    email: '',
+    password: '',
+    role: '',
+    rememberMe: false
+  });
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
-  const [loginForm, setLoginForm] = useState({ email: '', password: '' });
-  const [signUpForm, setSignUpForm] = useState({ 
-    email: '', 
-    password: '', 
-    fullName: '', 
-    role: 'student' 
-  });
+  const { login } = useAuth();
+  const { toast } = useToast();
 
-  useSEO({
-    title: "Login - ISBM College of Engineering",
-    description: "Access your ISBM College dashboard",
-    canonical: "https://isbmcoe.edu.in/login"
-  });
-
-  // Redirect if already authenticated
-  useEffect(() => {
-    if (isAuthenticated) {
-      navigate('/dashboard');
-    }
-  }, [isAuthenticated, navigate]);
-
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log('Login attempt:', loginForm.email);
-    const success = await login(loginForm.email, loginForm.password);
-    if (success) {
-      console.log('Login successful, navigating to dashboard');
-      navigate('/dashboard');
-    }
-  };
-
-  const handleSignUp = async (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log('Sign up attempt:', signUpForm.email);
-    const success = await signUp(
-      signUpForm.email, 
-      signUpForm.password, 
-      signUpForm.fullName, 
-      signUpForm.role
-    );
-    if (success) {
-      setSignUpForm({ email: '', password: '', fullName: '', role: 'student' });
-    }
-  };
-
-  const roleOptions = [
-    { value: 'student', label: 'Student' },
-    { value: 'teacher', label: 'Faculty Member' },
-    { value: 'admin', label: 'Administrator' },
-    { value: 'parent', label: 'Parent' },
-    { value: 'principal', label: 'Principal' },
-    { value: 'dean', label: 'Dean' },
-    { value: 'hod', label: 'Head of Department' },
-    { value: 'accountant', label: 'Finance Officer' },
-    { value: 'reception', label: 'Reception Staff' },
-    { value: 'security', label: 'Security Officer' },
-    { value: 'hostel', label: 'Hostel Manager' }
+  const roles = [
+    { value: 'super-admin', label: 'Super Admin', icon: Shield, color: 'bg-red-500', description: 'System Administrator' },
+    { value: 'admin', label: 'Admin', icon: UserCheck, color: 'bg-blue-500', description: 'College Administrator' },
+    { value: 'principal', label: 'Principal', icon: Building2, color: 'bg-purple-500', description: 'College Principal' },
+    { value: 'dean', label: 'Dean', icon: GraduationCap, color: 'bg-indigo-500', description: 'Academic Dean' },
+    { value: 'hod', label: 'HOD', icon: Users, color: 'bg-green-500', description: 'Head of Department' },
+    { value: 'teacher', label: 'Teacher', icon: User, color: 'bg-orange-500', description: 'Faculty Member' },
+    { value: 'student', label: 'Student', icon: GraduationCap, color: 'bg-cyan-500', description: 'Student Portal' },
+    { value: 'parent', label: 'Parent', icon: Users, color: 'bg-pink-500', description: 'Parent Portal' },
+    { value: 'accountant', label: 'Accountant', icon: CreditCard, color: 'bg-yellow-500', description: 'Finance Department' },
+    { value: 'reception', label: 'Reception', icon: Phone, color: 'bg-teal-500', description: 'Front Office' },
+    { value: 'security', label: 'Security', icon: Shield, color: 'bg-gray-500', description: 'Security Gate' },
+    { value: 'hostel', label: 'Hostel', icon: Home, color: 'bg-emerald-500', description: 'Hostel Management' },
   ];
 
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-college-primary"></div>
-      </div>
-    );
-  }
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!formData.email || !formData.password || !formData.role) {
+      toast({
+        title: "Error",
+        description: "Please fill in all required fields",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    setIsLoading(true);
+
+    try {
+      const success = login(formData.email, formData.password, formData.role);
+      
+      if (success) {
+        toast({
+          title: "Login Successful",
+          description: "Welcome to ISBM College Management System",
+        });
+
+        // Route based on role
+        const roleRoutes = {
+          'super-admin': '/dashboard/super-admin',
+          'admin': '/dashboard/admin',
+          'principal': '/dashboard/principal',
+          'dean': '/dashboard/dean',
+          'hod': '/dashboard/hod',
+          'teacher': '/dashboard/teacher',
+          'student': '/dashboard/student',
+          'parent': '/dashboard/parent',
+          'accountant': '/dashboard/accountant',
+          'reception': '/dashboard/reception',
+          'security': '/dashboard/security',
+          'hostel': '/dashboard/hostel',
+        };
+
+        navigate(roleRoutes[formData.role as keyof typeof roleRoutes] || '/dashboard/admin');
+      } else {
+        toast({
+          title: "Login Failed",
+          description: "Invalid credentials. Please try again.",
+          variant: "destructive"
+        });
+      }
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "An unexpected error occurred. Please try again.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value, type, checked } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: type === 'checkbox' ? checked : value
+    }));
+  };
+
+  const selectedRole = roles.find(role => role.value === formData.role);
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8">
-        <div className="text-center">
-          <img 
-            src="/lovable-uploads/18fee38c-1acf-462a-825a-cda10c5e7381.png" 
-            alt="ISBM Logo" 
-            className="mx-auto h-16 w-16 mb-4"
-          />
-          <h2 className="mt-6 text-3xl font-extrabold text-gray-900">
-            ISBM College Portal
-          </h2>
-          <p className="mt-2 text-sm text-gray-600">
-            Access your dashboard and manage your college experience
-          </p>
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-800 flex items-center justify-center p-4 relative overflow-hidden">
+      {/* Background decoration */}
+      <div className="absolute inset-0 opacity-20" style={{
+        backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%239C92AC' fill-opacity='0.05'%3E%3Ccircle cx='30' cy='30' r='4'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`
+      }}></div>
+      
+      <div className="w-full max-w-lg relative z-10">
+        <div className="text-center mb-8">
+          <Link to="/" className="inline-flex items-center text-white/80 hover:text-white transition-colors duration-200 mb-8 group">
+            <ArrowLeft className="h-4 w-4 mr-2 group-hover:-translate-x-1 transition-transform" />
+            Back to Home
+          </Link>
+          
+          <div className="flex items-center justify-center space-x-4 mb-6">
+            <div className="w-16 h-16 bg-white/10 backdrop-blur-md rounded-2xl flex items-center justify-center border border-white/20">
+              <img 
+                src="/lovable-uploads/18fee38c-1acf-462a-825a-cda10c5e7381.png" 
+                alt="ISBM College Logo" 
+                className="w-10 h-10"
+              />
+            </div>
+            <div className="text-left">
+              <h1 className="text-white font-bold text-2xl">ISBM College</h1>
+              <p className="text-blue-200 text-base">of Engineering</p>
+            </div>
+          </div>
+          
+          <div className="text-center">
+            <h2 className="text-3xl font-bold text-white mb-2">Welcome Back</h2>
+            <p className="text-blue-200">Sign in to access your dashboard</p>
+          </div>
         </div>
 
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-center">Welcome</CardTitle>
+        <Card className="shadow-2xl border-0 bg-white/95 backdrop-blur-md">
+          <CardHeader className="text-center pb-6">
+            <CardTitle className="text-2xl font-bold text-gray-800 flex items-center justify-center gap-2">
+              <Shield className="h-6 w-6 text-blue-600" />
+              Secure Login Portal
+            </CardTitle>
+            <p className="text-gray-600 mt-2">
+              Choose your role and enter credentials
+            </p>
           </CardHeader>
-          <CardContent>
-            <Tabs defaultValue="login" className="w-full">
-              <TabsList className="grid w-full grid-cols-2">
-                <TabsTrigger value="login">Login</TabsTrigger>
-                <TabsTrigger value="signup">Sign Up</TabsTrigger>
-              </TabsList>
-              
-              <TabsContent value="login">
-                <form onSubmit={handleLogin} className="space-y-4">
-                  <div>
-                    <Label htmlFor="email">Email</Label>
-                    <Input
-                      id="email"
-                      type="email"
-                      required
-                      value={loginForm.email}
-                      onChange={(e) => setLoginForm(prev => ({ ...prev, email: e.target.value }))}
-                      placeholder="Enter your email"
-                    />
+          <CardContent className="space-y-6">
+            <form onSubmit={handleSubmit} className="space-y-6">
+              {/* Role Selection */}
+              <div className="space-y-3">
+                <Label htmlFor="role" className="text-sm font-semibold text-gray-700">
+                  Select Your Role *
+                </Label>
+                <Select value={formData.role} onValueChange={(value) => setFormData(prev => ({ ...prev, role: value }))}>
+                  <SelectTrigger className="h-12 border-2 border-gray-200 focus:border-blue-500">
+                    <SelectValue placeholder="Choose your role" />
+                  </SelectTrigger>
+                  <SelectContent className="max-h-64">
+                    {roles.map((role) => (
+                      <SelectItem key={role.value} value={role.value} className="py-3">
+                        <div className="flex items-center space-x-3">
+                          <div className={`w-8 h-8 ${role.color} rounded-lg flex items-center justify-center`}>
+                            <role.icon className="h-4 w-4 text-white" />
+                          </div>
+                          <div>
+                            <p className="font-medium">{role.label}</p>
+                            <p className="text-xs text-gray-500">{role.description}</p>
+                          </div>
+                        </div>
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                {selectedRole && (
+                  <div className="mt-2">
+                    <Badge className={`${selectedRole.color} text-white`}>
+                      {selectedRole.label} - {selectedRole.description}
+                    </Badge>
                   </div>
-                  <div>
-                    <Label htmlFor="password">Password</Label>
-                    <Input
-                      id="password"
-                      type="password"
-                      required
-                      value={loginForm.password}
-                      onChange={(e) => setLoginForm(prev => ({ ...prev, password: e.target.value }))}
-                      placeholder="Enter your password"
-                    />
-                  </div>
-                  <Button 
-                    type="submit" 
-                    className="w-full bg-college-primary hover:bg-college-secondary"
-                    disabled={loading}
+                )}
+              </div>
+
+              {/* Email Field */}
+              <div className="space-y-2">
+                <Label htmlFor="email" className="text-sm font-semibold text-gray-700">
+                  Email Address *
+                </Label>
+                <div className="relative">
+                  <Mail className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                  <Input
+                    id="email"
+                    name="email"
+                    type="email"
+                    required
+                    className="pl-12 h-12 border-2 border-gray-200 focus:border-blue-500"
+                    placeholder="Enter your email"
+                    value={formData.email}
+                    onChange={handleInputChange}
+                    disabled={isLoading}
+                  />
+                </div>
+              </div>
+
+              {/* Password Field */}
+              <div className="space-y-2">
+                <Label htmlFor="password" className="text-sm font-semibold text-gray-700">
+                  Password *
+                </Label>
+                <div className="relative">
+                  <Lock className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                  <Input
+                    id="password"
+                    name="password"
+                    type={showPassword ? "text" : "password"}
+                    required
+                    className="pl-12 pr-12 h-12 border-2 border-gray-200 focus:border-blue-500"
+                    placeholder="Enter your password"
+                    value={formData.password}
+                    onChange={handleInputChange}
+                    disabled={isLoading}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                    disabled={isLoading}
                   >
-                    {loading ? 'Logging in...' : 'Login'}
-                  </Button>
-                </form>
-              </TabsContent>
-              
-              <TabsContent value="signup">
-                <form onSubmit={handleSignUp} className="space-y-4">
-                  <div>
-                    <Label htmlFor="fullName">Full Name</Label>
-                    <Input
-                      id="fullName"
-                      type="text"
-                      required
-                      value={signUpForm.fullName}
-                      onChange={(e) => setSignUpForm(prev => ({ ...prev, fullName: e.target.value }))}
-                      placeholder="Enter your full name"
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="signupEmail">Email</Label>
-                    <Input
-                      id="signupEmail"
-                      type="email"
-                      required
-                      value={signUpForm.email}
-                      onChange={(e) => setSignUpForm(prev => ({ ...prev, email: e.target.value }))}
-                      placeholder="Enter your email"
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="signupPassword">Password</Label>
-                    <Input
-                      id="signupPassword"
-                      type="password"
-                      required
-                      value={signUpForm.password}
-                      onChange={(e) => setSignUpForm(prev => ({ ...prev, password: e.target.value }))}
-                      placeholder="Create a password"
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="role">Role</Label>
-                    <Select 
-                      value={signUpForm.role} 
-                      onValueChange={(value) => setSignUpForm(prev => ({ ...prev, role: value }))}
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select your role" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {roleOptions.map(option => (
-                          <SelectItem key={option.value} value={option.value}>
-                            {option.label}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <Button 
-                    type="submit" 
-                    className="w-full bg-college-primary hover:bg-college-secondary"
-                    disabled={loading}
-                  >
-                    {loading ? 'Creating Account...' : 'Sign Up'}
-                  </Button>
-                </form>
-              </TabsContent>
-            </Tabs>
+                    {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                  </button>
+                </div>
+              </div>
+
+              {/* Remember Me & Forgot Password */}
+              <div className="flex items-center justify-between">
+                <label className="flex items-center space-x-2 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    name="rememberMe"
+                    checked={formData.rememberMe}
+                    onChange={handleInputChange}
+                    className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                    disabled={isLoading}
+                  />
+                  <span className="text-sm text-gray-600">Remember me</span>
+                </label>
+                <Link 
+                  to="/forgot-password" 
+                  className="text-sm text-blue-600 hover:text-blue-800 transition-colors duration-200 font-medium"
+                >
+                  Forgot Password?
+                </Link>
+              </div>
+
+              {/* Submit Button */}
+              <Button 
+                type="submit"
+                className="w-full h-12 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold rounded-lg transition-all duration-300 transform hover:scale-105 shadow-lg"
+                disabled={isLoading}
+              >
+                {isLoading ? 'Signing In...' : 'Sign In to Dashboard'}
+              </Button>
+            </form>
+
+            <div className="text-center space-y-4 pt-6 border-t border-gray-200">
+              <p className="text-sm text-gray-600">
+                🔒 Secure access to ISBM College management system
+              </p>
+              <p className="text-xs text-gray-500">
+                For technical support, contact IT department
+              </p>
+            </div>
           </CardContent>
         </Card>
       </div>
