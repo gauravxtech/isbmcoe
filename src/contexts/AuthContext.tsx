@@ -1,16 +1,25 @@
 
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { supabase } from '@/integrations/supabase/client';
+import { User as SupabaseUser } from '@supabase/supabase-js';
+import { useToast } from '@/hooks/use-toast';
 
-interface User {
+interface UserProfile {
+  id: string;
   email: string;
+  full_name: string;
   role: string;
-  name: string;
+  department?: string;
+  phone?: string;
+  avatar_url?: string;
 }
 
 interface AuthContextType {
-  user: User | null;
-  login: (email: string, password: string, role: string) => boolean;
-  logout: () => void;
+  user: UserProfile | null;
+  loading: boolean;
+  login: (email: string, password: string) => Promise<boolean>;
+  logout: () => Promise<void>;
+  signUp: (email: string, password: string, fullName: string, role?: string) => Promise<boolean>;
   isAuthenticated: boolean;
 }
 
@@ -29,53 +38,159 @@ interface AuthProviderProps {
 }
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
-  const [user, setUser] = useState<User | null>(() => {
-    const savedUser = localStorage.getItem('user');
-    return savedUser ? JSON.parse(savedUser) : null;
-  });
+  const [user, setUser] = useState<UserProfile | null>(null);
+  const [loading, setLoading] = useState(true);
+  const { toast } = useToast();
 
-  const login = (email: string, password: string, role: string): boolean => {
-    // Simple authentication - in production, this would call your backend API
-    if (email && password) {
-      const userData = {
-        email,
-        role,
-        name: getRoleDisplayName(role)
-      };
-      setUser(userData);
-      localStorage.setItem('user', JSON.stringify(userData));
-      return true;
+  useEffect(() => {
+    // Get initial session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session?.user) {
+        loadUserProfile(session.user);
+      } else {
+        setLoading(false);
+      }
+    });
+
+    // Listen for auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
+        if (session?.user) {
+          await loadUserProfile(session.user);
+        } else {
+          setUser(null);
+          setLoading(false);
+        }
+      }
+    );
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  const loadUserProfile = async (supabaseUser: SupabaseUser) => {
+    try {
+      const { data: profile, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', supabaseUser.id)
+        .single();
+
+      if (error) {
+        console.error('Error loading profile:', error);
+        setUser(null);
+      } else {
+        setUser(profile);
+      }
+    } catch (error) {
+      console.error('Error loading user profile:', error);
+      setUser(null);
+    } finally {
+      setLoading(false);
     }
-    return false;
   };
 
-  const logout = () => {
-    setUser(null);
-    localStorage.removeItem('user');
+  const login = async (email: string, password: string): Promise<boolean> => {
+    try {
+      setLoading(true);
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      if (error) {
+        toast({
+          title: "Login Failed",
+          description: error.message,
+          variant: "destructive",
+        });
+        return false;
+      }
+
+      toast({
+        title: "Login Successful",
+        description: "Welcome back!",
+      });
+      return true;
+    } catch (error) {
+      console.error('Login error:', error);
+      toast({
+        title: "Login Failed",
+        description: "An unexpected error occurred",
+        variant: "destructive",
+      });
+      return false;
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const getRoleDisplayName = (role: string): string => {
-    const roleNames: Record<string, string> = {
-      'super-admin': 'Super Administrator',
-      'admin': 'College Administrator',
-      'principal': 'Principal',
-      'dean': 'Academic Dean',
-      'hod': 'Head of Department',
-      'teacher': 'Faculty Member',
-      'student': 'Student',
-      'parent': 'Parent',
-      'accountant': 'Finance Officer',
-      'reception': 'Reception Staff',
-      'security': 'Security Officer',
-      'hostel': 'Hostel Manager'
-    };
-    return roleNames[role] || 'User';
+  const signUp = async (email: string, password: string, fullName: string, role: string = 'student'): Promise<boolean> => {
+    try {
+      setLoading(true);
+      const { error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: {
+            full_name: fullName,
+            role: role,
+          },
+        },
+      });
+
+      if (error) {
+        toast({
+          title: "Sign Up Failed",
+          description: error.message,
+          variant: "destructive",
+        });
+        return false;
+      }
+
+      toast({
+        title: "Sign Up Successful",
+        description: "Please check your email to verify your account",
+      });
+      return true;
+    } catch (error) {
+      console.error('Sign up error:', error);
+      toast({
+        title: "Sign Up Failed",
+        description: "An unexpected error occurred",
+        variant: "destructive",
+      });
+      return false;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const logout = async (): Promise<void> => {
+    try {
+      const { error } = await supabase.auth.signOut();
+      if (error) {
+        toast({
+          title: "Logout Failed",
+          description: error.message,
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "Logged Out",
+          description: "You have been successfully logged out",
+        });
+      }
+    } catch (error) {
+      console.error('Logout error:', error);
+    }
   };
 
   const value = {
     user,
+    loading,
     login,
     logout,
+    signUp,
     isAuthenticated: !!user
   };
 

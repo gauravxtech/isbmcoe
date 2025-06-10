@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -65,154 +64,148 @@ const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <AuthProvider>
+    <AuthProvider>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
           <Routes>
             {/* Public Routes */}
             <Route path="/" element={<Index />} />
+            <Route path="/login" element={<Login />} />
             <Route path="/about" element={<About />} />
             <Route path="/vision-mission" element={<VisionMission />} />
-            <Route path="/login" element={<Login />} />
+            <Route path="/administration" element={<Administration />} />
+            <Route path="/programs-offered" element={<ProgramsOffered />} />
+            <Route path="/fees-structure" element={<FeesStructure />} />
+            <Route path="/first-year-admission" element={<FirstYearAdmission />} />
+            <Route path="/direct-second-year-admission" element={<DirectSecondYearAdmission />} />
+            <Route path="/placements" element={<Placements />} />
+            <Route path="/industry-partners" element={<IndustryPartners />} />
+            <Route path="/career-services" element={<CareerServices />} />
+            <Route path="/training-programs" element={<TrainingPrograms />} />
+            <Route path="/alumni-network" element={<AlumniNetwork />} />
+            <Route path="/life-at-campus" element={<LifeAtCampus />} />
+            <Route path="/cultural-events" element={<CulturalEvents />} />
+            <Route path="/virtual-tour" element={<VirtualTour />} />
+            <Route path="/campus-location" element={<CampusLocation />} />
+            <Route path="/directions" element={<Directions />} />
+            <Route path="/hostel" element={<Hostel />} />
+            <Route path="/helpdesk" element={<Helpdesk />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
+
+            {/* Department Routes */}
+            <Route path="/first-year-department" element={<FirstYearDepartment />} />
+            <Route path="/computer-engineering" element={<ComputerEngineeringDepartment />} />
+            <Route path="/mechanical-department" element={<MechanicalDepartment />} />
+            <Route path="/aids-department" element={<AIDSDepartment />} />
+            <Route path="/aiml-department" element={<AIMLDepartment />} />
+            <Route path="/etc-department" element={<ETCDepartment />} />
+            <Route path="/bca-department" element={<BCADepartment />} />
+            <Route path="/bba-department" element={<BBADepartment />} />
+
+            {/* Student Association Routes */}
+            <Route path="/cesa" element={<CESA />} />
+            <Route path="/etsa" element={<ETSA />} />
+            <Route path="/aisa" element={<AISA />} />
+            <Route path="/malsa" element={<MALSA />} />
+
+            {/* Dashboard Routes - Protected */}
+            <Route path="/dashboard" element={
+              <ProtectedRoute>
+                <Navigate to="/dashboard/student" replace />
+              </ProtectedRoute>
+            } />
             
-            {/* Protected Dashboard Routes */}
             <Route path="/dashboard/super-admin" element={
               <ProtectedRoute allowedRoles={['super-admin']}>
                 <SuperAdminDashboard />
               </ProtectedRoute>
             } />
             <Route path="/dashboard/admin" element={
-              <ProtectedRoute allowedRoles={['admin']}>
+              <ProtectedRoute allowedRoles={['super-admin', 'admin']}>
                 <AdminDashboard />
               </ProtectedRoute>
             } />
             <Route path="/dashboard/principal" element={
-              <ProtectedRoute allowedRoles={['principal']}>
+              <ProtectedRoute allowedRoles={['super-admin', 'admin', 'principal']}>
                 <PrincipalDashboard />
               </ProtectedRoute>
             } />
             <Route path="/dashboard/dean" element={
-              <ProtectedRoute allowedRoles={['dean']}>
+              <ProtectedRoute allowedRoles={['super-admin', 'admin', 'dean']}>
                 <DeanDashboard />
               </ProtectedRoute>
             } />
             <Route path="/dashboard/hod" element={
-              <ProtectedRoute allowedRoles={['hod']}>
+              <ProtectedRoute allowedRoles={['super-admin', 'admin', 'hod']}>
                 <HODDashboard />
               </ProtectedRoute>
             } />
             <Route path="/dashboard/teacher" element={
-              <ProtectedRoute allowedRoles={['teacher']}>
+              <ProtectedRoute allowedRoles={['super-admin', 'admin', 'teacher']}>
                 <TeacherDashboard />
               </ProtectedRoute>
             } />
             <Route path="/dashboard/student" element={
-              <ProtectedRoute allowedRoles={['student']}>
+              <ProtectedRoute allowedRoles={['super-admin', 'admin', 'student']}>
                 <StudentDashboard />
               </ProtectedRoute>
             } />
             <Route path="/dashboard/parent" element={
-              <ProtectedRoute allowedRoles={['parent']}>
+              <ProtectedRoute allowedRoles={['super-admin', 'admin', 'parent']}>
                 <ParentDashboard />
               </ProtectedRoute>
             } />
             <Route path="/dashboard/accountant" element={
-              <ProtectedRoute allowedRoles={['accountant']}>
+              <ProtectedRoute allowedRoles={['super-admin', 'admin', 'accountant']}>
                 <AccountantDashboard />
               </ProtectedRoute>
             } />
             <Route path="/dashboard/reception" element={
-              <ProtectedRoute allowedRoles={['reception']}>
+              <ProtectedRoute allowedRoles={['super-admin', 'admin', 'reception']}>
                 <ReceptionDashboard />
               </ProtectedRoute>
             } />
             <Route path="/dashboard/security" element={
-              <ProtectedRoute allowedRoles={['security']}>
+              <ProtectedRoute allowedRoles={['super-admin', 'admin', 'security']}>
                 <SecurityDashboard />
               </ProtectedRoute>
             } />
             <Route path="/dashboard/hostel" element={
-              <ProtectedRoute allowedRoles={['hostel']}>
+              <ProtectedRoute allowedRoles={['super-admin', 'admin', 'hostel']}>
                 <HostelDashboard />
               </ProtectedRoute>
             } />
-            
-            {/* Protected Admin Management Routes */}
-            <Route path="/admin/admission-inquiry" element={
-              <ProtectedRoute>
+
+            {/* Admin Management Routes */}
+            <Route path="/admission-inquiry" element={
+              <ProtectedRoute allowedRoles={['super-admin', 'admin', 'reception']}>
                 <AdmissionInquiry />
               </ProtectedRoute>
             } />
-            <Route path="/admin/visitors" element={
-              <ProtectedRoute>
+            <Route path="/visitors-book" element={
+              <ProtectedRoute allowedRoles={['super-admin', 'admin', 'reception', 'security']}>
                 <VisitorsBook />
               </ProtectedRoute>
             } />
-            <Route path="/admin/complaints" element={
+            <Route path="/complaints" element={
               <ProtectedRoute>
                 <Complaints />
               </ProtectedRoute>
             } />
-            <Route path="/admin/teachers" element={
-              <ProtectedRoute>
+            <Route path="/all-teachers" element={
+              <ProtectedRoute allowedRoles={['super-admin', 'admin', 'principal', 'dean', 'hod']}>
                 <AllTeachers />
               </ProtectedRoute>
             } />
-            
-            {/* Legacy Route Redirects */}
-            <Route path="/admin/dashboard" element={<Navigate to="/dashboard/admin" replace />} />
-            <Route path="/admin/super-admin-dashboard" element={<Navigate to="/dashboard/super-admin" replace />} />
-            <Route path="/admin/principal-dashboard" element={<Navigate to="/dashboard/principal" replace />} />
-            <Route path="/admin/dean-dashboard" element={<Navigate to="/dashboard/dean" replace />} />
-            <Route path="/admin/hod-dashboard" element={<Navigate to="/dashboard/hod" replace />} />
-            <Route path="/admin/teacher-dashboard" element={<Navigate to="/dashboard/teacher" replace />} />
-            <Route path="/admin/student-dashboard" element={<Navigate to="/dashboard/student" replace />} />
-            <Route path="/admin/parent-dashboard" element={<Navigate to="/dashboard/parent" replace />} />
-            <Route path="/admin/accountant-dashboard" element={<Navigate to="/dashboard/accountant" replace />} />
-            <Route path="/admin/reception-dashboard" element={<Navigate to="/dashboard/reception" replace />} />
-            <Route path="/admin/security-dashboard" element={<Navigate to="/dashboard/security" replace />} />
-            <Route path="/admin/hostel-dashboard" element={<Navigate to="/dashboard/hostel" replace />} />
-            
-            {/* Public Department and Information Routes */}
-            <Route path="/programs-offered" element={<ProgramsOffered />} />
-            <Route path="/first-year-department" element={<FirstYearDepartment />} />
-            <Route path="/computer-engineering-department" element={<ComputerEngineeringDepartment />} />
-            <Route path="/aiml-department" element={<AIMLDepartment />} />
-            <Route path="/aids-department" element={<AIDSDepartment />} />
-            <Route path="/mechanical-department" element={<MechanicalDepartment />} />
-            <Route path="/etc-department" element={<ETCDepartment />} />
-            <Route path="/bba-department" element={<BBADepartment />} />
-            <Route path="/bca-department" element={<BCADepartment />} />
-            <Route path="/admissions/first-year" element={<FirstYearAdmission />} />
-            <Route path="/admissions/direct-second-year" element={<DirectSecondYearAdmission />} />
-            <Route path="/admissions/fees-structure" element={<FeesStructure />} />
-            <Route path="/placements" element={<Placements />} />
-            <Route path="/placements/training-programs" element={<TrainingPrograms />} />
-            <Route path="/placements/industry-partners" element={<IndustryPartners />} />
-            <Route path="/placements/career-services" element={<CareerServices />} />
-            <Route path="/placements/alumni-network" element={<AlumniNetwork />} />
-            <Route path="/contact/campus-location" element={<CampusLocation />} />
-            <Route path="/contact/administration" element={<Administration />} />
-            <Route path="/contact/helpdesk" element={<Helpdesk />} />
-            <Route path="/contact/directions" element={<Directions />} />
-            <Route path="/contact/virtual-tour" element={<VirtualTour />} />
-            <Route path="/life-at-campus" element={<LifeAtCampus />} />
-            <Route path="/cultural-events" element={<CulturalEvents />} />
-            <Route path="/hostel" element={<Hostel />} />
-            <Route path="/cesa" element={<CESA />} />
-            <Route path="/malsa" element={<MALSA />} />
-            <Route path="/aisa" element={<AISA />} />
-            <Route path="/etsa" element={<ETSA />} />
-            
-            {/* Catch-all route for 404 */}
+
+            {/* Catch all route */}
             <Route path="*" element={<NotFound />} />
           </Routes>
-        </AuthProvider>
-      </BrowserRouter>
-    </TooltipProvider>
+        </BrowserRouter>
+      </TooltipProvider>
+    </AuthProvider>
   </QueryClientProvider>
 );
 
