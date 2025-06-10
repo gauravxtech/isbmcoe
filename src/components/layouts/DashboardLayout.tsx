@@ -410,11 +410,11 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
               {/* User Profile */}
               <div className="flex items-center space-x-3">
                 <div className="text-right">
-                  <p className="text-sm font-medium text-gray-900 dark:text-white">{user?.name}</p>
+                  <p className="text-sm font-medium text-gray-900 dark:text-white">{user?.full_name}</p>
                   <p className="text-xs text-gray-500 dark:text-gray-400">{user?.email}</p>
                 </div>
                 <div className="w-10 h-10 bg-college-primary rounded-full flex items-center justify-center text-white font-semibold">
-                  {user?.name?.charAt(0) || 'U'}
+                  {user?.full_name?.charAt(0) || 'U'}
                 </div>
               </div>
             </div>
