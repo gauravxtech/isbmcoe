@@ -4,14 +4,14 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { CreditCard, DollarSign, TrendingUp, FileText, Calculator, Receipt, Wallet, BarChart3 } from 'lucide-react';
-import AdminLayout from '@/components/admin/AdminLayout';
+import DashboardLayout from '@/components/layouts/DashboardLayout';
 import { useSEO } from '@/hooks/useSEO';
 
 const AccountantDashboard = () => {
   useSEO({
     title: "Accountant Dashboard - ISBM College",
     description: "Finance department dashboard",
-    canonical: "https://isbmcoe.edu.in/admin/accountant-dashboard"
+    canonical: "https://isbmcoe.edu.in/dashboard/accountant"
   });
 
   const financeStats = [
@@ -22,15 +22,15 @@ const AccountantDashboard = () => {
   ];
 
   return (
-    <AdminLayout>
+    <DashboardLayout>
       <div className="space-y-6">
         <div className="flex justify-between items-center">
           <div>
             <h1 className="text-3xl font-bold text-gray-900 dark:text-white flex items-center gap-3">
               <Calculator className="h-8 w-8 text-yellow-500" />
-              Finance Dashboard
+              Finance Management
             </h1>
-            <p className="text-gray-600 dark:text-gray-400">Financial Management & Accounting</p>
+            <p className="text-gray-600 dark:text-gray-400">Financial Operations & Accounting</p>
           </div>
           <div className="flex gap-3">
             <Button variant="outline">
@@ -62,7 +62,7 @@ const AccountantDashboard = () => {
           ))}
         </div>
       </div>
-    </AdminLayout>
+    </DashboardLayout>
   );
 };
 

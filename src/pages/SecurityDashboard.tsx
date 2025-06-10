@@ -4,14 +4,14 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Shield, Camera, AlertTriangle, Users, Lock, Eye, Activity, FileText } from 'lucide-react';
-import AdminLayout from '@/components/admin/AdminLayout';
+import DashboardLayout from '@/components/layouts/DashboardLayout';
 import { useSEO } from '@/hooks/useSEO';
 
 const SecurityDashboard = () => {
   useSEO({
     title: "Security Dashboard - ISBM College",
     description: "Security gate management dashboard",
-    canonical: "https://isbmcoe.edu.in/admin/security-dashboard"
+    canonical: "https://isbmcoe.edu.in/dashboard/security"
   });
 
   const securityStats = [
@@ -22,13 +22,13 @@ const SecurityDashboard = () => {
   ];
 
   return (
-    <AdminLayout>
+    <DashboardLayout>
       <div className="space-y-6">
         <div className="flex justify-between items-center">
           <div>
             <h1 className="text-3xl font-bold text-gray-900 dark:text-white flex items-center gap-3">
               <Shield className="h-8 w-8 text-gray-500" />
-              Security Dashboard
+              Security Control Center
             </h1>
             <p className="text-gray-600 dark:text-gray-400">Campus Security & Monitoring</p>
           </div>
@@ -62,7 +62,7 @@ const SecurityDashboard = () => {
           ))}
         </div>
       </div>
-    </AdminLayout>
+    </DashboardLayout>
   );
 };
 

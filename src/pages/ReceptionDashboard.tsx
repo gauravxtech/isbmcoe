@@ -4,14 +4,14 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Phone, Users, Calendar, MessageSquare, Bell, UserPlus, Clock, FileText } from 'lucide-react';
-import AdminLayout from '@/components/admin/AdminLayout';
+import DashboardLayout from '@/components/layouts/DashboardLayout';
 import { useSEO } from '@/hooks/useSEO';
 
 const ReceptionDashboard = () => {
   useSEO({
     title: "Reception Dashboard - ISBM College",
     description: "Front office reception dashboard",
-    canonical: "https://isbmcoe.edu.in/admin/reception-dashboard"
+    canonical: "https://isbmcoe.edu.in/dashboard/reception"
   });
 
   const receptionStats = [
@@ -22,15 +22,15 @@ const ReceptionDashboard = () => {
   ];
 
   return (
-    <AdminLayout>
+    <DashboardLayout>
       <div className="space-y-6">
         <div className="flex justify-between items-center">
           <div>
             <h1 className="text-3xl font-bold text-gray-900 dark:text-white flex items-center gap-3">
               <Phone className="h-8 w-8 text-teal-500" />
-              Reception Dashboard
+              Front Office Management
             </h1>
-            <p className="text-gray-600 dark:text-gray-400">Front Office Management</p>
+            <p className="text-gray-600 dark:text-gray-400">Reception & Visitor Services</p>
           </div>
           <div className="flex gap-3">
             <Button variant="outline">
@@ -62,7 +62,7 @@ const ReceptionDashboard = () => {
           ))}
         </div>
       </div>
-    </AdminLayout>
+    </DashboardLayout>
   );
 };
 

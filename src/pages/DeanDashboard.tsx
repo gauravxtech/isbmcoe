@@ -4,14 +4,14 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { GraduationCap, BookOpen, Users, TrendingUp, FileText, Calendar, Award, BarChart3 } from 'lucide-react';
-import AdminLayout from '@/components/admin/AdminLayout';
+import DashboardLayout from '@/components/layouts/DashboardLayout';
 import { useSEO } from '@/hooks/useSEO';
 
 const DeanDashboard = () => {
   useSEO({
     title: "Dean Dashboard - ISBM College",
     description: "Academic dean administrative dashboard",
-    canonical: "https://isbmcoe.edu.in/admin/dean-dashboard"
+    canonical: "https://isbmcoe.edu.in/dashboard/dean"
   });
 
   const academicStats = [
@@ -22,13 +22,13 @@ const DeanDashboard = () => {
   ];
 
   return (
-    <AdminLayout>
+    <DashboardLayout>
       <div className="space-y-6">
         <div className="flex justify-between items-center">
           <div>
             <h1 className="text-3xl font-bold text-gray-900 dark:text-white flex items-center gap-3">
               <GraduationCap className="h-8 w-8 text-indigo-500" />
-              Academic Dean Dashboard
+              Academic Dean Portal
             </h1>
             <p className="text-gray-600 dark:text-gray-400">Academic Administration & Curriculum Management</p>
           </div>
@@ -62,7 +62,7 @@ const DeanDashboard = () => {
           ))}
         </div>
       </div>
-    </AdminLayout>
+    </DashboardLayout>
   );
 };
 

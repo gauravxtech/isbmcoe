@@ -4,14 +4,14 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Home, Users, Bed, Utensils, Wifi, Wrench, Calendar, FileText } from 'lucide-react';
-import AdminLayout from '@/components/admin/AdminLayout';
+import DashboardLayout from '@/components/layouts/DashboardLayout';
 import { useSEO } from '@/hooks/useSEO';
 
 const HostelDashboard = () => {
   useSEO({
     title: "Hostel Dashboard - ISBM College",
     description: "Hostel management dashboard",
-    canonical: "https://isbmcoe.edu.in/admin/hostel-dashboard"
+    canonical: "https://isbmcoe.edu.in/dashboard/hostel"
   });
 
   const hostelStats = [
@@ -22,15 +22,15 @@ const HostelDashboard = () => {
   ];
 
   return (
-    <AdminLayout>
+    <DashboardLayout>
       <div className="space-y-6">
         <div className="flex justify-between items-center">
           <div>
             <h1 className="text-3xl font-bold text-gray-900 dark:text-white flex items-center gap-3">
               <Home className="h-8 w-8 text-emerald-500" />
-              Hostel Dashboard
+              Hostel Management System
             </h1>
-            <p className="text-gray-600 dark:text-gray-400">Residential Management System</p>
+            <p className="text-gray-600 dark:text-gray-400">Residential Services & Administration</p>
           </div>
           <div className="flex gap-3">
             <Button variant="outline">
@@ -62,7 +62,7 @@ const HostelDashboard = () => {
           ))}
         </div>
       </div>
-    </AdminLayout>
+    </DashboardLayout>
   );
 };
 

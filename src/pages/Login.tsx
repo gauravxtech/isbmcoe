@@ -8,6 +8,8 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
+import { useAuth } from '@/contexts/AuthContext';
+import { useToast } from '@/hooks/use-toast';
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -17,7 +19,10 @@ const Login = () => {
     role: '',
     rememberMe: false
   });
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+  const { login } = useAuth();
+  const { toast } = useToast();
 
   const roles = [
     { value: 'super-admin', label: 'Super Admin', icon: Shield, color: 'bg-red-500', description: 'System Administrator' },
@@ -34,33 +39,62 @@ const Login = () => {
     { value: 'hostel', label: 'Hostel', icon: Home, color: 'bg-emerald-500', description: 'Hostel Management' },
   ];
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!formData.email || !formData.password || !formData.role) {
-      alert('Please fill in all required fields');
+      toast({
+        title: "Error",
+        description: "Please fill in all required fields",
+        variant: "destructive"
+      });
       return;
     }
 
-    console.log('Login attempt:', formData);
-    
-    // Route based on role
-    const roleRoutes = {
-      'super-admin': '/admin/super-admin-dashboard',
-      'admin': '/admin/dashboard',
-      'principal': '/admin/principal-dashboard',
-      'dean': '/admin/dean-dashboard',
-      'hod': '/admin/hod-dashboard',
-      'teacher': '/admin/teacher-dashboard',
-      'student': '/admin/student-dashboard',
-      'parent': '/admin/parent-dashboard',
-      'accountant': '/admin/accountant-dashboard',
-      'reception': '/admin/reception-dashboard',
-      'security': '/admin/security-dashboard',
-      'hostel': '/admin/hostel-dashboard',
-    };
+    setIsLoading(true);
 
-    navigate(roleRoutes[formData.role as keyof typeof roleRoutes] || '/admin/dashboard');
+    try {
+      const success = login(formData.email, formData.password, formData.role);
+      
+      if (success) {
+        toast({
+          title: "Login Successful",
+          description: "Welcome to ISBM College Management System",
+        });
+
+        // Route based on role
+        const roleRoutes = {
+          'super-admin': '/dashboard/super-admin',
+          'admin': '/dashboard/admin',
+          'principal': '/dashboard/principal',
+          'dean': '/dashboard/dean',
+          'hod': '/dashboard/hod',
+          'teacher': '/dashboard/teacher',
+          'student': '/dashboard/student',
+          'parent': '/dashboard/parent',
+          'accountant': '/dashboard/accountant',
+          'reception': '/dashboard/reception',
+          'security': '/dashboard/security',
+          'hostel': '/dashboard/hostel',
+        };
+
+        navigate(roleRoutes[formData.role as keyof typeof roleRoutes] || '/dashboard/admin');
+      } else {
+        toast({
+          title: "Login Failed",
+          description: "Invalid credentials. Please try again.",
+          variant: "destructive"
+        });
+      }
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "An unexpected error occurred. Please try again.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -169,6 +203,7 @@ const Login = () => {
                     placeholder="Enter your email"
                     value={formData.email}
                     onChange={handleInputChange}
+                    disabled={isLoading}
                   />
                 </div>
               </div>
@@ -189,11 +224,13 @@ const Login = () => {
                     placeholder="Enter your password"
                     value={formData.password}
                     onChange={handleInputChange}
+                    disabled={isLoading}
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
                     className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                    disabled={isLoading}
                   >
                     {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
                   </button>
@@ -209,6 +246,7 @@ const Login = () => {
                     checked={formData.rememberMe}
                     onChange={handleInputChange}
                     className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                    disabled={isLoading}
                   />
                   <span className="text-sm text-gray-600">Remember me</span>
                 </label>
@@ -224,8 +262,9 @@ const Login = () => {
               <Button 
                 type="submit"
                 className="w-full h-12 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold rounded-lg transition-all duration-300 transform hover:scale-105 shadow-lg"
+                disabled={isLoading}
               >
-                Sign In to Dashboard
+                {isLoading ? 'Signing In...' : 'Sign In to Dashboard'}
               </Button>
             </form>
 

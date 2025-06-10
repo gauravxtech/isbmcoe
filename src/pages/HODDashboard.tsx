@@ -4,14 +4,14 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Users, BookOpen, Calendar, TrendingUp, FileText, GraduationCap, Award, BarChart3 } from 'lucide-react';
-import AdminLayout from '@/components/admin/AdminLayout';
+import DashboardLayout from '@/components/layouts/DashboardLayout';
 import { useSEO } from '@/hooks/useSEO';
 
 const HODDashboard = () => {
   useSEO({
     title: "HOD Dashboard - ISBM College",
     description: "Head of Department dashboard",
-    canonical: "https://isbmcoe.edu.in/admin/hod-dashboard"
+    canonical: "https://isbmcoe.edu.in/dashboard/hod"
   });
 
   const deptStats = [
@@ -22,13 +22,13 @@ const HODDashboard = () => {
   ];
 
   return (
-    <AdminLayout>
+    <DashboardLayout>
       <div className="space-y-6">
         <div className="flex justify-between items-center">
           <div>
             <h1 className="text-3xl font-bold text-gray-900 dark:text-white flex items-center gap-3">
               <Users className="h-8 w-8 text-green-500" />
-              HOD Dashboard
+              Department Head Portal
             </h1>
             <p className="text-gray-600 dark:text-gray-400">Computer Engineering Department</p>
           </div>
@@ -62,7 +62,7 @@ const HODDashboard = () => {
           ))}
         </div>
       </div>
-    </AdminLayout>
+    </DashboardLayout>
   );
 };
 
