@@ -52,26 +52,38 @@ export const useContent = () => {
       setLoading(true);
       
       // Fetch banners
-      const { data: bannersData } = await supabase
+      const { data: bannersData, error: bannersError } = await supabase
         .from('banners')
         .select('*')
         .eq('status', 'active')
         .order('display_order', { ascending: true });
 
+      if (bannersError) {
+        console.error('Error fetching banners:', bannersError);
+      }
+
       // Fetch news/events
-      const { data: newsData } = await supabase
+      const { data: newsData, error: newsError } = await supabase
         .from('news_events')
         .select('*')
         .eq('status', 'published')
         .order('created_at', { ascending: false })
         .limit(6);
 
+      if (newsError) {
+        console.error('Error fetching news/events:', newsError);
+      }
+
       // Fetch marquee texts
-      const { data: marqueeData } = await supabase
+      const { data: marqueeData, error: marqueeError } = await supabase
         .from('marquee_texts')
         .select('*')
         .eq('status', 'active')
         .order('priority', { ascending: true });
+
+      if (marqueeError) {
+        console.error('Error fetching marquee texts:', marqueeError);
+      }
 
       setBanners(bannersData || []);
       setNewsEvents(newsData || []);

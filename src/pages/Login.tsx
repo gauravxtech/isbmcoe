@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -11,7 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { useSEO } from '@/hooks/useSEO';
 
 const Login = () => {
-  const { login, signUp, loading } = useAuth();
+  const { login, signUp, loading, isAuthenticated } = useAuth();
   const navigate = useNavigate();
   const [loginForm, setLoginForm] = useState({ email: '', password: '' });
   const [signUpForm, setSignUpForm] = useState({ 
@@ -27,16 +27,26 @@ const Login = () => {
     canonical: "https://isbmcoe.edu.in/login"
   });
 
+  // Redirect if already authenticated
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate('/dashboard');
+    }
+  }, [isAuthenticated, navigate]);
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+    console.log('Login attempt:', loginForm.email);
     const success = await login(loginForm.email, loginForm.password);
     if (success) {
+      console.log('Login successful, navigating to dashboard');
       navigate('/dashboard');
     }
   };
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
+    console.log('Sign up attempt:', signUpForm.email);
     const success = await signUp(
       signUpForm.email, 
       signUpForm.password, 
@@ -44,7 +54,6 @@ const Login = () => {
       signUpForm.role
     );
     if (success) {
-      // User will need to verify email before they can login
       setSignUpForm({ email: '', password: '', fullName: '', role: 'student' });
     }
   };
@@ -63,10 +72,23 @@ const Login = () => {
     { value: 'hostel', label: 'Hostel Manager' }
   ];
 
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-college-primary"></div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
         <div className="text-center">
+          <img 
+            src="/lovable-uploads/18fee38c-1acf-462a-825a-cda10c5e7381.png" 
+            alt="ISBM Logo" 
+            className="mx-auto h-16 w-16 mb-4"
+          />
           <h2 className="mt-6 text-3xl font-extrabold text-gray-900">
             ISBM College Portal
           </h2>

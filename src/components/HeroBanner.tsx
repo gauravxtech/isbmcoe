@@ -42,13 +42,13 @@ const HeroBanner = () => {
 
       {/* Hero Carousel */}
       {banners.length > 0 ? (
-        <Carousel className="w-full h-screen">
+        <Carousel className="w-full h-screen" opts={{ loop: true }}>
           <CarouselContent>
             {banners.map((banner) => (
               <CarouselItem key={banner.id}>
                 <div className="relative h-screen w-full overflow-hidden">
                   <img
-                    src={banner.image_url}
+                    src={banner.image_url || '/lovable-uploads/a07dab32-a06d-4aa9-ab59-2d061f93201f.png'}
                     alt={banner.title}
                     className="absolute inset-0 w-full h-full object-cover"
                   />
@@ -85,14 +85,20 @@ const HeroBanner = () => {
           </CarouselContent>
           {banners.length > 1 && (
             <>
-              <CarouselPrevious className="left-4" />
-              <CarouselNext className="right-4" />
+              <CarouselPrevious className="left-4 bg-white/20 border-white/30 text-white hover:bg-white/30" />
+              <CarouselNext className="right-4 bg-white/20 border-white/30 text-white hover:bg-white/30" />
             </>
           )}
         </Carousel>
       ) : (
         <div className="relative bg-gradient-to-r from-college-primary to-college-secondary text-white min-h-screen flex items-center">
           <div className="container mx-auto px-4 text-center">
+            <Badge 
+              variant="secondary" 
+              className="mb-4 bg-white/20 text-white border-white/30 text-sm px-4 py-2"
+            >
+              NAAC B++ Accredited
+            </Badge>
             <h1 className="text-4xl md:text-6xl font-bold mb-4">
               ISBM College of Engineering
             </h1>
