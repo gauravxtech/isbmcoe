@@ -18,7 +18,7 @@ const Login = () => {
   });
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
-  const { signIn, isAuthenticated, userRole } = useAuth();
+  const { signIn, isAuthenticated, userRole, loading } = useAuth();
   const { toast } = useToast();
 
   const getRoleDashboardPath = (role: string): string => {
@@ -42,11 +42,25 @@ const Login = () => {
 
   // Redirect authenticated users to their dashboard
   useEffect(() => {
-    if (isAuthenticated && userRole) {
+    // Only redirect if we're not loading, user is authenticated, and we have a role
+    if (!loading && isAuthenticated && userRole) {
+      console.log('Redirecting user with role:', userRole);
       const dashboardPath = getRoleDashboardPath(userRole);
-      navigate(dashboardPath);
+      navigate(dashboardPath, { replace: true });
     }
-  }, [isAuthenticated, userRole, navigate]);
+  }, [isAuthenticated, userRole, loading, navigate]);
+
+  // Don't render the login form if user is authenticated and we're redirecting
+  if (!loading && isAuthenticated && userRole) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 flex items-center justify-center p-4">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Redirecting to dashboard...</p>
+        </div>
+      </div>
+    );
+  }
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
