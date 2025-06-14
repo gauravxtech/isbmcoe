@@ -9,7 +9,213 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      banners: {
+        Row: {
+          created_at: string
+          cta_link: string | null
+          cta_text: string | null
+          display_order: number | null
+          highlight_text: string | null
+          id: string
+          image_url: string | null
+          status: string | null
+          subtitle: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          cta_link?: string | null
+          cta_text?: string | null
+          display_order?: number | null
+          highlight_text?: string | null
+          id?: string
+          image_url?: string | null
+          status?: string | null
+          subtitle?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          cta_link?: string | null
+          cta_text?: string | null
+          display_order?: number | null
+          highlight_text?: string | null
+          id?: string
+          image_url?: string | null
+          status?: string | null
+          subtitle?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      departments: {
+        Row: {
+          achievements: string[] | null
+          code: string
+          created_at: string
+          description: string | null
+          facilities: string[] | null
+          hod_name: string | null
+          id: string
+          image_url: string | null
+          name: string
+          programs: string[] | null
+          status: string | null
+          student_count: number | null
+          updated_at: string
+        }
+        Insert: {
+          achievements?: string[] | null
+          code: string
+          created_at?: string
+          description?: string | null
+          facilities?: string[] | null
+          hod_name?: string | null
+          id?: string
+          image_url?: string | null
+          name: string
+          programs?: string[] | null
+          status?: string | null
+          student_count?: number | null
+          updated_at?: string
+        }
+        Update: {
+          achievements?: string[] | null
+          code?: string
+          created_at?: string
+          description?: string | null
+          facilities?: string[] | null
+          hod_name?: string | null
+          id?: string
+          image_url?: string | null
+          name?: string
+          programs?: string[] | null
+          status?: string | null
+          student_count?: number | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      marquee_texts: {
+        Row: {
+          created_at: string
+          id: string
+          link: string | null
+          priority: number | null
+          status: string | null
+          text: string
+          type: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          link?: string | null
+          priority?: number | null
+          status?: string | null
+          text: string
+          type?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          link?: string | null
+          priority?: number | null
+          status?: string | null
+          text?: string
+          type?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      news_events: {
+        Row: {
+          category: string
+          content: string | null
+          created_at: string
+          created_by: string | null
+          event_date: string | null
+          excerpt: string | null
+          featured: boolean | null
+          id: string
+          image_url: string | null
+          status: string | null
+          title: string
+          type: string
+          updated_at: string
+        }
+        Insert: {
+          category: string
+          content?: string | null
+          created_at?: string
+          created_by?: string | null
+          event_date?: string | null
+          excerpt?: string | null
+          featured?: boolean | null
+          id?: string
+          image_url?: string | null
+          status?: string | null
+          title: string
+          type: string
+          updated_at?: string
+        }
+        Update: {
+          category?: string
+          content?: string | null
+          created_at?: string
+          created_by?: string | null
+          event_date?: string | null
+          excerpt?: string | null
+          featured?: boolean | null
+          id?: string
+          image_url?: string | null
+          status?: string | null
+          title?: string
+          type?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          department: string | null
+          email: string
+          full_name: string | null
+          id: string
+          phone: string | null
+          role: string
+          updated_at: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          department?: string | null
+          email: string
+          full_name?: string | null
+          id: string
+          phone?: string | null
+          role?: string
+          updated_at?: string
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          department?: string | null
+          email?: string
+          full_name?: string | null
+          id?: string
+          phone?: string | null
+          role?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
