@@ -254,8 +254,22 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
 
   return (
     <div className={`min-h-screen ${darkMode ? 'dark' : ''} bg-gray-50 dark:bg-gray-900 flex`}>
+      {/* Mobile Sidebar Overlay */}
+      {sidebarOpen && (
+        <div 
+          className="fixed inset-0 z-40 bg-black bg-opacity-50 lg:hidden"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
+
       {/* Sidebar */}
-      <div className={`${sidebarOpen ? 'w-64' : 'w-16'} bg-white dark:bg-gray-800 shadow-lg transition-all duration-300 flex flex-col border-r border-gray-200 dark:border-gray-700`}>
+      <div className={`${
+        sidebarOpen 
+          ? 'fixed inset-y-0 left-0 z-50 w-64 lg:relative lg:translate-x-0' 
+          : 'fixed inset-y-0 left-0 z-50 w-16 lg:relative lg:translate-x-0'
+      } bg-white dark:bg-gray-800 shadow-lg transition-all duration-300 transform ${
+        sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
+      } flex flex-col border-r border-gray-200 dark:border-gray-700`}>
         {/* Sidebar Header */}
         <div className="p-4 border-b border-gray-200 dark:border-gray-700">
           <div className="flex items-center justify-between">
@@ -276,7 +290,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
               variant="ghost"
               size="sm"
               onClick={() => setSidebarOpen(!sidebarOpen)}
-              className="text-gray-500 dark:text-gray-400"
+              className="text-gray-500 dark:text-gray-400 lg:hidden"
             >
               {sidebarOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
             </Button>
@@ -388,8 +402,28 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
         {/* Top Header */}
         <header className="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700 px-6 py-4">
           <div className="flex items-center justify-between">
-            {/* Left: Logo + Dashboard Title */}
+            {/* Left: Mobile Toggle + Logo + Dashboard Title */}
             <div className="flex items-center space-x-4">
+              {/* Mobile Menu Toggle */}
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setSidebarOpen(!sidebarOpen)}
+                className="lg:hidden text-gray-500 dark:text-gray-400"
+              >
+                <Menu className="h-5 w-5" />
+              </Button>
+              
+              {/* Desktop Sidebar Toggle */}
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setSidebarOpen(!sidebarOpen)}
+                className="hidden lg:flex text-gray-500 dark:text-gray-400"
+              >
+                <Menu className="h-5 w-5" />
+              </Button>
+
               <img 
                 src="/lovable-uploads/18fee38c-1acf-462a-825a-cda10c5e7381.png" 
                 alt="ISBM Logo" 
@@ -404,7 +438,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
             </div>
 
             {/* Center: Search */}
-            <div className="flex-1 max-w-md mx-8">
+            <div className="flex-1 max-w-md mx-8 hidden md:block">
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                 <Input
@@ -426,16 +460,6 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
                 {darkMode ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
               </Button>
 
-              {/* Settings Button */}
-              <Button 
-                variant="ghost" 
-                size="sm"
-                onClick={() => setSettingsOpen(true)}
-                className="text-gray-500 dark:text-gray-400"
-              >
-                <Settings className="h-5 w-5" />
-              </Button>
-
               {/* Notifications */}
               <Button variant="ghost" size="sm" className="relative text-gray-500 dark:text-gray-400">
                 <Bell className="h-5 w-5" />
@@ -444,14 +468,25 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
                 </Badge>
               </Button>
               
-              {/* User Profile */}
+              {/* User Profile with Settings */}
               <div className="flex items-center space-x-3">
-                <div className="text-right">
+                <div className="text-right hidden md:block">
                   <p className="text-sm font-medium text-gray-900 dark:text-white">{getUserDisplayName()}</p>
                   <p className="text-xs text-gray-500 dark:text-gray-400">{user?.email}</p>
                 </div>
-                <div className="w-10 h-10 bg-college-primary rounded-full flex items-center justify-center text-white font-semibold">
-                  {getUserInitial()}
+                <div className="relative">
+                  <div className="w-10 h-10 bg-college-primary rounded-full flex items-center justify-center text-white font-semibold">
+                    {getUserInitial()}
+                  </div>
+                  {/* Settings Button on Profile */}
+                  <Button 
+                    variant="ghost" 
+                    size="sm"
+                    onClick={() => setSettingsOpen(true)}
+                    className="absolute -bottom-1 -right-1 h-6 w-6 p-0 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-full shadow-sm hover:bg-gray-50 dark:hover:bg-gray-700"
+                  >
+                    <Settings className="h-3 w-3 text-gray-600 dark:text-gray-400" />
+                  </Button>
                 </div>
               </div>
             </div>
