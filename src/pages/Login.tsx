@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Eye, EyeOff, Mail, Lock, ArrowLeft, Shield, Sparkles } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -18,8 +18,35 @@ const Login = () => {
   });
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
-  const { signIn } = useAuth();
+  const { signIn, isAuthenticated, userRole } = useAuth();
   const { toast } = useToast();
+
+  const getRoleDashboardPath = (role: string): string => {
+    const dashboardPaths: Record<string, string> = {
+      'super-admin': '/dashboard/super-admin',
+      'admin': '/dashboard/admin',
+      'principal': '/dashboard/principal',
+      'dean': '/dashboard/dean',
+      'hod': '/dashboard/hod',
+      'teacher': '/dashboard/teacher',
+      'student': '/dashboard/student',
+      'parent': '/dashboard/parent',
+      'accountant': '/dashboard/accountant',
+      'reception': '/dashboard/reception',
+      'security': '/dashboard/security',
+      'hostel': '/dashboard/hostel'
+    };
+    
+    return dashboardPaths[role] || '/dashboard/student';
+  };
+
+  // Redirect authenticated users to their dashboard
+  useEffect(() => {
+    if (isAuthenticated && userRole) {
+      const dashboardPath = getRoleDashboardPath(userRole);
+      navigate(dashboardPath);
+    }
+  }, [isAuthenticated, userRole, navigate]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -49,7 +76,7 @@ const Login = () => {
           title: "Login Successful",
           description: "Welcome to ISBM College Management System",
         });
-        navigate('/');
+        // Navigation will be handled by the useEffect hook
       }
     } catch (error) {
       toast({

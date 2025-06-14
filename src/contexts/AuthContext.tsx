@@ -10,6 +10,7 @@ interface AuthContextType {
   signOut: () => Promise<{ error: any }>;
   isAuthenticated: boolean;
   loading: boolean;
+  userRole: string | null;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -30,6 +31,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
+  const [userRole, setUserRole] = useState<string | null>(null);
 
   useEffect(() => {
     // Set up auth state listener
@@ -37,6 +39,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       (event, session) => {
         setSession(session);
         setUser(session?.user ?? null);
+        
+        // Extract role from user metadata
+        if (session?.user?.user_metadata?.role) {
+          setUserRole(session.user.user_metadata.role);
+        } else {
+          setUserRole(null);
+        }
+        
         setLoading(false);
       }
     );
@@ -45,6 +55,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
       setUser(session?.user ?? null);
+      
+      // Extract role from user metadata
+      if (session?.user?.user_metadata?.role) {
+        setUserRole(session.user.user_metadata.role);
+      } else {
+        setUserRole(null);
+      }
+      
       setLoading(false);
     });
 
@@ -62,6 +80,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const signOut = async () => {
     const { error } = await supabase.auth.signOut();
+    if (!error) {
+      setUserRole(null);
+    }
     return { error };
   };
 
@@ -71,7 +92,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     signIn,
     signOut,
     isAuthenticated: !!user,
-    loading
+    loading,
+    userRole
   };
 
   return (
