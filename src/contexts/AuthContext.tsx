@@ -33,19 +33,47 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [userRole, setUserRole] = useState<string | null>(null);
 
+  const extractUserRole = (session: Session | null) => {
+    if (!session?.user) {
+      console.log('No session or user found');
+      return null;
+    }
+
+    console.log('User metadata:', session.user.user_metadata);
+    console.log('App metadata:', session.user.app_metadata);
+    
+    // Check user_metadata first, then app_metadata, then email-based fallback
+    let role = null;
+    
+    if (session.user.user_metadata?.role) {
+      role = session.user.user_metadata.role;
+      console.log('Role from user_metadata:', role);
+    } else if (session.user.app_metadata?.role) {
+      role = session.user.app_metadata.role;
+      console.log('Role from app_metadata:', role);
+    } else if (session.user.email === 'llm@isbmcoe.org') {
+      // Fallback for the specific super admin email
+      role = 'super-admin';
+      console.log('Role set as super-admin for llm@isbmcoe.org');
+    } else {
+      role = 'student'; // Default role
+      console.log('Default role set to student');
+    }
+    
+    return role;
+  };
+
   useEffect(() => {
     // Set up auth state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
+        console.log('Auth state change:', event, session?.user?.email);
         setSession(session);
         setUser(session?.user ?? null);
         
-        // Extract role from user metadata
-        if (session?.user?.user_metadata?.role) {
-          setUserRole(session.user.user_metadata.role);
-        } else {
-          setUserRole(null);
-        }
+        const role = extractUserRole(session);
+        setUserRole(role);
+        console.log('Setting user role to:', role);
         
         setLoading(false);
       }
@@ -53,15 +81,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
     // Get initial session
     supabase.auth.getSession().then(({ data: { session } }) => {
+      console.log('Initial session check:', session?.user?.email);
       setSession(session);
       setUser(session?.user ?? null);
       
-      // Extract role from user metadata
-      if (session?.user?.user_metadata?.role) {
-        setUserRole(session.user.user_metadata.role);
-      } else {
-        setUserRole(null);
-      }
+      const role = extractUserRole(session);
+      setUserRole(role);
+      console.log('Initial user role set to:', role);
       
       setLoading(false);
     });
