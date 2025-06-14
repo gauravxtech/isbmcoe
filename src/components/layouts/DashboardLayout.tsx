@@ -46,16 +46,24 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   const [darkMode, setDarkMode] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
-  const { user, logout } = useAuth();
+  const { user, signOut } = useAuth();
   const { toast } = useToast();
 
-  const handleLogout = () => {
-    logout();
-    toast({
-      title: "Logged Out",
-      description: "You have been successfully logged out."
-    });
-    navigate('/login');
+  const handleLogout = async () => {
+    const { error } = await signOut();
+    if (!error) {
+      toast({
+        title: "Logged Out",
+        description: "You have been successfully logged out."
+      });
+      navigate('/login');
+    } else {
+      toast({
+        title: "Error",
+        description: "Failed to log out. Please try again.",
+        variant: "destructive"
+      });
+    }
   };
 
   const toggleSection = (section: string) => {
@@ -90,7 +98,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
       name: 'Dashboard',
       icon: LayoutDashboard,
       items: [
-        { name: 'Overview', href: `/dashboard/${user?.role}`, icon: LayoutDashboard },
+        { name: 'Overview', href: `/dashboard/${user?.user_metadata?.role || 'student'}`, icon: LayoutDashboard },
       ]
     },
     {
@@ -223,6 +231,22 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
       { name: 'Chat', href: '/admin/apps/chat', icon: MessageSquare },
       { name: 'Email', href: '/admin/apps/email', icon: Mail },
     ]
+  };
+
+  // Get user display name from email or user metadata
+  const getUserDisplayName = () => {
+    if (user?.user_metadata?.full_name) {
+      return user.user_metadata.full_name;
+    }
+    if (user?.email) {
+      return user.email.split('@')[0];
+    }
+    return 'User';
+  };
+
+  const getUserInitial = () => {
+    const displayName = getUserDisplayName();
+    return displayName.charAt(0).toUpperCase();
   };
 
   return (
@@ -370,7 +394,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
               />
               <div>
                 <h1 className="text-xl font-bold text-gray-900 dark:text-white">
-                  {getDashboardTitle(user?.role || '')}
+                  {getDashboardTitle(user?.user_metadata?.role || 'student')}
                 </h1>
                 <p className="text-sm text-gray-500 dark:text-gray-400">ISBM College of Engineering</p>
               </div>
@@ -410,11 +434,11 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
               {/* User Profile */}
               <div className="flex items-center space-x-3">
                 <div className="text-right">
-                  <p className="text-sm font-medium text-gray-900 dark:text-white">{user?.name}</p>
+                  <p className="text-sm font-medium text-gray-900 dark:text-white">{getUserDisplayName()}</p>
                   <p className="text-xs text-gray-500 dark:text-gray-400">{user?.email}</p>
                 </div>
                 <div className="w-10 h-10 bg-college-primary rounded-full flex items-center justify-center text-white font-semibold">
-                  {user?.name?.charAt(0) || 'U'}
+                  {getUserInitial()}
                 </div>
               </div>
             </div>
