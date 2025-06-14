@@ -27,7 +27,8 @@ import {
   CheckSquare,
   Mail,
   Sun,
-  Moon
+  Moon,
+  User
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -35,6 +36,7 @@ import { Badge } from '@/components/ui/badge';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
+import UserSettingsDialog from '@/components/UserSettingsDialog';
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -44,9 +46,10 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [expandedSections, setExpandedSections] = useState<string[]>(['dashboard']);
   const [darkMode, setDarkMode] = useState(false);
+  const [settingsOpen, setSettingsOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
-  const { user, signOut } = useAuth();
+  const { user, signOut, userRole } = useAuth();
   const { toast } = useToast();
 
   const handleLogout = async () => {
@@ -98,7 +101,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
       name: 'Dashboard',
       icon: LayoutDashboard,
       items: [
-        { name: 'Overview', href: `/dashboard/${user?.user_metadata?.role || 'student'}`, icon: LayoutDashboard },
+        { name: 'Overview', href: `/dashboard/${userRole || 'student'}`, icon: LayoutDashboard },
       ]
     },
     {
@@ -394,7 +397,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
               />
               <div>
                 <h1 className="text-xl font-bold text-gray-900 dark:text-white">
-                  {getDashboardTitle(user?.user_metadata?.role || 'student')}
+                  {getDashboardTitle(userRole || 'student')}
                 </h1>
                 <p className="text-sm text-gray-500 dark:text-gray-400">ISBM College of Engineering</p>
               </div>
@@ -421,6 +424,16 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
                 className="text-gray-500 dark:text-gray-400"
               >
                 {darkMode ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+              </Button>
+
+              {/* Settings Button */}
+              <Button 
+                variant="ghost" 
+                size="sm"
+                onClick={() => setSettingsOpen(true)}
+                className="text-gray-500 dark:text-gray-400"
+              >
+                <Settings className="h-5 w-5" />
               </Button>
 
               {/* Notifications */}
@@ -450,6 +463,12 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
           {children}
         </main>
       </div>
+
+      {/* User Settings Dialog */}
+      <UserSettingsDialog 
+        open={settingsOpen} 
+        onOpenChange={setSettingsOpen}
+      />
     </div>
   );
 };
