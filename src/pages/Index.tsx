@@ -1,4 +1,3 @@
-
 import React, { useEffect } from 'react';
 import Header from '@/components/Header';
 import Navbar from '@/components/Navbar';
@@ -16,9 +15,7 @@ import { useSEO } from '@/hooks/useSEO';
 const Index = () => {
   useSEO({
     title: "ISBM College of Engineering - Best Engineering College in Pune | NAAC B++ Accredited",
-    description: "ISBM College of Engineering, Pune - Premier engineering institution affiliated to Savitribai Phule Pune University. NAAC B++ Accredited, AICTE Approved. Offering B.E. programs in CSE,
-
-AI/ML, Mechanical, Electronics. 95% placement record with top companies.",
+    description: "ISBM College of Engineering, Pune - Premier engineering institution affiliated to Savitribai Phule Pune University. NAAC B++ Accredited, AICTE Approved. Offering B.E. programs in CSE, AI/ML, Mechanical, Electronics. 95% placement record with top companies.",
     keywords: "ISBM College Engineering, Pune Engineering College, NAAC B++, AICTE Approved, Computer Science Engineering, Artificial Intelligence, Machine Learning, Mechanical Engineering, Electronics Engineering, Engineering Admissions Pune, Best Engineering College Maharashtra",
     canonical: "https://isbmcoe.edu.in",
     structuredData: {
