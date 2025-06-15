@@ -10,7 +10,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { Shield, Users, Server, Database, Settings, Activity, TrendingUp, AlertTriangle, ChevronDown, Globe, Image, FileText } from 'lucide-react';
+import { Shield, Users, Server, Database, Settings, Activity, TrendingUp, AlertTriangle } from 'lucide-react';
 import DashboardLayout from '@/components/layouts/DashboardLayout';
 import BannerManager from '@/components/admin/BannerManager';
 import { useSEO } from '@/hooks/useSEO';
@@ -179,36 +179,6 @@ const SuperAdminDashboard = () => {
               <Server className="h-3 w-3 md:h-4 md:w-4 mr-1 md:mr-2" />
               Refresh Data
             </Button>
-            
-            {/* Website Management Dropdown */}
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button className="bg-blue-500 hover:bg-blue-600 text-xs md:text-sm" size="sm">
-                  <Globe className="h-3 w-3 md:h-4 md:w-4 mr-1 md:mr-2" />
-                  Website Management
-                  <ChevronDown className="h-3 w-3 md:h-4 md:w-4 ml-1" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-56 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-lg">
-                <DropdownMenuLabel className="text-gray-900 dark:text-white">Website Content</DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem 
-                  onClick={() => setActiveView('banner-manager')}
-                  className="cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700"
-                >
-                  <Image className="mr-2 h-4 w-4" />
-                  <span>Banner & Slider Management</span>
-                </DropdownMenuItem>
-                <DropdownMenuItem className="cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700">
-                  <FileText className="mr-2 h-4 w-4" />
-                  <span>News & Events</span>
-                </DropdownMenuItem>
-                <DropdownMenuItem className="cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700">
-                  <Globe className="mr-2 h-4 w-4" />
-                  <span>Page Content</span>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
 
             <Button className="bg-red-500 hover:bg-red-600 text-xs md:text-sm" size="sm">
               <Settings className="h-3 w-3 md:h-4 md:w-4 mr-1 md:mr-2" />
