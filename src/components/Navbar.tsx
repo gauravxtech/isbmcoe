@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef } from 'react';
 import { ChevronDown, Menu, X } from 'lucide-react';
 import { Link } from 'react-router-dom';
@@ -66,7 +67,7 @@ const Navbar = () => {
       items: [
         { name: 'Our Story', path: '/about' },
         { name: 'Vision & Mission', path: '/vision-mission' },
-        { name: 'Leadership', path: '#' },
+        { name: 'Administration', path: '/administration' },
         { name: 'Infrastructure', path: '#' },
         { name: 'Awards & Recognition', path: '#' }
       ]
@@ -84,14 +85,14 @@ const Navbar = () => {
     {
       title: 'Departments',
       items: [
-        { name: 'First Year Engineering', path: '/first-year-department' },
-        { name: 'Computer Engineering', path: '/computer-engineering-department' },
-        { name: 'AI & Machine Learning', path: '/aiml-department' },
-        { name: 'AI & Data Science', path: '/aids-department' },
-        { name: 'Mechanical Engineering', path: '/mechanical-department' },
-        { name: 'Electronics Engineering (VLSI)', path: '/etc-department' },
-        { name: 'Bachelor of Business Administration (BBA)', path: '/bba-department' },
-        { name: 'Bachelor of Computer Application (BCA)', path: '/bca-department' },
+        { name: 'First Year Engineering', path: '/departments/first-year' },
+        { name: 'Computer Engineering', path: '/departments/computer-engineering' },
+        { name: 'AI & Machine Learning', path: '/departments/aiml' },
+        { name: 'AI & Data Science', path: '/departments/aids' },
+        { name: 'Mechanical Engineering', path: '/departments/mechanical-engineering' },
+        { name: 'Electronics Engineering (VLSI)', path: '/departments/electronics-telecommunication' },
+        { name: 'Bachelor of Business Administration (BBA)', path: '/departments/bba' },
+        { name: 'Bachelor of Computer Application (BCA)', path: '/departments/bca' },
         { name: 'Computer Science & Engineering', path: '#' }
       ]
     },
@@ -99,11 +100,9 @@ const Navbar = () => {
       title: 'Admissions',
       items: [
         { name: 'Programs Offered', path: '/programs-offered' },
-        { name: 'UG Programs', path: '#', subItems: [
-          { name: 'First Year', path: '/admissions/first-year' },
-          { name: 'Direct Second Year', path: '/admissions/direct-second-year' }
-        ]},
-        { name: 'Fee Structure', path: '/admissions/fees-structure' },
+        { name: 'First Year Admission', path: '/first-year-admission' },
+        { name: 'Direct Second Year', path: '/direct-second-year-admission' },
+        { name: 'Fee Structure', path: '/fees-structure' },
         { name: 'Scholarships', path: '#' },
         { name: 'Application Process', path: '#' }
       ]
@@ -112,10 +111,10 @@ const Navbar = () => {
       title: 'Placements',
       items: [
         { name: 'Placement Overview', path: '/placements' },
-        { name: 'Training Programs', path: '/placements/training-programs' },
-        { name: 'Industry Partners', path: '/placements/industry-partners' },
-        { name: 'Career Services', path: '/placements/career-services' },
-        { name: 'Alumni Network', path: '/placements/alumni-network' }
+        { name: 'Training Programs', path: '/training-programs' },
+        { name: 'Industry Partners', path: '/industry-partners' },
+        { name: 'Career Services', path: '/career-services' },
+        { name: 'Alumni Network', path: '/alumni-network' }
       ]
     },
     {
@@ -125,10 +124,10 @@ const Navbar = () => {
         { name: 'Cultural Events', path: '/cultural-events' },
         { name: 'Sports & Recreation', path: '#' },
         { name: 'Student Associations', path: '#', subItems: [
-          { name: 'CESA', path: '/cesa' },
-          { name: 'MALSA', path: '/malsa' },
-          { name: 'AISA', path: '/aisa' },
-          { name: 'ETSA', path: '/etsa' }
+          { name: 'CESA', path: '/associations/cesa' },
+          { name: 'MALSA', path: '/associations/malsa' },
+          { name: 'AISA', path: '/associations/aisa' },
+          { name: 'ETSA', path: '/associations/etsa' }
         ]},
         { name: 'Hostel Facilities', path: '/hostel' }
       ]
@@ -136,11 +135,11 @@ const Navbar = () => {
     {
       title: 'Contact Us',
       items: [
-        { name: 'Campus Location', path: '/contact/campus-location' },
-        { name: 'Administration', path: '/contact/administration' },
-        { name: 'Helpdesk', path: '/contact/helpdesk' },
-        { name: 'Directions', path: '/contact/directions' },
-        { name: 'Virtual Tour', path: '/contact/virtual-tour' }
+        { name: 'Campus Location', path: '/campus-location' },
+        { name: 'Administration', path: '/administration' },
+        { name: 'Helpdesk', path: '/helpdesk' },
+        { name: 'Directions', path: '/directions' },
+        { name: 'Virtual Tour', path: '/virtual-tour' }
       ]
     }
   ];
