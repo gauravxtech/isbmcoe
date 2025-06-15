@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
@@ -33,32 +32,25 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const extractUserRole = async (user: User | null) => {
     if (!user) {
-      console.log('No user found');
       return null;
     }
-
-    console.log('User metadata:', user.user_metadata);
-    console.log('App metadata:', user.app_metadata);
     
     let role = null;
     
     // Check user_metadata first, then app_metadata
     if (user.user_metadata?.role) {
       role = user.user_metadata.role;
-      console.log('Role from user_metadata:', role);
     } else if (user.app_metadata?.role) {
       role = user.app_metadata.role;
-      console.log('Role from app_metadata:', role);
     }
     
     // Special case for the super admin email - set role immediately
     if (user.email === 'llm@isbmcoe.org') {
       role = 'super-admin';
-      console.log('Role set as super-admin for llm@isbmcoe.org');
       
       // Also try to create/update profile in database
       try {
-        const { error: profileError } = await supabase
+        await supabase
           .from('profiles')
           .upsert({
             id: user.id,
@@ -68,14 +60,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           }, {
             onConflict: 'id'
           });
-        
-        if (profileError) {
-          console.log('Profile upsert error (non-critical):', profileError);
-        } else {
-          console.log('Profile created/updated successfully');
-        }
       } catch (error) {
-        console.log('Error creating profile (non-critical):', error);
+        // Errors can be sent to a logging service in production
       }
       
       return role;
@@ -92,37 +78,29 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         
         if (!error && profile) {
           role = profile.role;
-          console.log('Role from database:', role);
-        } else {
-          console.log('No profile found or error:', error);
         }
       } catch (error) {
-        console.log('Error fetching profile:', error);
+        // Errors can be sent to a logging service in production
       }
     }
     
     // Default role
     if (!role) {
       role = 'student';
-      console.log('Default role set to student');
     }
     
     return role;
   };
 
   useEffect(() => {
-    console.log('AuthProvider: Setting up auth state listener');
-    
     // Set up auth state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
-        console.log('Auth state change:', event, session?.user?.email);
         setUser(session?.user ?? null);
         
         if (session?.user) {
           const role = await extractUserRole(session.user);
           setUserRole(role);
-          console.log('Setting user role to:', role);
         } else {
           setUserRole(null);
         }
@@ -133,13 +111,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
     // Get initial session
     supabase.auth.getSession().then(async ({ data: { session } }) => {
-      console.log('Initial session check:', session?.user?.email);
       setUser(session?.user ?? null);
       
       if (session?.user) {
         const role = await extractUserRole(session.user);
         setUserRole(role);
-        console.log('Initial user role set to:', role);
       } else {
         setUserRole(null);
       }
@@ -151,31 +127,20 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   }, []);
 
   const signIn = async (email: string, password: string) => {
-    console.log('Attempting to sign in:', email);
-    const { data, error } = await supabase.auth.signInWithPassword({
+    const { error } = await supabase.auth.signInWithPassword({
       email,
       password
     });
-    
-    if (error) {
-      console.error('Sign in error:', error);
-    } else {
-      console.log('Sign in successful:', data.user?.email);
-    }
     
     return { error };
   };
 
   const signOut = async () => {
-    console.log('Signing out...');
     setLoading(true);
     const { error } = await supabase.auth.signOut();
     if (!error) {
       setUser(null);
       setUserRole(null);
-      console.log('Sign out successful');
-    } else {
-      console.error('Sign out error:', error);
     }
     setLoading(false);
     return { error };

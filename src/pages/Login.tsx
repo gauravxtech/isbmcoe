@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Eye, EyeOff, Mail, Lock, ArrowLeft, Shield, Sparkles } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
@@ -44,7 +43,6 @@ const Login = () => {
   useEffect(() => {
     // Only redirect if we're not loading, user is authenticated, and we have a role
     if (!loading && isAuthenticated && userRole) {
-      console.log('Redirecting user with role:', userRole);
       const dashboardPath = getRoleDashboardPath(userRole);
       navigate(dashboardPath, { replace: true });
     }

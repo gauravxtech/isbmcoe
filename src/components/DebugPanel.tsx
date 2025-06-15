@@ -83,7 +83,7 @@ const DebugPanel = () => {
                   <Button variant="outline" size="sm" onClick={() => window.location.href = '/admin-setup'}>
                     Admin Setup
                   </Button>
-                  <Button variant="outline" size="sm" onClick={() => console.log('Auth State:', { user, userRole, isAuthenticated, loading })}>
+                  <Button variant="outline" size="sm" onClick={() => { /* Removed console.log for production */ }}>
                     Log Auth State
                   </Button>
                 </div>
