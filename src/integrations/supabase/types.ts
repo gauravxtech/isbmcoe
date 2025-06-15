@@ -9,6 +9,51 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      announcements: {
+        Row: {
+          content: string
+          created_at: string
+          created_by: string | null
+          end_date: string | null
+          id: string
+          priority: number | null
+          start_date: string | null
+          status: string | null
+          target_audience: string | null
+          title: string
+          type: string | null
+          updated_at: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          created_by?: string | null
+          end_date?: string | null
+          id?: string
+          priority?: number | null
+          start_date?: string | null
+          status?: string | null
+          target_audience?: string | null
+          title: string
+          type?: string | null
+          updated_at?: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          created_by?: string | null
+          end_date?: string | null
+          id?: string
+          priority?: number | null
+          start_date?: string | null
+          status?: string | null
+          target_audience?: string | null
+          title?: string
+          type?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       banners: {
         Row: {
           created_at: string
@@ -129,6 +174,54 @@ export type Database = {
           text?: string
           type?: string | null
           updated_at?: string
+        }
+        Relationships: []
+      }
+      media_library: {
+        Row: {
+          alt_text: string | null
+          caption: string | null
+          created_at: string
+          file_size: number
+          file_type: string
+          file_url: string
+          filename: string
+          folder: string | null
+          id: string
+          mime_type: string
+          original_filename: string
+          updated_at: string
+          uploaded_by: string | null
+        }
+        Insert: {
+          alt_text?: string | null
+          caption?: string | null
+          created_at?: string
+          file_size: number
+          file_type: string
+          file_url: string
+          filename: string
+          folder?: string | null
+          id?: string
+          mime_type: string
+          original_filename: string
+          updated_at?: string
+          uploaded_by?: string | null
+        }
+        Update: {
+          alt_text?: string | null
+          caption?: string | null
+          created_at?: string
+          file_size?: number
+          file_type?: string
+          file_url?: string
+          filename?: string
+          folder?: string | null
+          id?: string
+          mime_type?: string
+          original_filename?: string
+          updated_at?: string
+          uploaded_by?: string | null
         }
         Relationships: []
       }
@@ -306,6 +399,90 @@ export type Database = {
           pending_updates?: number
           recorded_at?: string
           system_uptime?: string
+        }
+        Relationships: []
+      }
+      website_pages: {
+        Row: {
+          content: string | null
+          created_at: string
+          created_by: string | null
+          display_order: number | null
+          featured_image_url: string | null
+          id: string
+          meta_description: string | null
+          meta_keywords: string | null
+          page_type: string | null
+          slug: string
+          status: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          content?: string | null
+          created_at?: string
+          created_by?: string | null
+          display_order?: number | null
+          featured_image_url?: string | null
+          id?: string
+          meta_description?: string | null
+          meta_keywords?: string | null
+          page_type?: string | null
+          slug: string
+          status?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          content?: string | null
+          created_at?: string
+          created_by?: string | null
+          display_order?: number | null
+          featured_image_url?: string | null
+          id?: string
+          meta_description?: string | null
+          meta_keywords?: string | null
+          page_type?: string | null
+          slug?: string
+          status?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      website_settings: {
+        Row: {
+          category: string | null
+          created_at: string
+          description: string | null
+          id: string
+          is_public: boolean | null
+          setting_key: string
+          setting_type: string | null
+          setting_value: string | null
+          updated_at: string
+        }
+        Insert: {
+          category?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_public?: boolean | null
+          setting_key: string
+          setting_type?: string | null
+          setting_value?: string | null
+          updated_at?: string
+        }
+        Update: {
+          category?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_public?: boolean | null
+          setting_key?: string
+          setting_type?: string | null
+          setting_value?: string | null
+          updated_at?: string
         }
         Relationships: []
       }

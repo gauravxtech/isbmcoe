@@ -5,20 +5,25 @@ import BannerManager from './BannerManager';
 import NewsEventManager from './NewsEventManager';
 import DepartmentContentManager from './DepartmentContentManager';
 import MarqueeManager from './MarqueeManager';
-import PlaceholderTabContent from './PlaceholderTabContent';
+import PagesManager from './PagesManager';
+import AnnouncementManager from './AnnouncementManager';
+import MediaLibraryManager from './MediaLibraryManager';
+import WebsiteSettingsManager from './WebsiteSettingsManager';
 import { 
   Image as ImageIcon, 
   Newspaper, 
   Building, 
   Type,
   FileText,
-  Megaphone
+  Megaphone,
+  FolderOpen,
+  Settings
 } from 'lucide-react';
 
 const ContentManagerTabs = () => {
   return (
     <Tabs defaultValue="banners" className="space-y-6">
-      <TabsList className="grid w-full grid-cols-6">
+      <TabsList className="grid w-full grid-cols-8">
         <TabsTrigger value="banners" className="flex items-center gap-2">
           <ImageIcon className="h-4 w-4" />
           Banners
@@ -43,6 +48,14 @@ const ContentManagerTabs = () => {
           <Megaphone className="h-4 w-4" />
           Announcements
         </TabsTrigger>
+        <TabsTrigger value="media" className="flex items-center gap-2">
+          <FolderOpen className="h-4 w-4" />
+          Media Library
+        </TabsTrigger>
+        <TabsTrigger value="settings" className="flex items-center gap-2">
+          <Settings className="h-4 w-4" />
+          Settings
+        </TabsTrigger>
       </TabsList>
 
       <TabsContent value="banners">
@@ -62,19 +75,19 @@ const ContentManagerTabs = () => {
       </TabsContent>
 
       <TabsContent value="pages">
-        <PlaceholderTabContent 
-          icon={FileText}
-          title="Page Content Manager"
-          description="Manage static pages like About, Vision & Mission, Contact, etc."
-        />
+        <PagesManager />
       </TabsContent>
 
       <TabsContent value="announcements">
-        <PlaceholderTabContent 
-          icon={Megaphone}
-          title="Announcement Manager"
-          description="Manage urgent announcements and notifications"
-        />
+        <AnnouncementManager />
+      </TabsContent>
+
+      <TabsContent value="media">
+        <MediaLibraryManager />
+      </TabsContent>
+
+      <TabsContent value="settings">
+        <WebsiteSettingsManager />
       </TabsContent>
     </Tabs>
   );
