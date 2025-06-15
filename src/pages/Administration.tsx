@@ -1,237 +1,89 @@
 
 import React from 'react';
-import { User, Mail, Phone, MapPin, Calendar, Award } from 'lucide-react';
-import Header from '../components/Header';
-import Navbar from '../components/Navbar';
-import Footer from '../components/Footer';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
+import Navbar from '@/components/Navbar';
+import Footer from '@/components/Footer';
+import { useSEO } from '@/hooks/useSEO';
 
 const Administration = () => {
-  const leadership = [
+  useSEO({
+    title: "Administration - ISBM College of Engineering",
+    description: "Meet our administrative team and leadership committed to educational excellence.",
+    canonical: "https://isbmcoe.edu.in/administration"
+  });
+
+  const administrativeTeam = [
     {
       name: "Dr. Rajesh Kumar",
       position: "Principal",
       qualification: "Ph.D. in Computer Science",
-      experience: "20+ years",
-      email: "principal@isbm.ac.in",
-      phone: "+91-20-35012011",
-      specialization: "AI & Machine Learning, Educational Administration"
+      experience: "25+ Years",
+      image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&h=300&fit=crop&crop=face"
     },
     {
       name: "Prof. Sunita Sharma",
-      position: "Vice Principal (Academics)",
-      qualification: "M.Tech, Ph.D.",
-      experience: "18+ years",
-      email: "vp.academics@isbm.ac.in",
-      phone: "+91-20-35012012",
-      specialization: "Curriculum Development, Faculty Management"
+      position: "Vice Principal",
+      qualification: "M.Tech in Electronics",
+      experience: "20+ Years",
+      image: "https://images.unsplash.com/photo-1494790108755-2616b9e6d45e?w=300&h=300&fit=crop&crop=face"
     },
     {
       name: "Dr. Amit Patel",
-      position: "Vice Principal (Administration)",
-      qualification: "MBA, Ph.D.",
-      experience: "15+ years",
-      email: "vp.admin@isbm.ac.in",
-      phone: "+91-20-35012013",
-      specialization: "Operations Management, Student Affairs"
+      position: "Dean Academics",
+      qualification: "Ph.D. in Mechanical Engineering",
+      experience: "22+ Years",
+      image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=300&h=300&fit=crop&crop=face"
     }
   ];
-
-  const departments = [
-    {
-      department: "Academic Affairs",
-      head: "Dr. Priya Reddy",
-      contact: "academics@isbm.ac.in",
-      responsibilities: ["Curriculum Planning", "Examination Management", "Faculty Coordination", "Academic Calendar"]
-    },
-    {
-      department: "Student Affairs",
-      head: "Prof. Vikram Singh",
-      contact: "students@isbm.ac.in",
-      responsibilities: ["Student Welfare", "Disciplinary Actions", "Extracurricular Activities", "Counseling Services"]
-    },
-    {
-      department: "Finance & Accounts",
-      head: "CA. Meera Joshi",
-      contact: "finance@isbm.ac.in",
-      responsibilities: ["Fee Management", "Budget Planning", "Financial Reporting", "Scholarship Distribution"]
-    },
-    {
-      department: "Human Resources",
-      head: "Ms. Kavita Agarwal",
-      contact: "hr@isbm.ac.in",
-      responsibilities: ["Faculty Recruitment", "Staff Development", "Performance Management", "Policy Implementation"]
-    }
-  ];
-
-  const officeHours = [
-    { office: "Principal's Office", hours: "10:00 AM - 5:00 PM", appointment: "Required" },
-    { office: "Academic Office", hours: "9:00 AM - 6:00 PM", appointment: "Walk-in" },
-    { office: "Administration Office", hours: "9:00 AM - 5:30 PM", appointment: "Walk-in" },
-    { office: "Finance Office", hours: "10:00 AM - 4:00 PM", appointment: "Preferred" }
-  ];
-
-  const contactInfo = {
-    general: "+91-20-35012011",
-    admissions: "7410769206",
-    email: "info@isbm.ac.in",
-    address: "S.No 44/1, 44/1/2, Nande Village, Ahead of Pashan Sus Road, Pune - 412115"
-  };
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Header />
       <Navbar />
-      
-      {/* Hero Section */}
-      <div className="bg-gradient-to-r from-college-primary to-college-secondary py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h1 className="text-4xl md:text-5xl font-bold text-white mb-6">
-            Administration
-          </h1>
-          <p className="text-xl text-white/90 max-w-3xl mx-auto">
-            Meet our dedicated administrative team committed to excellence in education and student services
-          </p>
+      <div className="pt-8 pb-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <h1 className="text-4xl font-bold text-gray-900 mb-4">Administration</h1>
+            <p className="text-xl text-gray-600">
+              Meet our dedicated leadership team committed to educational excellence
+            </p>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
+            {administrativeTeam.map((member, index) => (
+              <div key={index} className="bg-white rounded-lg shadow-lg overflow-hidden">
+                <img 
+                  src={member.image} 
+                  alt={member.name}
+                  className="w-full h-64 object-cover"
+                />
+                <div className="p-6">
+                  <h3 className="text-xl font-bold text-gray-900 mb-2">{member.name}</h3>
+                  <p className="text-college-primary font-semibold mb-2">{member.position}</p>
+                  <p className="text-gray-700 mb-1">{member.qualification}</p>
+                  <p className="text-gray-600">{member.experience}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+          
+          <div className="bg-white rounded-lg shadow-lg p-8">
+            <h2 className="text-2xl font-bold text-gray-900 mb-6">Contact Administration</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <h3 className="text-lg font-semibold text-college-primary mb-3">Principal's Office</h3>
+                <p className="text-gray-700 mb-2">📞 Phone: +91 20 1234 5678</p>
+                <p className="text-gray-700 mb-2">📧 Email: principal@isbmcoe.edu.in</p>
+                <p className="text-gray-700">🕒 Office Hours: 9:00 AM - 5:00 PM</p>
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold text-college-primary mb-3">Academic Office</h3>
+                <p className="text-gray-700 mb-2">📞 Phone: +91 20 1234 5679</p>
+                <p className="text-gray-700 mb-2">📧 Email: academics@isbmcoe.edu.in</p>
+                <p className="text-gray-700">🕒 Office Hours: 9:00 AM - 5:00 PM</p>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
-
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        {/* Leadership Team */}
-        <Card className="mb-8">
-          <CardHeader>
-            <CardTitle className="text-2xl text-college-primary">Leadership Team</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid gap-6">
-              {leadership.map((leader, index) => (
-                <div key={index} className="border rounded-lg p-6 hover:shadow-md transition-shadow">
-                  <div className="flex flex-col md:flex-row md:items-center md:justify-between">
-                    <div className="mb-4 md:mb-0">
-                      <h3 className="text-xl font-semibold text-college-secondary">{leader.name}</h3>
-                      <p className="text-lg text-college-accent font-medium">{leader.position}</p>
-                      <div className="flex flex-wrap gap-2 mt-2">
-                        <Badge variant="secondary">{leader.qualification}</Badge>
-                        <Badge variant="outline">{leader.experience}</Badge>
-                      </div>
-                      <p className="text-gray-600 mt-2">{leader.specialization}</p>
-                    </div>
-                    <div className="space-y-2">
-                      <div className="flex items-center text-sm text-gray-600">
-                        <Mail className="h-4 w-4 mr-2" />
-                        {leader.email}
-                      </div>
-                      <div className="flex items-center text-sm text-gray-600">
-                        <Phone className="h-4 w-4 mr-2" />
-                        {leader.phone}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Administrative Departments */}
-        <Card className="mb-8">
-          <CardHeader>
-            <CardTitle className="text-2xl text-college-primary">Administrative Departments</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid md:grid-cols-2 gap-6">
-              {departments.map((dept, index) => (
-                <div key={index} className="border rounded-lg p-4">
-                  <h3 className="text-lg font-semibold text-college-secondary mb-2">{dept.department}</h3>
-                  <div className="mb-3">
-                    <p className="text-sm text-gray-600">Department Head:</p>
-                    <p className="font-medium">{dept.head}</p>
-                  </div>
-                  <div className="mb-3">
-                    <p className="text-sm text-gray-600">Contact:</p>
-                    <p className="text-college-accent">{dept.contact}</p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-gray-600 mb-2">Key Responsibilities:</p>
-                    <div className="flex flex-wrap gap-1">
-                      {dept.responsibilities.map((resp, idx) => (
-                        <Badge key={idx} variant="outline" className="text-xs">
-                          {resp}
-                        </Badge>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Office Hours */}
-        <Card className="mb-8">
-          <CardHeader>
-            <CardTitle className="flex items-center text-2xl text-college-primary">
-              <Calendar className="mr-3 h-6 w-6" />
-              Office Hours
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid md:grid-cols-2 gap-4">
-              {officeHours.map((office, index) => (
-                <div key={index} className="flex justify-between items-center p-4 border rounded-lg">
-                  <div>
-                    <p className="font-medium text-gray-700">{office.office}</p>
-                    <p className="text-sm text-gray-500">Appointment: {office.appointment}</p>
-                  </div>
-                  <p className="text-college-primary font-semibold">{office.hours}</p>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Contact Information */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-2xl text-college-primary">Contact Information</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid md:grid-cols-2 gap-6">
-              <div className="space-y-4">
-                <div className="flex items-center">
-                  <Phone className="h-5 w-5 text-college-accent mr-3" />
-                  <div>
-                    <p className="font-medium">General Inquiries</p>
-                    <p className="text-gray-600">{contactInfo.general}</p>
-                  </div>
-                </div>
-                <div className="flex items-center">
-                  <Phone className="h-5 w-5 text-college-accent mr-3" />
-                  <div>
-                    <p className="font-medium">Admissions</p>
-                    <p className="text-gray-600">{contactInfo.admissions}</p>
-                  </div>
-                </div>
-                <div className="flex items-center">
-                  <Mail className="h-5 w-5 text-college-accent mr-3" />
-                  <div>
-                    <p className="font-medium">Email</p>
-                    <p className="text-gray-600">{contactInfo.email}</p>
-                  </div>
-                </div>
-              </div>
-              <div className="flex items-start">
-                <MapPin className="h-5 w-5 text-college-accent mr-3 mt-1" />
-                <div>
-                  <p className="font-medium">Campus Address</p>
-                  <p className="text-gray-600">{contactInfo.address}</p>
-                </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
       <Footer />
     </div>
   );

@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -75,6 +76,33 @@ function App() {
               <Route path="/login" element={<Login />} />
               <Route path="/forgot-password" element={<ForgotPassword />} />
               <Route path="/admin-setup" element={<AdminSetup />} />
+              
+              {/* About Pages */}
+              <Route path="/about" element={<About />} />
+              <Route path="/vision-mission" element={<VisionMission />} />
+              <Route path="/administration" element={<Administration />} />
+              
+              {/* Admission Pages */}
+              <Route path="/programs-offered" element={<ProgramsOffered />} />
+              <Route path="/fees-structure" element={<FeesStructure />} />
+              <Route path="/first-year-admission" element={<FirstYearAdmission />} />
+              <Route path="/direct-second-year-admission" element={<DirectSecondYearAdmission />} />
+              
+              {/* Placement Pages */}
+              <Route path="/placements" element={<Placements />} />
+              <Route path="/career-services" element={<CareerServices />} />
+              <Route path="/training-programs" element={<TrainingPrograms />} />
+              <Route path="/industry-partners" element={<IndustryPartners />} />
+              <Route path="/alumni-network" element={<AlumniNetwork />} />
+              
+              {/* Campus Pages */}
+              <Route path="/campus-location" element={<CampusLocation />} />
+              <Route path="/directions" element={<Directions />} />
+              <Route path="/hostel" element={<Hostel />} />
+              <Route path="/life-at-campus" element={<LifeAtCampus />} />
+              <Route path="/cultural-events" element={<CulturalEvents />} />
+              <Route path="/virtual-tour" element={<VirtualTour />} />
+              <Route path="/helpdesk" element={<Helpdesk />} />
               
               {/* Department Pages */}
               <Route path="/departments/computer-engineering" element={<ComputerEngineeringDepartment />} />

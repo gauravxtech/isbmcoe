@@ -1,205 +1,133 @@
 
 import React from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Separator } from '@/components/ui/separator';
-import { Badge } from '@/components/ui/badge';
-import { GraduationCap, Clock, Users, BookOpen } from 'lucide-react';
-import Header from '@/components/Header';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { useSEO } from '@/hooks/useSEO';
+import { Link } from 'react-router-dom';
 
 const ProgramsOffered = () => {
   useSEO({
-    title: "Engineering Programs at ISBM College - B.E., BBA, BCA Courses in Pune",
-    description: "Explore undergraduate engineering programs at ISBM College of Engineering, Pune. B.E. in Computer Science, AI/ML, Mechanical, Electronics, BBA & BCA courses. AICTE approved, SPPU affiliated.",
-    keywords: "ISBM engineering programs, B.E. Computer Science Pune, AI ML engineering course, Mechanical engineering Pune, Electronics engineering, BBA BCA courses, AICTE approved programs, SPPU affiliated courses",
-    canonical: "https://isbmcoe.edu.in/programs-offered",
-    structuredData: {
-      "@context": "https://schema.org",
-      "@type": "Course",
-      "provider": {
-        "@type": "EducationalOrganization",
-        "name": "ISBM College of Engineering"
-      },
-      "courseCode": "UG Programs",
-      "description": "Undergraduate engineering and management programs",
-      "educationalLevel": "Undergraduate"
-    }
+    title: "Programs Offered - ISBM College of Engineering",
+    description: "Explore our comprehensive range of undergraduate and postgraduate engineering programs.",
+    canonical: "https://isbmcoe.edu.in/programs-offered"
   });
 
   const programs = [
     {
-      title: "Computer Engineering",
+      name: "Computer Engineering",
       duration: "4 Years",
-      seats: 120,
-      level: "Undergraduate",
-      description: "Comprehensive program covering software development, programming, algorithms, and computer systems.",
-      highlights: ["Software Development", "Data Structures", "Web Technologies", "Database Management"]
+      seats: "60",
+      type: "B.E.",
+      link: "/departments/computer-engineering"
     },
     {
-      title: "Computer Science Engineering",
+      name: "AI & Machine Learning",
       duration: "4 Years",
-      seats: 60,
-      level: "Undergraduate",
-      description: "Focus on theoretical foundations of computing and practical software engineering skills.",
-      highlights: ["Programming Languages", "Software Engineering", "Computer Networks", "Operating Systems"]
+      seats: "60",
+      type: "B.E.",
+      link: "/departments/aiml"
     },
     {
-      title: "Artificial Intelligence & Machine Learning",
+      name: "AI & Data Science",
       duration: "4 Years",
-      seats: 120,
-      level: "Undergraduate",
-      description: "Cutting-edge program in AI, ML, deep learning, and intelligent systems development.",
-      highlights: ["Machine Learning", "Deep Learning", "Neural Networks", "Computer Vision"]
+      seats: "60",
+      type: "B.E.",
+      link: "/departments/aids"
     },
     {
-      title: "Artificial Intelligence & Data Science",
+      name: "Mechanical Engineering",
       duration: "4 Years",
-      seats: 120,
-      level: "Undergraduate",
-      description: "Specialized program combining AI techniques with data science and analytics.",
-      highlights: ["Data Analytics", "Big Data", "AI Algorithms", "Statistical Learning"]
+      seats: "60",
+      type: "B.E.",
+      link: "/departments/mechanical-engineering"
     },
     {
-      title: "Electronics & Telecommunication Engineering",
+      name: "Electronics Engineering (VLSI)",
       duration: "4 Years",
-      seats: 30,
-      level: "Undergraduate",
-      description: "Comprehensive study of electronic systems, communication technologies, and signal processing.",
-      highlights: ["Digital Electronics", "Communication Systems", "Signal Processing", "Embedded Systems"]
+      seats: "60",
+      type: "B.E.",
+      link: "/departments/electronics-telecommunication"
     },
     {
-      title: "Electronics Engineering (VLSI & Design Technology)",
-      duration: "4 Years",
-      seats: 60,
-      level: "Undergraduate",
-      description: "Specialized program in VLSI design, chip development, and advanced electronics.",
-      highlights: ["VLSI Design", "Chip Architecture", "Digital Design", "Semiconductor Technology"]
+      name: "Bachelor of Computer Application",
+      duration: "3 Years",
+      seats: "60",
+      type: "BCA",
+      link: "/departments/bca"
     },
     {
-      title: "Mechanical Engineering",
-      duration: "4 Years",
-      seats: 60,
-      level: "Undergraduate",
-      description: "Traditional engineering discipline covering design, manufacturing, and mechanical systems.",
-      highlights: ["CAD/CAM", "Thermodynamics", "Manufacturing", "Automotive Engineering"]
-    },
-    {
-      title: "Bachelor of Business Administration (BBA)",
-      duration: "4 Years",
-      seats: 120,
-      level: "Undergraduate",
-      description: "Comprehensive business management program with focus on leadership and entrepreneurship.",
-      highlights: ["Business Management", "Marketing", "Finance", "Entrepreneurship"]
-    },
-    {
-      title: "Bachelor of Computer Application (BCA)",
-      duration: "4 Years",
-      seats: 120,
-      level: "Undergraduate",
-      description: "Computer applications program with emphasis on programming and software development.",
-      highlights: ["Programming", "Software Development", "Database Management", "Web Technologies"]
+      name: "Bachelor of Business Administration",
+      duration: "3 Years",
+      seats: "60",
+      type: "BBA",
+      link: "/departments/bba"
     }
   ];
 
   return (
-    <div className="min-h-screen bg-college-light">
-      <Header />
+    <div className="min-h-screen bg-gray-50">
       <Navbar />
-      <Separator className="bg-gray-300" />
-
-      <div className="bg-gradient-to-r from-college-primary to-college-secondary py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center">
-            <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
-              Programs Offered
-            </h1>
-            <p className="text-xl text-white/90 mb-4">Explore our comprehensive range of undergraduate programs</p>
-            <div className="w-24 h-1 bg-college-accent mx-auto mb-4"></div>
-            <nav className="text-sm text-white/80" aria-label="Breadcrumb">
-              <span className="hover:text-white cursor-pointer">Home</span>
-              <span className="mx-2">|</span>
-              <span className="text-white font-semibold">Programs Offered</span>
-            </nav>
-          </div>
-        </div>
-      </div>
-
-      <section className="py-16 bg-white">
+      <div className="pt-8 pb-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-college-primary mb-4">Undergraduate Programs</h2>
-            <p className="text-gray-600 max-w-3xl mx-auto">
-              Choose from our diverse range of AICTE approved undergraduate programs, 
-              designed to prepare you for successful careers in engineering, technology, and business.
+            <h1 className="text-4xl font-bold text-gray-900 mb-4">Programs Offered</h1>
+            <p className="text-xl text-gray-600">
+              Choose from our comprehensive range of undergraduate programs
             </p>
           </div>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
             {programs.map((program, index) => (
-              <Card key={index} className="hover:shadow-lg transition-shadow duration-300 h-full">
-                <CardHeader>
-                  <div className="flex items-center justify-between mb-2">
-                    <Badge variant="secondary" className="bg-college-primary/10 text-college-primary">
-                      {program.level}
-                    </Badge>
-                    <GraduationCap className="h-6 w-6 text-college-accent" />
-                  </div>
-                  <CardTitle className="text-xl text-college-primary mb-2">{program.title}</CardTitle>
-                </CardHeader>
-                <CardContent className="flex-1 flex flex-col">
-                  <p className="text-gray-600 mb-4 flex-1">{program.description}</p>
-                  
-                  <div className="space-y-3 mb-4">
-                    <div className="flex items-center text-sm text-gray-600">
-                      <Clock className="h-4 w-4 mr-2 text-college-accent" />
-                      Duration: {program.duration}
-                    </div>
-                    <div className="flex items-center text-sm text-gray-600">
-                      <Users className="h-4 w-4 mr-2 text-college-accent" />
-                      Intake: {program.seats} seats
-                    </div>
-                  </div>
-
-                  <div className="mt-auto">
-                    <h4 className="font-semibold text-college-secondary mb-2 flex items-center">
-                      <BookOpen className="h-4 w-4 mr-2" />
-                      Key Highlights
-                    </h4>
-                    <div className="flex flex-wrap gap-2">
-                      {program.highlights.map((highlight, idx) => (
-                        <Badge key={idx} variant="outline" className="text-xs">
-                          {highlight}
-                        </Badge>
-                      ))}
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
+              <div key={index} className="bg-white rounded-lg shadow-lg p-6 hover:shadow-xl transition-shadow">
+                <div className="mb-4">
+                  <span className="inline-block bg-college-primary text-white text-sm px-3 py-1 rounded-full">
+                    {program.type}
+                  </span>
+                </div>
+                <h3 className="text-xl font-bold text-gray-900 mb-3">{program.name}</h3>
+                <div className="space-y-2 mb-4">
+                  <p className="text-gray-700">
+                    <span className="font-semibold">Duration:</span> {program.duration}
+                  </p>
+                  <p className="text-gray-700">
+                    <span className="font-semibold">Seats:</span> {program.seats}
+                  </p>
+                </div>
+                <Link 
+                  to={program.link}
+                  className="inline-block bg-college-accent hover:bg-college-warning text-white font-semibold py-2 px-4 rounded transition-colors"
+                >
+                  Learn More
+                </Link>
+              </div>
             ))}
           </div>
-
-          <div className="mt-16 bg-gradient-to-r from-college-primary/5 to-college-accent/5 rounded-lg p-8 text-center">
-            <h3 className="text-2xl font-bold text-college-primary mb-4">Why Choose ISBM COE?</h3>
-            <div className="grid md:grid-cols-3 gap-6">
+          
+          <div className="bg-white rounded-lg shadow-lg p-8">
+            <h2 className="text-2xl font-bold text-gray-900 mb-6 text-center">Admission Information</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <div>
-                <div className="text-3xl font-bold text-college-accent mb-2">14+</div>
-                <p className="text-gray-600">Years of Excellence</p>
+                <h3 className="text-lg font-semibold text-college-primary mb-3">Eligibility Criteria</h3>
+                <ul className="space-y-2 text-gray-700">
+                  <li>• 10+2 with Physics, Chemistry, and Mathematics</li>
+                  <li>• Minimum 45% aggregate marks (40% for reserved categories)</li>
+                  <li>• Valid MHT-CET/JEE Main score</li>
+                  <li>• Age limit as per university norms</li>
+                </ul>
               </div>
               <div>
-                <div className="text-3xl font-bold text-college-accent mb-2">95%</div>
-                <p className="text-gray-600">Placement Rate</p>
-              </div>
-              <div>
-                <div className="text-3xl font-bold text-college-accent mb-2">50+</div>
-                <p className="text-gray-600">Industry Partners</p>
+                <h3 className="text-lg font-semibold text-college-primary mb-3">Application Process</h3>
+                <ul className="space-y-2 text-gray-700">
+                  <li>• Online application through DTE Maharashtra</li>
+                  <li>• Document verification</li>
+                  <li>• Counseling and seat allocation</li>
+                  <li>• Fee payment and admission confirmation</li>
+                </ul>
               </div>
             </div>
           </div>
         </div>
-      </section>
-
+      </div>
       <Footer />
     </div>
   );
