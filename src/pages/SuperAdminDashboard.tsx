@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -73,6 +72,7 @@ interface NewUser {
   role: string;
   department: string;
   phone: string;
+  password?: string;
 }
 
 const SuperAdminDashboard = () => {
@@ -86,7 +86,8 @@ const SuperAdminDashboard = () => {
     email: '',
     role: 'student',
     department: '',
-    phone: ''
+    phone: '',
+    password: ''
   });
   const { toast } = useToast();
   const { user, userRole } = useAuth();
@@ -186,42 +187,76 @@ const SuperAdminDashboard = () => {
   };
 
   const handleAddUser = async () => {
-    if (!newUser.fullName || !newUser.email || !newUser.department) {
+    if (!newUser.fullName || !newUser.email || !newUser.department || !newUser.password) {
       toast({
         title: "Error",
-        description: "Please fill in all required fields",
+        description: "Please fill in all required fields, including password.",
+        variant: "destructive"
+      });
+      return;
+    }
+    if (newUser.password.length < 6) {
+      toast({
+        title: "Error",
+        description: "Password must be at least 6 characters long.",
         variant: "destructive"
       });
       return;
     }
 
+    let adminSession = null;
     try {
-      // Generate a UUID for the profile (in a real app, this would be the auth user's ID)
-      const userId = crypto.randomUUID();
-      
-      // Add to profiles table with generated ID
-      const { error } = await supabase
-        .from('profiles')
-        .insert({
-          id: userId,
-          email: newUser.email,
-          full_name: newUser.fullName,
-          role: newUser.role,
-          department: newUser.department,
-          phone: newUser.phone
-        });
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        throw new Error("Could not get admin session. Please log in again.");
+      }
+      adminSession = session;
 
-      if (error) {
-        console.error('Error adding user:', error);
-        toast({
-          title: "Error",
-          description: "Failed to add user. Please try again.",
-          variant: "destructive"
-        });
-        return;
+      const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
+        email: newUser.email,
+        password: newUser.password,
+        options: {
+          data: {
+            full_name: newUser.fullName,
+            role: newUser.role,
+          }
+        }
+      });
+
+      if (signUpError) {
+        throw signUpError;
+      }
+      
+      if (!signUpData.user) {
+        throw new Error("User was not created.");
       }
 
-      // Log activity
+      const { error: profileError } = await supabase
+        .from('profiles')
+        .update({
+          department: newUser.department,
+          phone: newUser.phone,
+        })
+        .eq('id', signUpData.user.id);
+
+      if (profileError) {
+        console.error('Profile update error:', profileError);
+        toast({
+            title: "Warning",
+            description: "User created, but failed to set department/phone. You can edit the user later.",
+            variant: "default"
+        });
+      }
+
+      const { error: setSessionError } = await supabase.auth.setSession({
+        access_token: adminSession.access_token,
+        refresh_token: adminSession.refresh_token,
+      });
+
+      if (setSessionError) {
+        throw new Error("Could not restore admin session. Please refresh and log in again.");
+      }
+
       await supabase
         .from('system_activities')
         .insert({
@@ -241,17 +276,25 @@ const SuperAdminDashboard = () => {
         email: '',
         role: 'student',
         department: '',
-        phone: ''
+        phone: '',
+        password: ''
       });
       setIsAddUserOpen(false);
       fetchActivities();
-    } catch (error) {
-      console.error('Error:', error);
+
+    } catch (error: any) {
+      console.error('Error adding user:', error);
       toast({
         title: "Error",
-        description: "An unexpected error occurred",
+        description: error.message || "An unexpected error occurred",
         variant: "destructive"
       });
+      if (adminSession) {
+        await supabase.auth.setSession({
+          access_token: adminSession.access_token,
+          refresh_token: adminSession.refresh_token,
+        });
+      }
     }
   };
 
@@ -451,6 +494,16 @@ const SuperAdminDashboard = () => {
                   />
                 </div>
                 <div>
+                  <Label htmlFor="password">Password *</Label>
+                  <Input
+                    id="password"
+                    type="password"
+                    value={newUser.password}
+                    onChange={(e) => setNewUser({ ...newUser, password: e.target.value })}
+                    placeholder="Enter initial password (min. 6 chars)"
+                  />
+                </div>
+                <div>
                   <Label htmlFor="role">Role *</Label>
                   <select
                     id="role"
@@ -462,8 +515,14 @@ const SuperAdminDashboard = () => {
                     <option value="teacher">Teacher</option>
                     <option value="staff">Staff</option>
                     <option value="admin">Admin</option>
+                    <option value="super-admin">Super Admin</option>
                     <option value="hod">HOD</option>
                     <option value="principal">Principal</option>
+                    <option value="dean">Dean</option>
+                    <option value="parent">Parent</option>
+                    <option value="accountant">Accountant</option>
+                    <option value="reception">Reception</option>
+                    <option value="security">Security</option>
                   </select>
                 </div>
                 <div>
