@@ -28,7 +28,7 @@ interface Banner {
 const BannerManager = () => {
   const [banners, setBanners] = useState<Banner[]>([]);
   const [loading, setLoading] = useState(true);
-  const [editingBanner, setEditingBanner] =   (null);
+  const [editingBanner, setEditingBanner] = useState<Banner | null>(null);
   const [showForm, setShowForm] = useState(false);
   const [formData, setFormData] = useState({
     title: '',
