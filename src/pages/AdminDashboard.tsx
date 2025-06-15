@@ -5,7 +5,7 @@ import DashboardLayout from '@/components/layouts/DashboardLayout';
 import SchoolDashboardOverview from '@/components/admin/SchoolDashboardOverview';
 import ContentManager from '@/components/admin/ContentManager';
 import AnalyticsPanel from '@/components/admin/AnalyticsPanel';
-import UserManager from '@/components/admin/UserManager';
+import NewUserManager from '@/components/admin/NewUserManager';
 import SettingsPanel from '@/components/admin/SettingsPanel';
 import { useSEO } from '@/hooks/useSEO';
 
@@ -46,7 +46,7 @@ const AdminDashboard = () => {
           </TabsContent>
 
           <TabsContent value="users">
-            <UserManager />
+            <NewUserManager />
           </TabsContent>
 
           <TabsContent value="settings">
