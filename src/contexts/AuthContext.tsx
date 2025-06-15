@@ -1,5 +1,6 @@
+
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { User, Session } from '@supabase/supabase-js';
+import { User } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 
 interface AuthContextType {
@@ -93,56 +94,65 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   };
 
   useEffect(() => {
+    setLoading(true);
     // Set up auth state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
+      (event, session) => {
         setUser(session?.user ?? null);
         
         if (session?.user) {
-          const role = await extractUserRole(session.user);
-          setUserRole(role);
+          // Defer async operations to avoid deadlocks
+          setTimeout(() => {
+            extractUserRole(session.user).then(role => {
+              setUserRole(role);
+              setLoading(false);
+            });
+          }, 0);
         } else {
           setUserRole(null);
+          setLoading(false);
         }
-        
-        setLoading(false);
       }
     );
 
     // Get initial session
-    supabase.auth.getSession().then(async ({ data: { session } }) => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
       setUser(session?.user ?? null);
       
       if (session?.user) {
-        const role = await extractUserRole(session.user);
-        setUserRole(role);
+        extractUserRole(session.user).then(role => {
+          setUserRole(role);
+          setLoading(false);
+        });
       } else {
         setUserRole(null);
+        setLoading(false);
       }
-      
-      setLoading(false);
     });
 
     return () => subscription.unsubscribe();
   }, []);
 
   const signIn = async (email: string, password: string) => {
+    setLoading(true);
     const { error } = await supabase.auth.signInWithPassword({
       email,
       password
     });
-    
+    if (error) {
+      setLoading(false);
+    }
     return { error };
   };
 
   const signOut = async () => {
     setLoading(true);
     const { error } = await supabase.auth.signOut();
-    if (!error) {
-      setUser(null);
-      setUserRole(null);
+    // onAuthStateChange will handle resetting user, userRole, and loading state.
+    // We only need to handle the error case here.
+    if (error) {
+      setLoading(false);
     }
-    setLoading(false);
     return { error };
   };
 
