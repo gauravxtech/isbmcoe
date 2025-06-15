@@ -156,38 +156,38 @@ const SuperAdminDashboard = () => {
 
   return (
     <DashboardLayout>
-      <div className="space-y-6">
-        <div className="flex justify-between items-center">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-white flex items-center gap-3">
-              <Shield className="h-8 w-8 text-red-500" />
-              System Control Center
+      <div className="space-y-4 md:space-y-6 px-2 sm:px-4 md:px-0">
+        <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4">
+          <div className="min-w-0">
+            <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900 dark:text-white flex items-center gap-2 md:gap-3">
+              <Shield className="h-6 w-6 md:h-8 md:w-8 text-red-500 flex-shrink-0" />
+              <span className="truncate">System Control Center</span>
             </h1>
-            <p className="text-gray-600 dark:text-gray-400">Complete system administration and monitoring</p>
+            <p className="text-sm md:text-base text-gray-600 dark:text-gray-400 mt-1">Complete system administration and monitoring</p>
           </div>
-          <div className="flex gap-3">
-            <Button variant="outline" onClick={fetchSystemData}>
-              <Server className="h-4 w-4 mr-2" />
+          <div className="flex flex-col sm:flex-row gap-2 md:gap-3">
+            <Button variant="outline" onClick={fetchSystemData} size="sm" className="text-xs md:text-sm">
+              <Server className="h-3 w-3 md:h-4 md:w-4 mr-1 md:mr-2" />
               Refresh Data
             </Button>
-            <Button className="bg-red-500 hover:bg-red-600">
-              <Settings className="h-4 w-4 mr-2" />
+            <Button className="bg-red-500 hover:bg-red-600 text-xs md:text-sm" size="sm">
+              <Settings className="h-3 w-3 md:h-4 md:w-4 mr-1 md:mr-2" />
               System Settings
             </Button>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6">
           {systemStats.map((stat, index) => (
-            <Card key={index}>
-              <CardContent className="p-6">
+            <Card key={index} className="min-w-0">
+              <CardContent className="p-3 md:p-6">
                 <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-gray-600 dark:text-gray-400">{stat.label}</p>
-                    <p className="text-3xl font-bold text-gray-900 dark:text-white">{stat.value}</p>
+                  <div className="min-w-0 flex-1">
+                    <p className="text-xs md:text-sm font-medium text-gray-600 dark:text-gray-400 truncate">{stat.label}</p>
+                    <p className="text-lg md:text-3xl font-bold text-gray-900 dark:text-white truncate">{stat.value}</p>
                   </div>
-                  <div className="p-3 bg-gray-100 dark:bg-gray-800 rounded-full">
-                    <stat.icon className={`h-6 w-6 ${stat.color}`} />
+                  <div className="p-2 md:p-3 bg-gray-100 dark:bg-gray-800 rounded-full flex-shrink-0 ml-2">
+                    <stat.icon className={`h-4 w-4 md:h-6 md:w-6 ${stat.color}`} />
                   </div>
                 </div>
               </CardContent>
@@ -195,49 +195,49 @@ const SuperAdminDashboard = () => {
           ))}
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
           <Card>
-            <CardHeader>
-              <CardTitle>System Monitoring</CardTitle>
+            <CardHeader className="pb-3 md:pb-6">
+              <CardTitle className="text-base md:text-lg">System Monitoring</CardTitle>
             </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
+            <CardContent className="pt-0">
+              <div className="space-y-3 md:space-y-4">
                 <div className="flex justify-between items-center">
-                  <span>CPU Usage</span>
-                  <Badge variant="secondary">{systemData?.cpu_usage || 0}%</Badge>
+                  <span className="text-sm md:text-base">CPU Usage</span>
+                  <Badge variant="secondary" className="text-xs md:text-sm">{systemData?.cpu_usage || 0}%</Badge>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span>Memory Usage</span>
-                  <Badge variant="secondary">{systemData?.memory_usage || 0}%</Badge>
+                  <span className="text-sm md:text-base">Memory Usage</span>
+                  <Badge variant="secondary" className="text-xs md:text-sm">{systemData?.memory_usage || 0}%</Badge>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span>Disk Usage</span>
-                  <Badge variant="secondary">{systemData?.disk_usage || 0}%</Badge>
+                  <span className="text-sm md:text-base">Disk Usage</span>
+                  <Badge variant="secondary" className="text-xs md:text-sm">{systemData?.disk_usage || 0}%</Badge>
                 </div>
               </div>
             </CardContent>
           </Card>
 
           <Card>
-            <CardHeader>
-              <CardTitle>Recent Activities</CardTitle>
+            <CardHeader className="pb-3 md:pb-6">
+              <CardTitle className="text-base md:text-lg">Recent Activities</CardTitle>
             </CardHeader>
-            <CardContent>
-              <div className="space-y-3">
+            <CardContent className="pt-0">
+              <div className="space-y-2 md:space-y-3">
                 {activities.length > 0 ? (
                   activities.map((activity) => (
-                    <div key={activity.id} className="flex items-center space-x-3">
-                      <div className={`w-2 h-2 rounded-full ${getActivityColor(activity.activity_type)}`}></div>
+                    <div key={activity.id} className="flex items-start space-x-2 md:space-x-3">
+                      <div className={`w-2 h-2 rounded-full ${getActivityColor(activity.activity_type)} flex-shrink-0 mt-1.5`}></div>
                       <div className="flex-1 min-w-0">
-                        <span className="text-sm font-medium">{activity.activity_name}</span>
-                        <p className="text-xs text-gray-500">
+                        <span className="text-xs md:text-sm font-medium block truncate">{activity.activity_name}</span>
+                        <p className="text-xs text-gray-500 truncate">
                           {activity.user_name} • {formatTimeAgo(activity.created_at)}
                         </p>
                       </div>
                     </div>
                   ))
                 ) : (
-                  <p className="text-sm text-gray-500">No recent activities</p>
+                  <p className="text-xs md:text-sm text-gray-500">No recent activities</p>
                 )}
               </div>
             </CardContent>
