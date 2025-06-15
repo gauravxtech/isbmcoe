@@ -10,6 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Plus, Edit, Trash2, Upload, Eye, Save, X } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import FileUploadDialog from './FileUploadDialog';
 
 interface Banner {
   id: string;
@@ -30,6 +31,7 @@ const BannerManager = () => {
   const [loading, setLoading] = useState(true);
   const [editingBanner, setEditingBanner] = useState<Banner | null>(null);
   const [showForm, setShowForm] = useState(false);
+  const [showUploadDialog, setShowUploadDialog] = useState(false);
   const [formData, setFormData] = useState({
     title: '',
     subtitle: '',
@@ -155,6 +157,10 @@ const BannerManager = () => {
         variant: "destructive"
       });
     }
+  };
+
+  const handleImageUpload = (url: string) => {
+    setFormData({ ...formData, image_url: url });
   };
 
   const resetForm = () => {
@@ -311,16 +317,27 @@ const BannerManager = () => {
               </div>
 
               <div>
-                <Label htmlFor="image_url">Banner Image URL</Label>
-                <Input
-                  id="image_url"
-                  type="url"
-                  value={formData.image_url}
-                  onChange={(e) => setFormData({ ...formData, image_url: e.target.value })}
-                  placeholder="https://..."
-                />
+                <Label htmlFor="image_url">Banner Image</Label>
+                <div className="flex gap-2">
+                  <Input
+                    id="image_url"
+                    type="url"
+                    value={formData.image_url}
+                    onChange={(e) => setFormData({ ...formData, image_url: e.target.value })}
+                    placeholder="https://... or upload new image"
+                    className="flex-1"
+                  />
+                  <Button 
+                    type="button" 
+                    variant="outline"
+                    onClick={() => setShowUploadDialog(true)}
+                  >
+                    <Upload className="h-4 w-4 mr-2" />
+                    Upload
+                  </Button>
+                </div>
                 <p className="text-sm text-gray-500 mt-1">
-                  Use Media Library to upload images and copy the URL here
+                  Enter URL directly or use the upload button to add a new image
                 </p>
               </div>
 
@@ -363,6 +380,13 @@ const BannerManager = () => {
           </CardContent>
         </Card>
       )}
+
+      <FileUploadDialog 
+        open={showUploadDialog}
+        onClose={() => setShowUploadDialog(false)}
+        onUploadComplete={handleImageUpload}
+        folder="banners"
+      />
     </div>
   );
 };
