@@ -63,7 +63,7 @@ const BannerManager = () => {
       
       console.log('Banners fetched successfully:', data);
       setBanners(data || []);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error fetching banners:', error);
       toast({
         title: "Error",
@@ -113,7 +113,7 @@ const BannerManager = () => {
 
       resetForm();
       fetchBanners();
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error saving banner:', error);
       toast({
         title: "Error",
@@ -155,7 +155,7 @@ const BannerManager = () => {
       });
       
       fetchBanners();
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error deleting banner:', error);
       toast({
         title: "Error",
@@ -231,8 +231,12 @@ const BannerManager = () => {
                         className="w-full h-full object-cover"
                         onError={(e) => {
                           console.error('Image failed to load:', banner.image_url);
-                          e.target.style.display = 'none';
-                          e.target.nextElementSibling.style.display = 'flex';
+                          const target = e.target as HTMLImageElement;
+                          target.style.display = 'none';
+                          const nextElement = target.nextElementSibling as HTMLElement;
+                          if (nextElement) {
+                            nextElement.style.display = 'flex';
+                          }
                         }}
                       />
                     ) : null}
