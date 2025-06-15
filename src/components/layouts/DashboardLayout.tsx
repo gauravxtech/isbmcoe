@@ -72,11 +72,15 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   };
 
   const toggleSection = (section: string) => {
-    setExpandedSections(prev => 
-      prev.includes(section) 
-        ? prev.filter(s => s !== section)
-        : [...prev, section]
-    );
+    setExpandedSections(prev => {
+      // If the section is already expanded, close it
+      if (prev.includes(section)) {
+        return prev.filter(s => s !== section);
+      } else {
+        // Close all other sections and open only the clicked one (auto-close functionality)
+        return [section];
+      }
+    });
   };
 
   const getDashboardTitle = (role: string): string => {
