@@ -35,7 +35,7 @@ export const dataService = {
       const { data, error } = await supabase
         .from('news_events')
         .select('*')
-        .eq('is_published', true)
+        .eq('status', 'published')
         .order('created_at', { ascending: false })
         .limit(6);
 
@@ -46,11 +46,11 @@ export const dataService = {
 
       return data?.map(item => ({
         id: parseInt(item.id),
-        type: item.event_type || 'News',
+        type: item.type || 'News',
         title: item.title,
         excerpt: item.excerpt || item.content?.substring(0, 150) + '...',
         date: item.event_date || item.created_at,
-        image: item.featured_image || this.getDefaultImage(item.event_type),
+        image: item.image_url || this.getDefaultImage(item.type),
         category: item.category || 'General'
       })) || this.getFallbackNewsEvents();
     } catch (error) {
@@ -65,15 +65,23 @@ export const dataService = {
       const { data, error } = await supabase
         .from('banners')
         .select('*')
-        .eq('is_active', true)
-        .order('order_index', { ascending: true });
+        .eq('status', 'active')
+        .order('display_order', { ascending: true });
 
       if (error) {
         console.error('Error fetching banners:', error);
         return [];
       }
 
-      return data || [];
+      return data?.map(item => ({
+        id: item.id,
+        title: item.title,
+        subtitle: item.subtitle,
+        image_url: item.image_url,
+        link_url: item.cta_link,
+        is_active: item.status === 'active',
+        order_index: item.display_order
+      })) || [];
     } catch (error) {
       console.error('Error loading banners:', error);
       return [];
@@ -86,15 +94,20 @@ export const dataService = {
       const { data, error } = await supabase
         .from('marquee_texts')
         .select('*')
-        .eq('is_active', true)
-        .order('order_index', { ascending: true });
+        .eq('status', 'active')
+        .order('priority', { ascending: true });
 
       if (error) {
         console.error('Error fetching marquee texts:', error);
         return [];
       }
 
-      return data || [];
+      return data?.map(item => ({
+        id: item.id,
+        text: item.text,
+        is_active: item.status === 'active',
+        order_index: item.priority
+      })) || [];
     } catch (error) {
       console.error('Error loading marquee texts:', error);
       return [];
