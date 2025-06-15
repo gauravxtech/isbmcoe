@@ -8,7 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 const DebugPanel = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
-  const { user, session, userRole, isAuthenticated, loading } = useAuth();
+  const { user, userRole, isAuthenticated, loading } = useAuth();
 
   if (process.env.NODE_ENV === 'production') {
     return null;
@@ -70,13 +70,6 @@ const DebugPanel = () => {
                       {JSON.stringify(user, null, 2)}
                     </pre>
                   </div>
-                  
-                  <div>
-                    <h4 className="font-semibold mb-2">Session Object</h4>
-                    <pre className="bg-gray-100 p-2 rounded text-xs overflow-auto max-h-32">
-                      {JSON.stringify(session, null, 2)}
-                    </pre>
-                  </div>
                 </div>
               )}
 
@@ -90,7 +83,7 @@ const DebugPanel = () => {
                   <Button variant="outline" size="sm" onClick={() => window.location.href = '/admin-setup'}>
                     Admin Setup
                   </Button>
-                  <Button variant="outline" size="sm" onClick={() => console.log('Auth State:', { user, session, userRole, isAuthenticated, loading })}>
+                  <Button variant="outline" size="sm" onClick={() => console.log('Auth State:', { user, userRole, isAuthenticated, loading })}>
                     Log Auth State
                   </Button>
                 </div>
