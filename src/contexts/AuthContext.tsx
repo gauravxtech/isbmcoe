@@ -42,17 +42,49 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     console.log('User metadata:', session.user.user_metadata);
     console.log('App metadata:', session.user.app_metadata);
     
-    // Check user_metadata first, then app_metadata, then database
     let role = null;
     
+    // Check user_metadata first, then app_metadata
     if (session.user.user_metadata?.role) {
       role = session.user.user_metadata.role;
       console.log('Role from user_metadata:', role);
     } else if (session.user.app_metadata?.role) {
       role = session.user.app_metadata.role;
       console.log('Role from app_metadata:', role);
-    } else {
-      // Try to get role from profiles table
+    }
+    
+    // Special case for the super admin email - set role immediately
+    if (session.user.email === 'llm@isbmcoe.org') {
+      role = 'super-admin';
+      console.log('Role set as super-admin for llm@isbmcoe.org');
+      
+      // Also try to create/update profile in database
+      try {
+        const { error: profileError } = await supabase
+          .from('profiles')
+          .upsert({
+            id: session.user.id,
+            email: session.user.email,
+            full_name: session.user.user_metadata?.full_name || 'Super Admin',
+            role: 'super-admin'
+          }, {
+            onConflict: 'id'
+          });
+        
+        if (profileError) {
+          console.log('Profile upsert error (non-critical):', profileError);
+        } else {
+          console.log('Profile created/updated successfully');
+        }
+      } catch (error) {
+        console.log('Error creating profile (non-critical):', error);
+      }
+      
+      return role;
+    }
+    
+    // Try to get role from profiles table
+    if (!role) {
       try {
         const { data: profile, error } = await supabase
           .from('profiles')
@@ -69,12 +101,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       } catch (error) {
         console.log('Error fetching profile:', error);
       }
-    }
-    
-    // Special case for the super admin email
-    if (session.user.email === 'llm@isbmcoe.org' && !role) {
-      role = 'super-admin';
-      console.log('Role set as super-admin for llm@isbmcoe.org');
     }
     
     // Default role
@@ -96,9 +122,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         setSession(session);
         setUser(session?.user ?? null);
         
-        const role = await extractUserRole(session);
-        setUserRole(role);
-        console.log('Setting user role to:', role);
+        if (session?.user) {
+          const role = await extractUserRole(session);
+          setUserRole(role);
+          console.log('Setting user role to:', role);
+        } else {
+          setUserRole(null);
+        }
         
         setLoading(false);
       }
@@ -110,9 +140,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       setSession(session);
       setUser(session?.user ?? null);
       
-      const role = await extractUserRole(session);
-      setUserRole(role);
-      console.log('Initial user role set to:', role);
+      if (session?.user) {
+        const role = await extractUserRole(session);
+        setUserRole(role);
+        console.log('Initial user role set to:', role);
+      } else {
+        setUserRole(null);
+      }
       
       setLoading(false);
     });
@@ -138,13 +172,17 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const signOut = async () => {
     console.log('Signing out...');
+    setLoading(true);
     const { error } = await supabase.auth.signOut();
     if (!error) {
+      setUser(null);
+      setSession(null);
       setUserRole(null);
       console.log('Sign out successful');
     } else {
       console.error('Sign out error:', error);
     }
+    setLoading(false);
     return { error };
   };
 
