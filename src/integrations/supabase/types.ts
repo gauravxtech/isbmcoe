@@ -216,6 +216,99 @@ export type Database = {
         }
         Relationships: []
       }
+      system_activities: {
+        Row: {
+          activity_name: string
+          activity_type: string
+          created_at: string
+          description: string | null
+          id: string
+          user_name: string | null
+        }
+        Insert: {
+          activity_name: string
+          activity_type?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          user_name?: string | null
+        }
+        Update: {
+          activity_name?: string
+          activity_type?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          user_name?: string | null
+        }
+        Relationships: []
+      }
+      system_metrics: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          metric_name: string
+          metric_type: string
+          metric_value: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          metric_name: string
+          metric_type?: string
+          metric_value: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          metric_name?: string
+          metric_type?: string
+          metric_value?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      system_monitoring: {
+        Row: {
+          active_users: number
+          cpu_usage: number
+          database_size: string
+          disk_usage: number
+          id: string
+          memory_usage: number
+          pending_updates: number
+          recorded_at: string
+          system_uptime: string
+        }
+        Insert: {
+          active_users?: number
+          cpu_usage?: number
+          database_size?: string
+          disk_usage?: number
+          id?: string
+          memory_usage?: number
+          pending_updates?: number
+          recorded_at?: string
+          system_uptime?: string
+        }
+        Update: {
+          active_users?: number
+          cpu_usage?: number
+          database_size?: string
+          disk_usage?: number
+          id?: string
+          memory_usage?: number
+          pending_updates?: number
+          recorded_at?: string
+          system_uptime?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
