@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Users, BookOpen, Calendar, TrendingUp, FileText, GraduationCap, Award, BarChart3 } from 'lucide-react';
 import DashboardLayout from '@/components/layouts/DashboardLayout';
 import { useSEO } from '@/hooks/useSEO';
+import { useToast } from '@/hooks/use-toast';
 
 const HODDashboard = () => {
   useSEO({
@@ -13,6 +14,15 @@ const HODDashboard = () => {
     description: "Head of Department dashboard",
     canonical: "https://isbmcoe.edu.in/dashboard/hod"
   });
+
+  const { toast } = useToast();
+
+  const handleGenerateReport = () => {
+    toast({
+      title: "Report Generation Started",
+      description: "Generating the Department Report for the current academic year. You will be notified when it's ready.",
+    });
+  };
 
   const deptStats = [
     { label: 'Faculty Members', value: '28', icon: Users, color: 'text-green-600' },
@@ -33,7 +43,7 @@ const HODDashboard = () => {
             <p className="text-gray-600 dark:text-gray-400">Computer Engineering Department</p>
           </div>
           <div className="flex gap-3">
-            <Button variant="outline">
+            <Button variant="outline" onClick={handleGenerateReport}>
               <BarChart3 className="h-4 w-4 mr-2" />
               Department Report
             </Button>
