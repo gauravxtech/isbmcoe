@@ -50,18 +50,24 @@ const BannerManager = () => {
 
   const fetchBanners = async () => {
     try {
+      console.log('Fetching banners...');
       const { data, error } = await supabase
         .from('banners')
         .select('*')
         .order('display_order', { ascending: true });
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error fetching banners:', error);
+        throw error;
+      }
+      
+      console.log('Banners fetched successfully:', data);
       setBanners(data || []);
     } catch (error) {
       console.error('Error fetching banners:', error);
       toast({
         title: "Error",
-        description: "Failed to fetch banners",
+        description: `Failed to fetch banners: ${error.message}`,
         variant: "destructive"
       });
     } finally {
@@ -111,7 +117,7 @@ const BannerManager = () => {
       console.error('Error saving banner:', error);
       toast({
         title: "Error",
-        description: "Failed to save banner",
+        description: `Failed to save banner: ${error.message}`,
         variant: "destructive"
       });
     }
@@ -153,7 +159,7 @@ const BannerManager = () => {
       console.error('Error deleting banner:', error);
       toast({
         title: "Error",
-        description: "Failed to delete banner",
+        description: `Failed to delete banner: ${error.message}`,
         variant: "destructive"
       });
     }
@@ -161,6 +167,10 @@ const BannerManager = () => {
 
   const handleImageUpload = (url: string) => {
     setFormData({ ...formData, image_url: url });
+    toast({
+      title: "Success",
+      description: "Image uploaded successfully"
+    });
   };
 
   const resetForm = () => {
@@ -172,14 +182,18 @@ const BannerManager = () => {
       cta_link: '',
       highlight_text: '',
       status: 'active',
-      display_order: 1
+      display_order: (banners.length + 1)
     });
     setEditingBanner(null);
     setShowForm(false);
   };
 
   if (loading) {
-    return <div className="flex justify-center p-8">Loading...</div>;
+    return (
+      <div className="flex justify-center items-center p-8">
+        <div className="text-lg">Loading banners...</div>
+      </div>
+    );
   }
 
   return (
@@ -196,64 +210,77 @@ const BannerManager = () => {
       </div>
 
       {/* Banner List */}
-      <div className="grid gap-4">
-        {banners.map((banner) => (
-          <Card key={banner.id} className="overflow-hidden">
-            <CardContent className="p-0">
-              <div className="flex">
-                <div className="w-48 h-32 bg-gray-100 flex-shrink-0">
-                  {banner.image_url ? (
-                    <img 
-                      src={banner.image_url} 
-                      alt={banner.title}
-                      className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center text-gray-400">
+      {banners.length === 0 ? (
+        <Card>
+          <CardContent className="p-8 text-center text-gray-500">
+            <p className="text-lg mb-2">No banners found</p>
+            <p className="text-sm">Click "Add Banner" to create your first banner.</p>
+          </CardContent>
+        </Card>
+      ) : (
+        <div className="grid gap-4">
+          {banners.map((banner) => (
+            <Card key={banner.id} className="overflow-hidden">
+              <CardContent className="p-0">
+                <div className="flex">
+                  <div className="w-48 h-32 bg-gray-100 flex-shrink-0">
+                    {banner.image_url ? (
+                      <img 
+                        src={banner.image_url} 
+                        alt={banner.title}
+                        className="w-full h-full object-cover"
+                        onError={(e) => {
+                          console.error('Image failed to load:', banner.image_url);
+                          e.target.style.display = 'none';
+                          e.target.nextElementSibling.style.display = 'flex';
+                        }}
+                      />
+                    ) : null}
+                    <div className="w-full h-full flex items-center justify-center text-gray-400" style={{display: banner.image_url ? 'none' : 'flex'}}>
                       No Image
                     </div>
-                  )}
-                </div>
-                <div className="flex-1 p-4">
-                  <div className="flex items-start justify-between">
-                    <div>
-                      <div className="flex items-center gap-2 mb-2">
-                        <h4 className="font-semibold">{banner.title}</h4>
-                        <Badge variant={banner.status === 'active' ? 'default' : 'secondary'}>
-                          {banner.status}
-                        </Badge>
-                        <Badge variant="outline">Order: {banner.display_order}</Badge>
+                  </div>
+                  <div className="flex-1 p-4">
+                    <div className="flex items-start justify-between">
+                      <div>
+                        <div className="flex items-center gap-2 mb-2">
+                          <h4 className="font-semibold">{banner.title}</h4>
+                          <Badge variant={banner.status === 'active' ? 'default' : 'secondary'}>
+                            {banner.status}
+                          </Badge>
+                          <Badge variant="outline">Order: {banner.display_order}</Badge>
+                        </div>
+                        {banner.subtitle && (
+                          <p className="text-sm text-gray-600 mb-2">{banner.subtitle}</p>
+                        )}
+                        <div className="flex items-center gap-4 text-sm">
+                          {banner.cta_text && <span><strong>CTA:</strong> {banner.cta_text}</span>}
+                          {banner.highlight_text && <span><strong>Highlight:</strong> {banner.highlight_text}</span>}
+                        </div>
                       </div>
-                      {banner.subtitle && (
-                        <p className="text-sm text-gray-600 mb-2">{banner.subtitle}</p>
-                      )}
-                      <div className="flex items-center gap-4 text-sm">
-                        {banner.cta_text && <span><strong>CTA:</strong> {banner.cta_text}</span>}
-                        {banner.highlight_text && <span><strong>Highlight:</strong> {banner.highlight_text}</span>}
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      {banner.image_url && (
-                        <Button variant="ghost" size="sm" asChild>
-                          <a href={banner.image_url} target="_blank" rel="noopener noreferrer">
-                            <Eye className="h-4 w-4" />
-                          </a>
+                      <div className="flex items-center gap-2">
+                        {banner.image_url && (
+                          <Button variant="ghost" size="sm" asChild>
+                            <a href={banner.image_url} target="_blank" rel="noopener noreferrer">
+                              <Eye className="h-4 w-4" />
+                            </a>
+                          </Button>
+                        )}
+                        <Button variant="ghost" size="sm" onClick={() => handleEdit(banner)}>
+                          <Edit className="h-4 w-4" />
                         </Button>
-                      )}
-                      <Button variant="ghost" size="sm" onClick={() => handleEdit(banner)}>
-                        <Edit className="h-4 w-4" />
-                      </Button>
-                      <Button variant="ghost" size="sm" className="text-red-600" onClick={() => handleDelete(banner.id)}>
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
+                        <Button variant="ghost" size="sm" className="text-red-600" onClick={() => handleDelete(banner.id)}>
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      )}
 
       {/* Add/Edit Form */}
       {showForm && (
@@ -265,12 +292,13 @@ const BannerManager = () => {
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor="title">Banner Title</Label>
+                  <Label htmlFor="title">Banner Title *</Label>
                   <Input
                     id="title"
                     value={formData.title}
                     onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                     required
+                    placeholder="Enter banner title"
                   />
                 </div>
                 <div>
@@ -311,7 +339,7 @@ const BannerManager = () => {
                     type="url"
                     value={formData.cta_link}
                     onChange={(e) => setFormData({ ...formData, cta_link: e.target.value })}
-                    placeholder="https://..."
+                    placeholder="https://... or /page-path"
                   />
                 </div>
               </div>

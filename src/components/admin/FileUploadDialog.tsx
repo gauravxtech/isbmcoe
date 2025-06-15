@@ -53,22 +53,36 @@ const FileUploadDialog = ({ open, onClose, onUploadComplete, folder = 'banners' 
 
     setUploading(true);
     try {
+      console.log('Starting file upload...');
+      
       // Generate unique filename
       const fileExt = file.name.split('.').pop();
       const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`;
       const filePath = `${folder}/${fileName}`;
 
+      console.log('Uploading to path:', filePath);
+
       // Upload to Supabase Storage
       const { data: uploadData, error: uploadError } = await supabase.storage
         .from('website-files')
-        .upload(filePath, file);
+        .upload(filePath, file, {
+          cacheControl: '3600',
+          upsert: false
+        });
 
-      if (uploadError) throw uploadError;
+      if (uploadError) {
+        console.error('Upload error:', uploadError);
+        throw uploadError;
+      }
+
+      console.log('Upload successful:', uploadData);
 
       // Get public URL
       const { data: urlData } = supabase.storage
         .from('website-files')
         .getPublicUrl(filePath);
+
+      console.log('Public URL:', urlData.publicUrl);
 
       // Save to media library
       const { error: dbError } = await supabase
@@ -84,7 +98,10 @@ const FileUploadDialog = ({ open, onClose, onUploadComplete, folder = 'banners' 
           folder: folder
         }]);
 
-      if (dbError) throw dbError;
+      if (dbError) {
+        console.error('Database error:', dbError);
+        throw dbError;
+      }
 
       toast({
         title: "Success",
@@ -97,7 +114,7 @@ const FileUploadDialog = ({ open, onClose, onUploadComplete, folder = 'banners' 
       console.error('Error uploading file:', error);
       toast({
         title: "Error",
-        description: "Failed to upload file",
+        description: `Failed to upload file: ${error.message}`,
         variant: "destructive"
       });
     } finally {
