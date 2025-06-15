@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -27,6 +26,7 @@ import {
   EyeOff
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import ProfileUpdateForm from '@/components/ProfileUpdateForm';
 
 const SettingsPanel = () => {
   const { toast } = useToast();
@@ -119,8 +119,9 @@ const SettingsPanel = () => {
         </Badge>
       </div>
 
-      <Tabs defaultValue="college-info" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-6 bg-white dark:bg-gray-800 border">
+      <Tabs defaultValue="profile" className="space-y-6">
+        <TabsList className="grid w-full grid-cols-7 bg-white dark:bg-gray-800 border">
+          <TabsTrigger value="profile">Profile</TabsTrigger>
           <TabsTrigger value="college-info">College Info</TabsTrigger>
           <TabsTrigger value="academic">Academic</TabsTrigger>
           <TabsTrigger value="integrations">Integrations</TabsTrigger>
@@ -128,6 +129,10 @@ const SettingsPanel = () => {
           <TabsTrigger value="system">System</TabsTrigger>
           <TabsTrigger value="appearance">Appearance</TabsTrigger>
         </TabsList>
+
+        <TabsContent value="profile">
+          <ProfileUpdateForm />
+        </TabsContent>
 
         <TabsContent value="college-info">
           <Card>
