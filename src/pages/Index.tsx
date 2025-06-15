@@ -10,12 +10,15 @@ import PlacementMetrics from '@/components/PlacementMetrics';
 import NewsEvents from '@/components/NewsEvents';
 import Footer from '@/components/Footer';
 import Chatbot from '@/components/Chatbot';
+import DebugPanel from '@/components/DebugPanel';
 import { useSEO } from '@/hooks/useSEO';
 
 const Index = () => {
   useSEO({
     title: "ISBM College of Engineering - Best Engineering College in Pune | NAAC B++ Accredited",
-    description: "ISBM College of Engineering, Pune - Premier engineering institution affiliated to Savitribai Phule Pune University. NAAC B++ Accredited, AICTE Approved. Offering B.E. programs in CSE, AI/ML, Mechanical, Electronics. 95% placement record with top companies.",
+    description: "ISBM College of Engineering, Pune - Premier engineering institution affiliated to Savitribai Phule Pune University. NAAC B++ Accredited, AICTE Approved. Offering B.E. programs in CSE,
+
+AI/ML, Mechanical, Electronics. 95% placement record with top companies.",
     keywords: "ISBM College Engineering, Pune Engineering College, NAAC B++, AICTE Approved, Computer Science Engineering, Artificial Intelligence, Machine Learning, Mechanical Engineering, Electronics Engineering, Engineering Admissions Pune, Best Engineering College Maharashtra",
     canonical: "https://isbmcoe.edu.in",
     structuredData: {
@@ -98,6 +101,7 @@ const Index = () => {
       </main>
       <Footer />
       <Chatbot />
+      <DebugPanel />
     </div>
   );
 };
