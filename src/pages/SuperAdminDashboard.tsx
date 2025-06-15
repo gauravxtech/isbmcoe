@@ -196,10 +196,14 @@ const SuperAdminDashboard = () => {
     }
 
     try {
-      // Add to profiles table (simulated - in real app would create auth user first)
+      // Generate a UUID for the profile (in a real app, this would be the auth user's ID)
+      const userId = crypto.randomUUID();
+      
+      // Add to profiles table with generated ID
       const { error } = await supabase
         .from('profiles')
         .insert({
+          id: userId,
           email: newUser.email,
           full_name: newUser.fullName,
           role: newUser.role,
