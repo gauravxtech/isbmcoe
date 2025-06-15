@@ -8,7 +8,6 @@ import ProtectedRoute from "@/components/ProtectedRoute";
 import Index from "./pages/Index";
 import Login from "./pages/Login";
 import ForgotPassword from "./pages/ForgotPassword";
-import AdminSetup from "./components/AdminSetup";
 import About from "./pages/About";
 import VisionMission from "./pages/VisionMission";
 import Administration from "./pages/Administration";
@@ -59,14 +58,7 @@ import AllTeachers from "./pages/AllTeachers";
 import WebsiteManagement from "./pages/WebsiteManagement";
 import NotFound from "./pages/NotFound";
 
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      retry: 1,
-      refetchOnWindowFocus: false,
-    },
-  },
-});
+const queryClient = new QueryClient();
 
 function App() {
   return (
@@ -81,7 +73,25 @@ function App() {
               <Route path="/" element={<Index />} />
               <Route path="/login" element={<Login />} />
               <Route path="/forgot-password" element={<ForgotPassword />} />
-              <Route path="/admin-setup" element={<AdminSetup />} />
+              <Route path="/about" element={<About />} />
+              <Route path="/vision-mission" element={<VisionMission />} />
+              <Route path="/administration" element={<Administration />} />
+              <Route path="/programs-offered" element={<ProgramsOffered />} />
+              <Route path="/fees-structure" element={<FeesStructure />} />
+              <Route path="/first-year-admission" element={<FirstYearAdmission />} />
+              <Route path="/direct-second-year-admission" element={<DirectSecondYearAdmission />} />
+              <Route path="/placements" element={<Placements />} />
+              <Route path="/career-services" element={<CareerServices />} />
+              <Route path="/training-programs" element={<TrainingPrograms />} />
+              <Route path="/industry-partners" element={<IndustryPartners />} />
+              <Route path="/alumni-network" element={<AlumniNetwork />} />
+              <Route path="/campus-location" element={<CampusLocation />} />
+              <Route path="/directions" element={<Directions />} />
+              <Route path="/hostel" element={<Hostel />} />
+              <Route path="/life-at-campus" element={<LifeAtCampus />} />
+              <Route path="/cultural-events" element={<CulturalEvents />} />
+              <Route path="/virtual-tour" element={<VirtualTour />} />
+              <Route path="/helpdesk" element={<Helpdesk />} />
               
               {/* Department Pages */}
               <Route path="/departments/computer-engineering" element={<ComputerEngineeringDepartment />} />

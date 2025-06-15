@@ -1,3 +1,4 @@
+
 import React, { useEffect } from 'react';
 import Header from '@/components/Header';
 import Navbar from '@/components/Navbar';
@@ -9,7 +10,6 @@ import PlacementMetrics from '@/components/PlacementMetrics';
 import NewsEvents from '@/components/NewsEvents';
 import Footer from '@/components/Footer';
 import Chatbot from '@/components/Chatbot';
-import DebugPanel from '@/components/DebugPanel';
 import { useSEO } from '@/hooks/useSEO';
 
 const Index = () => {
@@ -98,7 +98,6 @@ const Index = () => {
       </main>
       <Footer />
       <Chatbot />
-      <DebugPanel />
     </div>
   );
 };
