@@ -28,7 +28,8 @@ import {
   Mail,
   Sun,
   Moon,
-  User
+  User,
+  ChevronLeft
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -94,6 +95,44 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
     };
     return titles[role] || 'Dashboard';
   };
+
+  // Generate breadcrumb from current path
+  const generateBreadcrumb = () => {
+    const pathSegments = location.pathname.split('/').filter(segment => segment);
+    const breadcrumbs = [];
+    
+    // Add home/dashboard as first item
+    breadcrumbs.push({
+      label: 'Dashboard',
+      path: '/dashboard',
+      isActive: false
+    });
+
+    // Process path segments
+    let currentPath = '';
+    pathSegments.forEach((segment, index) => {
+      currentPath += `/${segment}`;
+      const isLast = index === pathSegments.length - 1;
+      
+      // Format segment label
+      let label = segment.replace(/-/g, ' ');
+      label = label.charAt(0).toUpperCase() + label.slice(1);
+      
+      // Special cases for role-based paths
+      if (segment === 'super-admin') label = 'Super Admin';
+      if (segment === 'admin') label = 'Admin';
+      
+      breadcrumbs.push({
+        label,
+        path: currentPath,
+        isActive: isLast
+      });
+    });
+
+    return breadcrumbs;
+  };
+
+  const breadcrumbs = generateBreadcrumb();
 
   const navigationSections = [
     {
@@ -399,41 +438,19 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col overflow-hidden">
-        {/* Top Header */}
-        <header className="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700 px-6 py-4">
+        {/* Top Header - Simplified */}
+        <header className="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700 px-6 py-3">
           <div className="flex items-center justify-between">
-            {/* Left: Mobile Toggle + Logo + Dashboard Title */}
+            {/* Left: Logo + College Name */}
             <div className="flex items-center space-x-4">
-              {/* Mobile Menu Toggle */}
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setSidebarOpen(!sidebarOpen)}
-                className="lg:hidden text-gray-500 dark:text-gray-400"
-              >
-                <Menu className="h-5 w-5" />
-              </Button>
-              
-              {/* Desktop Sidebar Toggle */}
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setSidebarOpen(!sidebarOpen)}
-                className="hidden lg:flex text-gray-500 dark:text-gray-400"
-              >
-                <Menu className="h-5 w-5" />
-              </Button>
-
               <img 
                 src="/lovable-uploads/18fee38c-1acf-462a-825a-cda10c5e7381.png" 
                 alt="ISBM Logo" 
                 className="w-8 h-8"
               />
               <div>
-                <h1 className="text-xl font-bold text-gray-900 dark:text-white">
-                  {getDashboardTitle(userRole || 'student')}
-                </h1>
-                <p className="text-sm text-gray-500 dark:text-gray-400">ISBM College of Engineering</p>
+                <h1 className="text-lg font-bold text-gray-900 dark:text-white">ISBM College of Engineering</h1>
+                <p className="text-xs text-gray-500 dark:text-gray-400">Management System</p>
               </div>
             </div>
 
@@ -448,8 +465,8 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
               </div>
             </div>
             
-            {/* Right: User Info */}
-            <div className="flex items-center space-x-4">
+            {/* Right: User Controls */}
+            <div className="flex items-center space-x-3">
               {/* Dark Mode Toggle */}
               <Button 
                 variant="ghost" 
@@ -457,41 +474,88 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
                 onClick={() => setDarkMode(!darkMode)}
                 className="text-gray-500 dark:text-gray-400"
               >
-                {darkMode ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+                {darkMode ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
               </Button>
 
               {/* Notifications */}
               <Button variant="ghost" size="sm" className="relative text-gray-500 dark:text-gray-400">
-                <Bell className="h-5 w-5" />
-                <Badge className="absolute -top-2 -right-2 h-5 w-5 flex items-center justify-center text-xs bg-red-500">
+                <Bell className="h-4 w-4" />
+                <Badge className="absolute -top-2 -right-2 h-4 w-4 flex items-center justify-center text-xs bg-red-500">
                   3
                 </Badge>
               </Button>
               
-              {/* User Profile with Settings */}
-              <div className="flex items-center space-x-3">
+              {/* User Profile */}
+              <div className="flex items-center space-x-2">
                 <div className="text-right hidden md:block">
                   <p className="text-sm font-medium text-gray-900 dark:text-white">{getUserDisplayName()}</p>
                   <p className="text-xs text-gray-500 dark:text-gray-400">{user?.email}</p>
                 </div>
                 <div className="relative">
-                  <div className="w-10 h-10 bg-college-primary rounded-full flex items-center justify-center text-white font-semibold">
+                  <div className="w-8 h-8 bg-college-primary rounded-full flex items-center justify-center text-white font-semibold text-sm">
                     {getUserInitial()}
                   </div>
-                  {/* Settings Button on Profile */}
                   <Button 
                     variant="ghost" 
                     size="sm"
                     onClick={() => setSettingsOpen(true)}
-                    className="absolute -bottom-1 -right-1 h-6 w-6 p-0 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-full shadow-sm hover:bg-gray-50 dark:hover:bg-gray-700"
+                    className="absolute -bottom-1 -right-1 h-5 w-5 p-0 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-full shadow-sm hover:bg-gray-50 dark:hover:bg-gray-700"
                   >
-                    <Settings className="h-3 w-3 text-gray-600 dark:text-gray-400" />
+                    <Settings className="h-2.5 w-2.5 text-gray-600 dark:text-gray-400" />
                   </Button>
                 </div>
               </div>
             </div>
           </div>
         </header>
+
+        {/* Title Bar with Toggle and Breadcrumb */}
+        <div className="bg-gray-50 dark:bg-gray-800/50 border-b border-gray-200 dark:border-gray-700 px-6 py-3">
+          <div className="flex items-center justify-between">
+            {/* Left: Toggle Button + Breadcrumb */}
+            <div className="flex items-center space-x-4">
+              {/* Desktop Sidebar Toggle */}
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setSidebarOpen(!sidebarOpen)}
+                className="text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700"
+              >
+                <Menu className="h-4 w-4" />
+              </Button>
+
+              {/* Breadcrumb Navigation */}
+              <nav className="flex items-center space-x-1 text-sm">
+                {breadcrumbs.map((crumb, index) => (
+                  <div key={crumb.path} className="flex items-center">
+                    {index > 0 && (
+                      <ChevronRight className="h-3 w-3 text-gray-400 mx-1" />
+                    )}
+                    {crumb.isActive ? (
+                      <span className="font-medium text-gray-900 dark:text-white">
+                        {crumb.label}
+                      </span>
+                    ) : (
+                      <Link
+                        to={crumb.path}
+                        className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 transition-colors"
+                      >
+                        {crumb.label}
+                      </Link>
+                    )}
+                  </div>
+                ))}
+              </nav>
+            </div>
+
+            {/* Right: Page Title */}
+            <div className="text-right">
+              <h2 className="font-semibold text-gray-900 dark:text-white">
+                {getDashboardTitle(userRole || 'student')}
+              </h2>
+            </div>
+          </div>
+        </div>
 
         {/* Page Content */}
         <main className="flex-1 overflow-auto p-6 bg-gray-50 dark:bg-gray-900">
