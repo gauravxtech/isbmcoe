@@ -29,7 +29,8 @@ import {
   Sun,
   Moon,
   User,
-  ChevronLeft
+  ChevronLeft,
+  Globe
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -121,6 +122,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
       // Special cases for role-based paths
       if (segment === 'super-admin') label = 'Super Admin';
       if (segment === 'admin') label = 'Admin';
+      if (segment === 'website-management') label = 'Website Management';
       
       breadcrumbs.push({
         label,
@@ -141,6 +143,10 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
       icon: LayoutDashboard,
       items: [
         { name: 'Overview', href: `/dashboard/${userRole || 'student'}`, icon: LayoutDashboard },
+        // Add Website Management option for super-admin and admin roles
+        ...(userRole === 'super-admin' || userRole === 'admin' ? [
+          { name: 'Website Management', href: '/dashboard/website-management', icon: Globe }
+        ] : [])
       ]
     },
     {
