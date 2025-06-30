@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -53,12 +52,17 @@ import AccountantDashboard from "./pages/AccountantDashboard";
 import ReceptionDashboard from "./pages/ReceptionDashboard";
 import SecurityDashboard from "./pages/SecurityDashboard";
 import HostelDashboard from "./pages/HostelDashboard";
+import WebsiteManagement from "./pages/WebsiteManagement";
 import AdmissionInquiry from "./pages/AdmissionInquiry";
 import VisitorsBook from "./pages/VisitorsBook";
 import Complaints from "./pages/Complaints";
 import AllTeachers from "./pages/AllTeachers";
-import WebsiteManagement from "./pages/WebsiteManagement";
 import NotFound from "./pages/NotFound";
+import UserManagement from "./pages/UserManagement";
+import SystemManagement from "./pages/SystemManagement";
+import ReportGenerator from "./pages/ReportGenerator";
+import NotificationCenter from "./pages/NotificationCenter";
+import DepartmentManagement from "./pages/DepartmentManagement";
 
 const queryClient = new QueryClient();
 
@@ -208,6 +212,33 @@ function App() {
               <Route path="/admin/teachers" element={
                 <ProtectedRoute allowedRoles={['admin', 'principal', 'hod', 'super-admin']}>
                   <AllTeachers />
+                </ProtectedRoute>
+              } />
+              
+              {/* New Admin Routes */}
+              <Route path="/admin/user-management" element={
+                <ProtectedRoute allowedRoles={['super-admin', 'admin']}>
+                  <UserManagement />
+                </ProtectedRoute>
+              } />
+              <Route path="/admin/system-management" element={
+                <ProtectedRoute allowedRoles={['super-admin']}>
+                  <SystemManagement />
+                </ProtectedRoute>
+              } />
+              <Route path="/admin/reports" element={
+                <ProtectedRoute allowedRoles={['super-admin', 'admin', 'principal']}>
+                  <ReportGenerator />
+                </ProtectedRoute>
+              } />
+              <Route path="/admin/notifications" element={
+                <ProtectedRoute allowedRoles={['super-admin', 'admin', 'principal']}>
+                  <NotificationCenter />
+                </ProtectedRoute>
+              } />
+              <Route path="/admin/departments" element={
+                <ProtectedRoute allowedRoles={['super-admin', 'admin', 'principal']}>
+                  <DepartmentManagement />
                 </ProtectedRoute>
               } />
               

@@ -37,13 +37,16 @@ import {
   FileText,
   Bell,
   Trash2,
-  Edit
+  Edit,
+  Mail,
+  Lock
 } from 'lucide-react';
 import DashboardLayout from '@/components/layouts/DashboardLayout';
 import { useSEO } from '@/hooks/useSEO';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
+import { useNavigate } from 'react-router-dom';
 
 interface SystemMonitoring {
   id: string;
@@ -91,6 +94,7 @@ const SuperAdminDashboard = () => {
   });
   const { toast } = useToast();
   const { user, userRole } = useAuth();
+  const navigate = useNavigate();
 
   useSEO({
     title: "Super Admin Dashboard - ISBM College",
@@ -461,7 +465,7 @@ const SuperAdminDashboard = () => {
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
           <Dialog open={isAddUserOpen} onOpenChange={setIsAddUserOpen}>
             <DialogTrigger asChild>
-              <Button className="h-20 flex-col bg-blue-500 hover:bg-blue-600">
+              <Button className="h-20 flex-col bg-blue-500 hover:bg-blue-600" onClick={() => setIsAddUserOpen(true)}>
                 <UserPlus className="h-6 w-6 mb-2" />
                 <span className="text-xs">Add User</span>
               </Button>
@@ -568,7 +572,7 @@ const SuperAdminDashboard = () => {
 
           <Button 
             className="h-20 flex-col bg-green-500 hover:bg-green-600"
-            onClick={() => handleSystemAction('Generate Reports')}
+            onClick={() => navigate('/admin/reports')}
           >
             <FileText className="h-6 w-6 mb-2" />
             <span className="text-xs">Reports</span>
@@ -576,7 +580,7 @@ const SuperAdminDashboard = () => {
 
           <Button 
             className="h-20 flex-col bg-purple-500 hover:bg-purple-600"
-            onClick={() => handleSystemAction('Send Notifications')}
+            onClick={() => navigate('/admin/notifications')}
           >
             <Bell className="h-6 w-6 mb-2" />
             <span className="text-xs">Notifications</span>
@@ -584,7 +588,7 @@ const SuperAdminDashboard = () => {
 
           <Button 
             className="h-20 flex-col bg-orange-500 hover:bg-orange-600"
-            onClick={() => handleSystemAction('Manage Departments')}
+            onClick={() => navigate('/admin/departments')}
           >
             <Building className="h-6 w-6 mb-2" />
             <span className="text-xs">Departments</span>
@@ -685,10 +689,10 @@ const SuperAdminDashboard = () => {
                   <Button 
                     variant="outline" 
                     className="h-24 flex-col"
-                    onClick={() => handleSystemAction('Export User Data')}
+                    onClick={() => navigate('/admin/user-management')}
                   >
                     <Users className="h-8 w-8 mb-2" />
-                    <span>Export Users</span>
+                    <span>Manage Users</span>
                   </Button>
                   <Button 
                     variant="outline" 
@@ -717,10 +721,10 @@ const SuperAdminDashboard = () => {
                   <Button 
                     variant="outline" 
                     className="h-24 flex-col"
-                    onClick={() => handleSystemAction('Manage Banners')}
+                    onClick={() => navigate('/dashboard/website-management')}
                   >
                     <FileText className="h-8 w-8 mb-2" />
-                    <span>Banners</span>
+                    <span>Website Content</span>
                   </Button>
                   <Button 
                     variant="outline" 
@@ -749,17 +753,17 @@ const SuperAdminDashboard = () => {
                   <Button 
                     variant="outline" 
                     className="h-24 flex-col"
-                    onClick={() => handleSystemAction('Database Maintenance')}
+                    onClick={() => navigate('/admin/system-management')}
                   >
                     <Database className="h-8 w-8 mb-2" />
-                    <span>Database</span>
+                    <span>System Management</span>
                   </Button>
                   <Button 
                     variant="outline" 
                     className="h-24 flex-col"
                     onClick={() => handleSystemAction('Security Audit')}
                   >
-                    <Shield className="h-8 w-8 mb-2" />
+                    <Lock className="h-8 w-8 mb-2" />
                     <span>Security</span>
                   </Button>
                   <Button 
@@ -781,10 +785,10 @@ const SuperAdminDashboard = () => {
                   <Button 
                     variant="outline" 
                     className="h-24 flex-col"
-                    onClick={() => handleSystemAction('Generate Usage Report')}
+                    onClick={() => navigate('/admin/reports')}
                   >
                     <TrendingUp className="h-8 w-8 mb-2" />
-                    <span>Usage Reports</span>
+                    <span>Reports</span>
                   </Button>
                   <Button 
                     variant="outline" 
