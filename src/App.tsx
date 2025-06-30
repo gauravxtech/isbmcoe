@@ -214,6 +214,11 @@ function App() {
                   <AllTeachers />
                 </ProtectedRoute>
               } />
+              <Route path="/admin/teachers/add" element={
+                <ProtectedRoute allowedRoles={['super-admin', 'admin']}>
+                  <UserManagement />
+                </ProtectedRoute>
+              } />
               
               {/* New Admin Routes */}
               <Route path="/admin/user-management" element={
