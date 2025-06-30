@@ -1,4 +1,3 @@
-
 -- Enable RLS on tables that don't have it yet and add proper policies
 
 -- Add RLS policies for banners table
@@ -71,3 +70,29 @@ FOR UPDATE USING (bucket_id = 'website-files' AND auth.role() = 'authenticated')
 
 CREATE POLICY "Authenticated users can delete website files" ON storage.objects
 FOR DELETE USING (bucket_id = 'website-files' AND auth.role() = 'authenticated');
+
+CREATE TABLE public.notifications (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id uuid REFERENCES public.profiles(id) ON DELETE CASCADE,
+  title text NOT NULL,
+  message text,
+  type text DEFAULT 'announcement',
+  ref_id uuid,
+  read boolean DEFAULT false,
+  created_at timestamptz NOT NULL DEFAULT timezone('utc', now())
+);
+
+-- Enable RLS
+ALTER TABLE public.notifications ENABLE ROW LEVEL SECURITY;
+
+-- Allow users to see their own notifications
+CREATE POLICY "Users can view their notifications" ON public.notifications
+  FOR SELECT USING (auth.uid() = user_id);
+
+-- Allow users to mark their notifications as read
+CREATE POLICY "Users can update their notifications" ON public.notifications
+  FOR UPDATE USING (auth.uid() = user_id);
+
+-- Allow system/admins to insert notifications for any user
+CREATE POLICY "Admins can insert notifications" ON public.notifications
+  FOR INSERT WITH CHECK (true);

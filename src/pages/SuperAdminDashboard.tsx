@@ -38,15 +38,15 @@ import {
   Bell,
   Trash2,
   Edit,
-  Mail,
-  Lock
+  Book,
+  User
 } from 'lucide-react';
 import DashboardLayout from '@/components/layouts/DashboardLayout';
 import { useSEO } from '@/hooks/useSEO';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
-import { useNavigate } from 'react-router-dom';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 
 interface SystemMonitoring {
   id: string;
@@ -92,9 +92,49 @@ const SuperAdminDashboard = () => {
     phone: '',
     password: ''
   });
+  const [userCount, setUserCount] = useState<number>(0);
+  const [studentCount, setStudentCount] = useState<number>(0);
+  const [departmentCount, setDepartmentCount] = useState<number>(0);
   const { toast } = useToast();
   const { user, userRole } = useAuth();
-  const navigate = useNavigate();
+  const navigate = (window as any).navigate || ((url: string) => { window.location.href = url; });
+
+  // Admins and Roles State
+  const [admins, setAdmins] = useState<any[]>([]);
+  const [allUsers, setAllUsers] = useState<any[]>([]);
+  const [userLoading, setUserLoading] = useState(true);
+  const [roleEditId, setRoleEditId] = useState<string | null>(null);
+  const [roleEditValue, setRoleEditValue] = useState<string>('');
+  const [addAdminOpen, setAddAdminOpen] = useState(false);
+  const [addAdminForm, setAddAdminForm] = useState({ full_name: '', email: '', password: '', department: '', role: 'admin' });
+  const [editAdmin, setEditAdmin] = useState<any | null>(null);
+  const [editAdminOpen, setEditAdminOpen] = useState(false);
+  const [editAdminForm, setEditAdminForm] = useState({ full_name: '', email: '', department: '', role: 'admin', status: 'active' });
+
+  // Add department options for admin creation
+  const departmentOptions = [
+    'Computer Engineering',
+    'AIDS',
+    'Mechanical',
+    'ETC',
+    'BCA',
+    'BBA',
+    'Sports Cell',
+    'Cultural Cell',
+    'Library',
+    'Hostel',
+    'Accounts',
+    'General Administration',
+  ];
+
+  // Update role options to include super-admin
+  const roleOptions = [
+    'student',
+    'faculty',
+    'staff',
+    'admin',
+    'super-admin',
+  ];
 
   useSEO({
     title: "Super Admin Dashboard - ISBM College",
@@ -103,10 +143,23 @@ const SuperAdminDashboard = () => {
   });
 
   useEffect(() => {
-    console.log('SuperAdminDashboard mounted. User:', user?.email, 'Role:', userRole);
     fetchSystemData();
     fetchActivities();
+    fetchCounts();
+    fetchAdminsAndUsers();
   }, [user, userRole]);
+
+  const fetchCounts = async () => {
+    // Fetch total users
+    const { count: userCount } = await supabase.from('profiles').select('*', { count: 'exact', head: true });
+    setUserCount(userCount || 0);
+    // Fetch total students
+    const { count: studentCount } = await supabase.from('students').select('*', { count: 'exact', head: true });
+    setStudentCount(studentCount || 0);
+    // Fetch total departments
+    const { count: departmentCount } = await supabase.from('departments').select('*', { count: 'exact', head: true });
+    setDepartmentCount(departmentCount || 0);
+  };
 
   const fetchSystemData = async () => {
     try {
@@ -188,6 +241,20 @@ const SuperAdminDashboard = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const fetchAdminsAndUsers = async () => {
+    setUserLoading(true);
+    // Fetch only admins and super-admins for the admins list
+    const { data: admins } = await supabase
+      .from('profiles')
+      .select('*')
+      .in('role', ['admin', 'super-admin']);
+    setAdmins(admins || []);
+    // Fetch all users for the roles tab
+    const { data: users } = await supabase.from('profiles').select('*');
+    setAllUsers(users || []);
+    setUserLoading(false);
   };
 
   const handleAddUser = async () => {
@@ -348,6 +415,121 @@ const SuperAdminDashboard = () => {
     return `${Math.floor(diffInMinutes / 1440)} days ago`;
   };
 
+  const handleDeleteAdmin = async (id: string) => {
+    if (!window.confirm('Are you sure you want to delete this admin?')) return;
+    try {
+      const { error } = await supabase.from('profiles').delete().eq('id', id);
+      if (error) throw error;
+      toast({ title: 'Admin deleted successfully!' });
+      fetchAdminsAndUsers();
+    } catch (err: any) {
+      toast({ title: 'Error', description: err.message || 'Failed to delete admin.', variant: 'destructive' });
+    }
+  };
+
+  const handleAddAdmin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setAddAdminOpen(true);
+    if (!addAdminForm.full_name || !addAdminForm.email || !addAdminForm.password || !addAdminForm.department) {
+      toast({ title: 'Error', description: 'All fields are required.', variant: 'destructive' });
+      return;
+    }
+    if (addAdminForm.password.length < 6) {
+      toast({ title: 'Error', description: 'Password must be at least 6 characters.', variant: 'destructive' });
+      return;
+    }
+    try {
+      // 1. Check if user exists in Auth
+      const { data: existingUser, error: fetchError } = await supabase.auth.admin.getUserByEmail(addAdminForm.email);
+      let userId = existingUser?.user?.id;
+      if (!userId) {
+        // 2. If not, create in Auth
+        const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
+          email: addAdminForm.email,
+          password: addAdminForm.password,
+          options: { data: { full_name: addAdminForm.full_name, role: addAdminForm.role, department: addAdminForm.department } }
+        });
+        if (signUpError) throw signUpError;
+        userId = signUpData.user?.id;
+      }
+      // 3. Upsert to profiles
+      const { error: profileError } = await supabase.from('profiles').upsert({
+        id: userId,
+        email: addAdminForm.email,
+        full_name: addAdminForm.full_name,
+        department: addAdminForm.department,
+        role: addAdminForm.role,
+        status: 'active'
+      });
+      if (profileError) throw profileError;
+      toast({ title: 'Admin added successfully!' });
+      setAddAdminOpen(false);
+      setAddAdminForm({ full_name: '', email: '', password: '', department: '', role: 'admin' });
+      fetchAdminsAndUsers();
+    } catch (err: any) {
+      toast({ title: 'Error', description: err.message || 'Failed to add admin.', variant: 'destructive' });
+    }
+  };
+
+  const handleRoleEdit = (id: string, value: string) => {
+    setRoleEditId(id);
+    setRoleEditValue(value);
+  };
+  const saveRoleEdit = async (id: string) => {
+    await supabase.from('profiles').update({ role: roleEditValue }).eq('id', id);
+    setRoleEditId(null);
+    fetchAdminsAndUsers();
+    toast({ title: 'Role updated' });
+  };
+
+  const handleEditAdmin = (admin: any) => {
+    setEditAdmin(admin);
+    setEditAdminForm({
+      full_name: admin.full_name,
+      email: admin.email,
+      department: admin.department,
+      role: admin.role,
+      status: admin.status || 'active',
+    });
+    setEditAdminOpen(true);
+  };
+
+  const handleSaveEditAdmin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editAdmin) return;
+    try {
+      const { error } = await supabase.from('profiles').update({
+        full_name: editAdminForm.full_name,
+        department: editAdminForm.department,
+        role: editAdminForm.role,
+        status: editAdminForm.status
+      }).eq('id', editAdmin.id);
+      if (error) throw error;
+      toast({ title: 'Admin updated successfully!' });
+      setEditAdminOpen(false);
+      setEditAdmin(null);
+      fetchAdminsAndUsers();
+    } catch (err: any) {
+      toast({ title: 'Error', description: err.message || 'Failed to update admin.', variant: 'destructive' });
+    }
+  };
+
+  const handleQuickLink = (action: string) => {
+    switch (action) {
+      case 'add-student':
+        navigate('/admin/students/add');
+        break;
+      case 'manage-course':
+        navigate('/admin/courses');
+        break;
+      case 'upload-notice':
+        setIsAddUserOpen(true); // Or open a dedicated notice modal
+        break;
+      default:
+        break;
+    }
+  };
+
   if (loading) {
     return (
       <DashboardLayout>
@@ -392,425 +574,247 @@ const SuperAdminDashboard = () => {
 
   return (
     <DashboardLayout>
-      <div className="space-y-4 md:space-y-6 px-2 sm:px-4 md:px-0">
-        <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4">
-          <div className="min-w-0">
-            <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900 dark:text-white flex items-center gap-2 md:gap-3">
-              <Shield className="h-6 w-6 md:h-8 md:w-8 text-red-500 flex-shrink-0" />
-              <span className="truncate">System Control Center</span>
-            </h1>
-            <p className="text-sm md:text-base text-gray-600 dark:text-gray-400 mt-1">Complete system administration and monitoring</p>
-            <p className="text-xs text-gray-500 mt-1">Logged in as: {user?.email} ({userRole})</p>
-          </div>
-          <div className="flex flex-col sm:flex-row gap-2 md:gap-3">
-            <Button variant="outline" onClick={fetchSystemData} size="sm" className="text-xs md:text-sm">
-              <Server className="h-3 w-3 md:h-4 md:w-4 mr-1 md:mr-2" />
-              Refresh Data
-            </Button>
-
-            <Dialog open={isSystemSettingsOpen} onOpenChange={setIsSystemSettingsOpen}>
-              <DialogTrigger asChild>
-                <Button className="bg-red-500 hover:bg-red-600 text-xs md:text-sm" size="sm">
-                  <Settings className="h-3 w-3 md:h-4 md:w-4 mr-1 md:mr-2" />
-                  System Settings
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="max-w-md">
-                <DialogHeader>
-                  <DialogTitle>System Settings</DialogTitle>
-                  <DialogDescription>
-                    Manage system-wide configurations and settings.
-                  </DialogDescription>
-                </DialogHeader>
-                <div className="space-y-3">
-                  <Button 
-                    className="w-full justify-start" 
-                    variant="outline"
-                    onClick={() => handleSystemAction('System Backup')}
-                  >
-                    <Database className="h-4 w-4 mr-2" />
-                    Backup Database
-                  </Button>
-                  <Button 
-                    className="w-full justify-start" 
-                    variant="outline"
-                    onClick={() => handleSystemAction('System Update')}
-                  >
-                    <TrendingUp className="h-4 w-4 mr-2" />
-                    Check Updates
-                  </Button>
-                  <Button 
-                    className="w-full justify-start" 
-                    variant="outline"
-                    onClick={() => handleSystemAction('Clear Cache')}
-                  >
-                    <Server className="h-4 w-4 mr-2" />
-                    Clear System Cache
-                  </Button>
-                  <Button 
-                    className="w-full justify-start text-red-600 hover:text-red-700" 
-                    variant="outline"
-                    onClick={() => handleSystemAction('System Restart')}
-                  >
-                    <AlertTriangle className="h-4 w-4 mr-2" />
-                    Restart System
-                  </Button>
-                </div>
-              </DialogContent>
-            </Dialog>
-          </div>
+      <div className="space-y-6 px-2 sm:px-4 md:px-0">
+        {/* Top Section: KPIs and Quick Links */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+          {/* KPI Cards */}
+          <Card className="col-span-1">
+            <CardContent className="flex flex-col items-center p-4">
+              <Users className="h-8 w-8 text-blue-600 mb-2" />
+              <div className="text-lg font-bold">{userCount}</div>
+              <div className="text-xs text-gray-500">Active Users</div>
+            </CardContent>
+          </Card>
+          <Card className="col-span-1">
+            <CardContent className="flex flex-col items-center p-4">
+              <GraduationCap className="h-8 w-8 text-green-600 mb-2" />
+              <div className="text-lg font-bold">{studentCount}</div>
+              <div className="text-xs text-gray-500">Total Students</div>
+            </CardContent>
+          </Card>
+          <Card className="col-span-1">
+            <CardContent className="flex flex-col items-center p-4">
+              <Building className="h-8 w-8 text-purple-600 mb-2" />
+              <div className="text-lg font-bold">{departmentCount}</div>
+              <div className="text-xs text-gray-500">Departments</div>
+            </CardContent>
+          </Card>
+          <Card className="col-span-1">
+            <CardContent className="flex flex-col items-center p-4">
+              <Activity className="h-8 w-8 text-orange-600 mb-2" />
+              <div className="text-lg font-bold">{systemData?.system_uptime || '99.9%'}</div>
+              <div className="text-xs text-gray-500">System Uptime</div>
+            </CardContent>
+          </Card>
         </div>
 
-        {/* Quick Actions */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
-          <Dialog open={isAddUserOpen} onOpenChange={setIsAddUserOpen}>
-            <DialogTrigger asChild>
-              <Button className="h-20 flex-col bg-blue-500 hover:bg-blue-600" onClick={() => setIsAddUserOpen(true)}>
-                <UserPlus className="h-6 w-6 mb-2" />
-                <span className="text-xs">Add User</span>
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="max-w-md">
-              <DialogHeader>
-                <DialogTitle>Add New User</DialogTitle>
-                <DialogDescription>
-                  Create a new student, teacher, or staff member account.
-                </DialogDescription>
-              </DialogHeader>
-              <div className="space-y-4">
-                <div>
-                  <Label htmlFor="fullName">Full Name *</Label>
-                  <Input
-                    id="fullName"
-                    value={newUser.fullName}
-                    onChange={(e) => setNewUser({...newUser, fullName: e.target.value})}
-                    placeholder="Enter full name"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="email">Email *</Label>
-                  <Input
-                    id="email"
-                    type="email"
-                    value={newUser.email}
-                    onChange={(e) => setNewUser({...newUser, email: e.target.value})}
-                    placeholder="Enter email address"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="password">Password *</Label>
-                  <Input
-                    id="password"
-                    type="password"
-                    value={newUser.password}
-                    onChange={(e) => setNewUser({ ...newUser, password: e.target.value })}
-                    placeholder="Enter initial password (min. 6 chars)"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="role">Role *</Label>
-                  <select
-                    id="role"
-                    value={newUser.role}
-                    onChange={(e) => setNewUser({...newUser, role: e.target.value})}
-                    className="w-full border border-gray-300 rounded-md px-3 py-2"
-                  >
-                    <option value="student">Student</option>
-                    <option value="teacher">Teacher</option>
-                    <option value="staff">Staff</option>
-                    <option value="admin">Admin</option>
-                    <option value="super-admin">Super Admin</option>
-                    <option value="hod">HOD</option>
-                    <option value="principal">Principal</option>
-                    <option value="dean">Dean</option>
-                    <option value="parent">Parent</option>
-                    <option value="accountant">Accountant</option>
-                    <option value="reception">Reception</option>
-                    <option value="security">Security</option>
-                  </select>
-                </div>
-                <div>
-                  <Label htmlFor="department">Department *</Label>
-                  <select
-                    id="department"
-                    value={newUser.department}
-                    onChange={(e) => setNewUser({...newUser, department: e.target.value})}
-                    className="w-full border border-gray-300 rounded-md px-3 py-2"
-                  >
-                    <option value="">Select Department</option>
-                    <option value="Computer Engineering">Computer Engineering</option>
-                    <option value="Mechanical Engineering">Mechanical Engineering</option>
-                    <option value="Electronics & Telecommunication">Electronics & Telecommunication</option>
-                    <option value="AI/ML">AI/ML</option>
-                    <option value="AIDS">AIDS</option>
-                    <option value="BCA">BCA</option>
-                    <option value="BBA">BBA</option>
-                    <option value="First Year">First Year</option>
-                    <option value="Administration">Administration</option>
-                  </select>
-                </div>
-                <div>
-                  <Label htmlFor="phone">Phone Number</Label>
-                  <Input
-                    id="phone"
-                    value={newUser.phone}
-                    onChange={(e) => setNewUser({...newUser, phone: e.target.value})}
-                    placeholder="Enter phone number"
-                  />
-                </div>
-                <div className="flex justify-end space-x-2">
-                  <Button variant="outline" onClick={() => setIsAddUserOpen(false)}>
-                    Cancel
-                  </Button>
-                  <Button onClick={handleAddUser}>
-                    Add User
-                  </Button>
-                </div>
-              </div>
-            </DialogContent>
-          </Dialog>
-
-          <Button 
-            className="h-20 flex-col bg-green-500 hover:bg-green-600"
-            onClick={() => navigate('/admin/reports')}
-          >
-            <FileText className="h-6 w-6 mb-2" />
-            <span className="text-xs">Reports</span>
+        {/* Quick Links */}
+        <div className="flex flex-wrap gap-4 mb-6">
+          <Button className="bg-blue-600 hover:bg-blue-700 text-white flex items-center gap-2" onClick={() => handleQuickLink('add-student')}>
+            <UserPlus className="h-5 w-5" /> Add Student
           </Button>
-
-          <Button 
-            className="h-20 flex-col bg-purple-500 hover:bg-purple-600"
-            onClick={() => navigate('/admin/notifications')}
-          >
-            <Bell className="h-6 w-6 mb-2" />
-            <span className="text-xs">Notifications</span>
+          <Button className="bg-green-600 hover:bg-green-700 text-white flex items-center gap-2" onClick={() => handleQuickLink('manage-course')}>
+            <Book className="h-5 w-5" /> Manage Course
           </Button>
-
-          <Button 
-            className="h-20 flex-col bg-orange-500 hover:bg-orange-600"
-            onClick={() => navigate('/admin/departments')}
-          >
-            <Building className="h-6 w-6 mb-2" />
-            <span className="text-xs">Departments</span>
+          <Button className="bg-yellow-600 hover:bg-yellow-700 text-white flex items-center gap-2" onClick={() => handleQuickLink('upload-notice')}>
+            <FileText className="h-5 w-5" /> Upload Notice
           </Button>
         </div>
 
-        {/* System Stats */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6">
-          {systemStats.map((stat, index) => (
-            <Card key={index} className="min-w-0">
-              <CardContent className="p-3 md:p-6">
-                <div className="flex items-center justify-between">
-                  <div className="min-w-0 flex-1">
-                    <p className="text-xs md:text-sm font-medium text-gray-600 dark:text-gray-400 truncate">{stat.label}</p>
-                    <p className="text-lg md:text-3xl font-bold text-gray-900 dark:text-white truncate">{stat.value}</p>
-                  </div>
-                  <div className="p-2 md:p-3 bg-gray-100 dark:bg-gray-800 rounded-full flex-shrink-0 ml-2">
-                    <stat.icon className={`h-4 w-4 md:h-6 md:w-6 ${stat.color}`} />
-                  </div>
-                </div>
+        {/* Widgets Section */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>Attendance Graph</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="h-32 flex items-center justify-center text-gray-400">[Attendance Chart]</div>
               </CardContent>
             </Card>
-          ))}
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
           <Card>
-            <CardHeader className="pb-3 md:pb-6">
-              <CardTitle className="text-base md:text-lg">System Monitoring</CardTitle>
+            <CardHeader>
+              <CardTitle>Top-Performing Students</CardTitle>
             </CardHeader>
-            <CardContent className="pt-0">
-              <div className="space-y-3 md:space-y-4">
-                <div className="flex justify-between items-center">
-                  <span className="text-sm md:text-base">CPU Usage</span>
-                  <Badge variant="secondary" className="text-xs md:text-sm">{systemData?.cpu_usage || 45}%</Badge>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-sm md:text-base">Memory Usage</span>
-                  <Badge variant="secondary" className="text-xs md:text-sm">{systemData?.memory_usage || 60}%</Badge>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-sm md:text-base">Disk Usage</span>
-                  <Badge variant="secondary" className="text-xs md:text-sm">{systemData?.disk_usage || 30}%</Badge>
-                </div>
-              </div>
+            <CardContent>
+              <div className="h-32 flex items-center justify-center text-gray-400">[Top Students List]</div>
             </CardContent>
           </Card>
-
           <Card>
-            <CardHeader className="pb-3 md:pb-6">
-              <CardTitle className="text-base md:text-lg">Recent Activities</CardTitle>
+            <CardHeader>
+              <CardTitle>Upcoming Exams</CardTitle>
             </CardHeader>
-            <CardContent className="pt-0">
-              <div className="space-y-2 md:space-y-3">
-                {activities.length > 0 ? (
-                  activities.map((activity) => (
-                    <div key={activity.id} className="flex items-start space-x-2 md:space-x-3">
-                      <div className={`w-2 h-2 rounded-full ${getActivityColor(activity.activity_type)} flex-shrink-0 mt-1.5`}></div>
-                      <div className="flex-1 min-w-0">
-                        <span className="text-xs md:text-sm font-medium block truncate">{activity.activity_name}</span>
-                        <p className="text-xs text-gray-500 truncate">
-                          {activity.user_name} • {formatTimeAgo(activity.created_at)}
-                        </p>
-                      </div>
-                    </div>
-                  ))
-                ) : (
-                  <p className="text-xs md:text-sm text-gray-500">No recent activities</p>
-                )}
-              </div>
+            <CardContent>
+              <div className="h-32 flex items-center justify-center text-gray-400">[Upcoming Exams Table]</div>
             </CardContent>
           </Card>
         </div>
 
-        {/* Advanced Management Tabs */}
+        {/* Tabs for Super Admin Features */}
         <Card>
           <CardHeader>
-            <CardTitle>Advanced Management</CardTitle>
+            <CardTitle>Super Admin Control Center</CardTitle>
           </CardHeader>
           <CardContent>
-            <Tabs defaultValue="users" className="w-full">
+            <Tabs defaultValue="admins" className="w-full">
               <TabsList className="grid w-full grid-cols-4">
-                <TabsTrigger value="users">Users</TabsTrigger>
-                <TabsTrigger value="content">Content</TabsTrigger>
-                <TabsTrigger value="system">System</TabsTrigger>
-                <TabsTrigger value="analytics">Analytics</TabsTrigger>
+                <TabsTrigger value="admins">Manage Admins</TabsTrigger>
+                <TabsTrigger value="roles">Role Management</TabsTrigger>
+                <TabsTrigger value="settings">System Settings</TabsTrigger>
+                <TabsTrigger value="api">API & Integration</TabsTrigger>
               </TabsList>
-              
-              <TabsContent value="users" className="space-y-4">
-                <div className="flex justify-between items-center">
-                  <h3 className="text-lg font-semibold">User Management</h3>
-                  <Button size="sm" onClick={() => setIsAddUserOpen(true)}>
-                    <Plus className="h-4 w-4 mr-2" />
-                    Add User
-                  </Button>
+              <TabsContent value="admins">
+                <div className="flex justify-between items-center mb-4">
+                  <h3 className="text-lg font-semibold flex items-center gap-2"><Shield className="h-5 w-5" /> Admin Users</h3>
+                  <Button onClick={() => setAddAdminOpen(true)} className="bg-blue-600 hover:bg-blue-700"><Plus className="h-4 w-4 mr-1" /> Add Admin</Button>
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <Button 
-                    variant="outline" 
-                    className="h-24 flex-col"
-                    onClick={() => navigate('/admin/user-management')}
-                  >
-                    <Users className="h-8 w-8 mb-2" />
-                    <span>Manage Users</span>
-                  </Button>
-                  <Button 
-                    variant="outline" 
-                    className="h-24 flex-col"
-                    onClick={() => handleSystemAction('Bulk User Import')}
-                  >
-                    <UserPlus className="h-8 w-8 mb-2" />
-                    <span>Bulk Import</span>
-                  </Button>
-                  <Button 
-                    variant="outline" 
-                    className="h-24 flex-col"
-                    onClick={() => handleSystemAction('User Audit')}
-                  >
-                    <Shield className="h-8 w-8 mb-2" />
-                    <span>User Audit</span>
-                  </Button>
-                </div>
-              </TabsContent>
-              
-              <TabsContent value="content" className="space-y-4">
-                <div className="flex justify-between items-center">
-                  <h3 className="text-lg font-semibold">Content Management</h3>
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <Button 
-                    variant="outline" 
-                    className="h-24 flex-col"
-                    onClick={() => navigate('/dashboard/website-management')}
-                  >
-                    <FileText className="h-8 w-8 mb-2" />
-                    <span>Website Content</span>
-                  </Button>
-                  <Button 
-                    variant="outline" 
-                    className="h-24 flex-col"
-                    onClick={() => handleSystemAction('Manage News')}
-                  >
-                    <Bell className="h-8 w-8 mb-2" />
-                    <span>News & Events</span>
-                  </Button>
-                  <Button 
-                    variant="outline" 
-                    className="h-24 flex-col"
-                    onClick={() => handleSystemAction('Media Library')}
-                  >
-                    <Database className="h-8 w-8 mb-2" />
-                    <span>Media Library</span>
-                  </Button>
+                <Dialog open={addAdminOpen} onOpenChange={setAddAdminOpen}>
+                  <DialogContent>
+                    <DialogHeader>
+                      <DialogTitle>Add New Admin</DialogTitle>
+                    </DialogHeader>
+                    <form onSubmit={handleAddAdmin} className="space-y-4">
+                      <Input placeholder="Full Name" value={addAdminForm.full_name} onChange={e => setAddAdminForm(f => ({ ...f, full_name: e.target.value }))} required />
+                      <Input placeholder="Email" type="email" value={addAdminForm.email} onChange={e => setAddAdminForm(f => ({ ...f, email: e.target.value }))} required />
+                      <select value={addAdminForm.role || 'admin'} onChange={e => setAddAdminForm(f => ({ ...f, role: e.target.value }))} required className="w-full border rounded px-2 py-2">
+                        {roleOptions.map(role => <option key={role} value={role}>{role.charAt(0).toUpperCase() + role.slice(1)}</option>)}
+                      </select>
+                      <select value={addAdminForm.department || ''} onChange={e => setAddAdminForm(f => ({ ...f, department: e.target.value }))} className="w-full border rounded px-2 py-2" disabled={addAdminForm.role === 'super-admin'}>
+                        <option value="">Select Department/Cell</option>
+                        {departmentOptions.map(dep => <option key={dep} value={dep}>{dep}</option>)}
+                      </select>
+                      <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700">Add Admin</Button>
+                    </form>
+                  </DialogContent>
+                </Dialog>
+                <div className="overflow-x-auto rounded shadow bg-white mt-4">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Name</TableHead>
+                        <TableHead>Email</TableHead>
+                        <TableHead>Status</TableHead>
+                        <TableHead>Actions</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {userLoading ? (
+                        <TableRow><TableCell colSpan={4} className="text-center">Loading...</TableCell></TableRow>
+                      ) : admins.length === 0 ? (
+                        <TableRow><TableCell colSpan={4} className="text-center">No admin users found.</TableCell></TableRow>
+                      ) : admins.map(admin => (
+                        <TableRow key={admin.id}>
+                          <TableCell className="font-semibold flex items-center gap-2"><Shield className="h-4 w-4 text-blue-600" /> {admin.full_name}</TableCell>
+                          <TableCell>{admin.email}</TableCell>
+                          <TableCell><Badge className={admin.role === 'super-admin' ? 'bg-red-100 text-red-800' : 'bg-blue-100 text-blue-800'}>{admin.role}</Badge></TableCell>
+                          <TableCell>
+                            <Button variant="ghost" size="sm" onClick={() => handleEditAdmin(admin)} className="text-blue-600 hover:text-blue-700 mr-2"><Edit className="h-4 w-4" /></Button>
+                            <Button variant="ghost" size="sm" onClick={() => handleDeleteAdmin(admin.id)} className="text-red-600 hover:text-red-700"><Trash2 className="h-4 w-4" /></Button>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
                 </div>
               </TabsContent>
-              
-              <TabsContent value="system" className="space-y-4">
-                <div className="flex justify-between items-center">
-                  <h3 className="text-lg font-semibold">System Administration</h3>
+              <TabsContent value="roles">
+                <div className="mb-4 flex items-center justify-between">
+                  <h3 className="text-lg font-semibold flex items-center gap-2"><Users className="h-5 w-5" /> User Roles</h3>
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <Button 
-                    variant="outline" 
-                    className="h-24 flex-col"
-                    onClick={() => navigate('/admin/system-management')}
-                  >
-                    <Database className="h-8 w-8 mb-2" />
-                    <span>System Management</span>
-                  </Button>
-                  <Button 
-                    variant="outline" 
-                    className="h-24 flex-col"
-                    onClick={() => handleSystemAction('Security Audit')}
-                  >
-                    <Lock className="h-8 w-8 mb-2" />
-                    <span>Security</span>
-                  </Button>
-                  <Button 
-                    variant="outline" 
-                    className="h-24 flex-col"
-                    onClick={() => handleSystemAction('Performance Monitor')}
-                  >
-                    <TrendingUp className="h-8 w-8 mb-2" />
-                    <span>Performance</span>
-                  </Button>
+                <div className="overflow-x-auto rounded shadow bg-white">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Name</TableHead>
+                        <TableHead>Email</TableHead>
+                        <TableHead>Role</TableHead>
+                        <TableHead>Department</TableHead>
+                        <TableHead>Actions</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {userLoading ? (
+                        <TableRow><TableCell colSpan={5} className="text-center">Loading...</TableCell></TableRow>
+                      ) : allUsers.length === 0 ? (
+                        <TableRow><TableCell colSpan={5} className="text-center">No users found.</TableCell></TableRow>
+                      ) : allUsers.map(user => (
+                        <TableRow key={user.id}>
+                          <TableCell className="font-semibold flex items-center gap-2"><User className="h-4 w-4 text-gray-600" /> {user.full_name}</TableCell>
+                          <TableCell>{user.email}</TableCell>
+                          <TableCell>
+                            {roleEditId === user.id ? (
+                              <>
+                                <select value={roleEditValue} onChange={e => setRoleEditValue(e.target.value)} className="border rounded px-2 py-1 mr-2">
+                                  {roleOptions.map(role => <option key={role} value={role}>{role.charAt(0).toUpperCase() + role.slice(1)}</option>)}
+                                </select>
+                                <select value={user.department || ''} onChange={e => setAllUsers(prev => prev.map(u => u.id === user.id ? { ...u, department: e.target.value } : u))} className="border rounded px-2 py-1" disabled={roleEditValue === 'super-admin'}>
+                                  <option value="">Select Department/Cell</option>
+                                  {departmentOptions.map(dep => <option key={dep} value={dep}>{dep}</option>)}
+                                </select>
+                              </>
+                            ) : (
+                              <>
+                                <Badge className={user.role === 'admin' ? 'bg-blue-100 text-blue-800' : user.role === 'super-admin' ? 'bg-red-100 text-red-800' : user.role === 'faculty' ? 'bg-green-100 text-green-800' : user.role === 'staff' ? 'bg-purple-100 text-purple-800' : 'bg-gray-100 text-gray-800'}>{user.role}</Badge>
+                                {user.department && <Badge className="ml-2 bg-gray-200 text-gray-700">{user.department}</Badge>}
+                              </>
+                            )}
+                          </TableCell>
+                          <TableCell>
+                            {roleEditId === user.id ? (
+                              <Button size="sm" className="bg-green-600 hover:bg-green-700 text-white mr-2" onClick={() => saveRoleEdit(user.id)}>Save</Button>
+                            ) : (
+                              <Button variant="ghost" size="sm" onClick={() => handleRoleEdit(user.id, user.role)}><Edit className="h-4 w-4" /></Button>
+                            )}
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
                 </div>
               </TabsContent>
-              
-              <TabsContent value="analytics" className="space-y-4">
-                <div className="flex justify-between items-center">
-                  <h3 className="text-lg font-semibold">Analytics & Reporting</h3>
+              <TabsContent value="settings">
+                <div className="flex flex-col items-center justify-center py-12 text-gray-500">
+                  <Settings className="h-10 w-10 mb-2 text-blue-400" />
+                  <h3 className="text-lg font-semibold mb-2">System Settings</h3>
+                  <p>Configure logo, SMTP, SMS gateway, and more. (Coming soon)</p>
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <Button 
-                    variant="outline" 
-                    className="h-24 flex-col"
-                    onClick={() => navigate('/admin/reports')}
-                  >
-                    <TrendingUp className="h-8 w-8 mb-2" />
-                    <span>Reports</span>
-                  </Button>
-                  <Button 
-                    variant="outline" 
-                    className="h-24 flex-col"
-                    onClick={() => handleSystemAction('Performance Analytics')}
-                  >
-                    <Activity className="h-8 w-8 mb-2" />
-                    <span>Performance</span>
-                  </Button>
-                  <Button 
-                    variant="outline" 
-                    className="h-24 flex-col"
-                    onClick={() => handleSystemAction('Export Analytics')}
-                  >
-                    <FileText className="h-8 w-8 mb-2" />
-                    <span>Export Data</span>
-                  </Button>
+              </TabsContent>
+              <TabsContent value="api">
+                <div className="flex flex-col items-center justify-center py-12 text-gray-500">
+                  <Server className="h-10 w-10 mb-2 text-green-400" />
+                  <h3 className="text-lg font-semibold mb-2">API & Integration</h3>
+                  <p>Manage API tokens and integrations. (Coming soon)</p>
                 </div>
               </TabsContent>
             </Tabs>
           </CardContent>
         </Card>
+
+        {/* Edit Admin Modal */}
+        <Dialog open={editAdminOpen} onOpenChange={setEditAdminOpen}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Edit Admin</DialogTitle>
+            </DialogHeader>
+            <form onSubmit={handleSaveEditAdmin} className="space-y-4">
+              <Input placeholder="Full Name" value={editAdminForm.full_name} onChange={e => setEditAdminForm(f => ({ ...f, full_name: e.target.value }))} required />
+              <Input placeholder="Email" type="email" value={editAdminForm.email} onChange={e => setEditAdminForm(f => ({ ...f, email: e.target.value }))} required />
+              <select value={editAdminForm.role} onChange={e => setEditAdminForm(f => ({ ...f, role: e.target.value }))} required className="w-full border rounded px-2 py-2">
+                {roleOptions.map(role => <option key={role} value={role}>{role.charAt(0).toUpperCase() + role.slice(1)}</option>)}
+              </select>
+              <select value={editAdminForm.department} onChange={e => setEditAdminForm(f => ({ ...f, department: e.target.value }))} className="w-full border rounded px-2 py-2" disabled={editAdminForm.role === 'super-admin'}>
+                <option value="">Select Department/Cell</option>
+                {departmentOptions.map(dep => <option key={dep} value={dep}>{dep}</option>)}
+              </select>
+              <select value={editAdminForm.status} onChange={e => setEditAdminForm(f => ({ ...f, status: e.target.value }))} className="w-full border rounded px-2 py-2">
+                <option value="active">Active</option>
+                <option value="inactive">Inactive</option>
+              </select>
+              <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700">Save Changes</Button>
+            </form>
+          </DialogContent>
+        </Dialog>
+
+        {/* Add more modular sections as needed for Control Center, Monitoring, Reports, etc. */}
       </div>
     </DashboardLayout>
   );

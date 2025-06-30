@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { User } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
@@ -99,18 +98,21 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
         setUser(session?.user ?? null);
-        
         if (session?.user) {
           // Defer async operations to avoid deadlocks
           setTimeout(() => {
             extractUserRole(session.user).then(role => {
               setUserRole(role);
               setLoading(false);
+              if (!role) {
+                console.warn('[AuthContext] No role found for user:', session.user.email);
+              }
             });
           }, 0);
         } else {
           setUserRole(null);
           setLoading(false);
+          console.warn('[AuthContext] No user session found after auth state change.');
         }
       }
     );
@@ -118,15 +120,18 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     // Get initial session
     supabase.auth.getSession().then(({ data: { session } }) => {
       setUser(session?.user ?? null);
-      
       if (session?.user) {
         extractUserRole(session.user).then(role => {
           setUserRole(role);
           setLoading(false);
+          if (!role) {
+            console.warn('[AuthContext] No role found for user:', session.user.email);
+          }
         });
       } else {
         setUserRole(null);
         setLoading(false);
+        console.warn('[AuthContext] No user session found on initial load.');
       }
     });
 

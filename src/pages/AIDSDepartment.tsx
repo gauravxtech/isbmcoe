@@ -1,8 +1,25 @@
-
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import DepartmentTemplate from '@/components/DepartmentTemplate';
+import { supabase } from '@/integrations/supabase/client';
 
 const AIDSDepartment = () => {
+  const [facultyMembers, setFacultyMembers] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchFaculty = async () => {
+      setLoading(true);
+      // Get AIDS department id
+      const { data: deptData } = await supabase.from('departments').select('id').eq('name', 'AIDS Department').single();
+      if (deptData) {
+        const { data, error } = await supabase.from('teachers').select('*').eq('department', deptData.id).order('name');
+        if (!error && data) setFacultyMembers(data);
+      }
+      setLoading(false);
+    };
+    fetchFaculty();
+  }, []);
+
   const departmentData = {
     name: "Artificial Intelligence & Data Science",
     vision: "To be a leading centre for education, research, and innovation in artificial intelligence and data science and to prepare students to be ethical and responsible leaders in the field of artificial intelligence and data science.",
@@ -46,19 +63,7 @@ const AIDSDepartment = () => {
         "The department has very good connect with industries. The objective of this course is to make students ready for industry with practical exposure in AI & DS."
       ]
     },
-    facultyMembers: [
-      { name: "Prof. Anil V. Walke", position: "HOD & Assistant Professor", qualification: "PhD*, ME(E&TC), BE(E&TC), Industry: 10 Years, Academic: 18 Years", photo: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop&crop=face" },
-      { name: "Prof. Suwarna Karankal", position: "Assistant Professor", qualification: "PhD*, M.E. Computer Engineering, B.E. Computer Engineering, Academic: 14.8 Years", photo: "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=400&h=400&fit=crop&crop=face" },
-      { name: "Prof. Snehal Javheri", position: "Assistant Professor", qualification: "M.E. (Computer Engineering), B.E. (Computer Engineering), Academic: 12.5 Years", photo: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&h=400&fit=crop&crop=face" },
-      { name: "Prof. Nikita Khawase", position: "Assistant Professor", qualification: "M.Tech (CSE), B.E. (IT), Academic: 6 Years", photo: "https://images.unsplash.com/photo-1489424731084-a5d8b219a5bb?w=400&h=400&fit=crop&crop=face" },
-      { name: "Prof. Tejaswini Ganesh Mali", position: "Assistant Professor", qualification: "M.E. (Computer Engineering), B.E. (Computer Engineering), Academic: 6 Years", photo: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&h=400&fit=crop&crop=face" },
-      { name: "Prof. Dipti Jaisinghani", position: "Assistant Professor", qualification: "BE (Electronics), ME (EnTC), VLSI & Embedded Systems, Academic: 10 Years", photo: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=400&h=400&fit=crop&crop=face" },
-      { name: "Prof Azhar Inamdar", position: "Assistant Professor", qualification: "M.Tech (IT), B.Tech (Computer Engineering), Academic: 3 Years", photo: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop&crop=face" },
-      { name: "Prof Shradha Mukkawar", position: "Assistant Professor", qualification: "M.E (Computer Science), B.E. (CS), Academic: 1 Year", photo: "https://images.unsplash.com/photo-1507591064344-4c6ce005b128?w=400&h=400&fit=crop&crop=face" },
-      { name: "Prof. Balbhim Lanke", position: "Assistant Professor", qualification: "ME (Data Science), BE (IT), Industry: 2.5 Years, Academic: 1 Year", photo: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop&crop=face" },
-      { name: "Prof. Poonam Mishra", position: "Assistant Professor", qualification: "ME (CSE), BE (CSE), Academic: 1 Year", photo: "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=400&h=400&fit=crop&crop=face" },
-      { name: "Mrs. Nita Lahulkar", position: "Technical Assistant", qualification: "B.E(IT), Academic: 1 Year", photo: "https://images.unsplash.com/photo-1507591064344-4c6ce005b128?w=400&h=400&fit=crop&crop=face" }
-    ],
+    facultyMembers,
     activities: [
       { title: "Data Structure and Analytics Lab", description: "Advanced data structure implementation and analytics", color: "from-blue-50 to-blue-100 text-blue-800" },
       { title: "Object Oriented Programming Lab", description: "Hands-on programming with OOP concepts", color: "from-green-50 to-green-100 text-green-800" },

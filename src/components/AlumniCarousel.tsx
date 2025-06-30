@@ -13,7 +13,7 @@ const AlumniCarousel = () => {
       batch: "2020",
       position: "Software Engineer",
       company: "Google",
-      image: "/lovable-uploads/18fee38c-1acf-462a-825a-cda10c5e7381.png",
+      image: "/assets/logo.png",
       testimonial: "ISBM COE provided me with the technical foundation and practical skills that helped me secure my dream job at Google. The faculty's mentorship was invaluable.",
       rating: 5
     },
@@ -23,7 +23,7 @@ const AlumniCarousel = () => {
       batch: "2019",
       position: "Data Scientist",
       company: "Microsoft",
-      image: "/lovable-uploads/30216b9d-1287-4b01-8ab1-8429e5f6f329.png",
+      image: "/assets/nacc.png",
       testimonial: "The AI and Machine Learning program at ISBM COE is world-class. The hands-on projects and industry exposure prepared me perfectly for my role at Microsoft.",
       rating: 5
     },
@@ -33,7 +33,7 @@ const AlumniCarousel = () => {
       batch: "2021",
       position: "Product Manager",
       company: "Amazon",
-      image: "/lovable-uploads/a07dab32-a06d-4aa9-ab59-2d061f93201f.png",
+      image: "/assets/slider-1.png",
       testimonial: "ISBM COE not only taught me technical skills but also leadership and communication skills that are essential in my current role as a Product Manager.",
       rating: 5
     },
@@ -43,7 +43,7 @@ const AlumniCarousel = () => {
       batch: "2018",
       position: "Senior Developer",
       company: "Tesla",
-      image: "/lovable-uploads/b592b170-56b4-4e52-b3ff-c4f500363b94.png",
+      image: "/assets/slider-2.png",
       testimonial: "The practical approach to learning and the state-of-the-art labs at ISBM COE gave me a competitive edge in the industry.",
       rating: 5
     },
@@ -53,7 +53,7 @@ const AlumniCarousel = () => {
       batch: "2020",
       position: "AI Research Engineer",
       company: "NVIDIA",
-      image: "/lovable-uploads/c63a8ec4-3adb-47a0-9e29-d081de2cff06.png",
+      image: "/assets/slider-3.png",
       testimonial: "The research opportunities and mentorship at ISBM COE helped me develop innovative solutions and land my dream job in AI research.",
       rating: 5
     }

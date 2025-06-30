@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { 
@@ -206,7 +205,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
             {sidebarOpen && (
               <div className="flex items-center space-x-3">
                 <img 
-                  src="/lovable-uploads/18fee38c-1acf-462a-825a-cda10c5e7381.png" 
+                  src="/assets/logo.png" 
                   alt="ISBM Logo" 
                   className="w-8 h-8"
                 />
@@ -334,7 +333,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
             {/* Left: Logo + College Name */}
             <div className="flex items-center space-x-4">
               <img 
-                src="/lovable-uploads/18fee38c-1acf-462a-825a-cda10c5e7381.png" 
+                src="/assets/logo.png" 
                 alt="ISBM Logo" 
                 className="w-8 h-8"
               />

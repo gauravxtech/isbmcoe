@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -8,9 +7,10 @@ import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Plus, Edit, Trash2, Save, X, AlertCircle } from 'lucide-react';
+import { Plus, Edit, Trash2, Save, X, AlertCircle, Bell } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface Announcement {
   id: string;
@@ -42,6 +42,7 @@ const AnnouncementManager = () => {
     end_date: ''
   });
   const { toast } = useToast();
+  const { user } = useAuth();
 
   useEffect(() => {
     fetchAnnouncements();
@@ -71,15 +72,15 @@ const AnnouncementManager = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
     try {
       const announcementData = {
         ...formData,
         priority: Number(formData.priority),
         start_date: new Date(formData.start_date).toISOString(),
-        end_date: formData.end_date ? new Date(formData.end_date).toISOString() : null
+        end_date: formData.end_date ? new Date(formData.end_date).toISOString() : null,
+        created_by: user?.id
       };
-
+      let announcementId = editingAnnouncement?.id;
       if (editingAnnouncement) {
         const { error } = await supabase
           .from('announcements')
@@ -88,35 +89,38 @@ const AnnouncementManager = () => {
             updated_at: new Date().toISOString()
           })
           .eq('id', editingAnnouncement.id);
-
         if (error) throw error;
-        
-        toast({
-          title: "Success",
-          description: "Announcement updated successfully"
-        });
+        toast({ title: "Success", description: "Announcement updated successfully" });
       } else {
-        const { error } = await supabase
+        const { data, error } = await supabase
           .from('announcements')
-          .insert([announcementData]);
-
+          .insert([announcementData])
+          .select();
         if (error) throw error;
-        
-        toast({
-          title: "Success",
-          description: "Announcement created successfully"
-        });
+        announcementId = data?.[0]?.id;
+        toast({ title: "Success", description: "Announcement created successfully" });
       }
-
+      // Insert notification for all users
+      if (announcementId) {
+        const { data: users } = await supabase.from('profiles').select('id');
+        if (users && users.length > 0) {
+          const notifications = users.map((u: any) => ({
+            user_id: u.id,
+            title: formData.title,
+            message: formData.content,
+            type: 'announcement',
+            ref_id: announcementId,
+            read: false,
+            created_at: new Date().toISOString()
+          }));
+          await supabase.from('notifications').insert(notifications);
+        }
+      }
       resetForm();
       fetchAnnouncements();
     } catch (error) {
       console.error('Error saving announcement:', error);
-      toast({
-        title: "Error",
-        description: "Failed to save announcement",
-        variant: "destructive"
-      });
+      toast({ title: "Error", description: "Failed to save announcement", variant: "destructive" });
     }
   };
 
@@ -192,20 +196,19 @@ const AnnouncementManager = () => {
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h3 className="text-xl font-semibold">Announcements</h3>
-          <p className="text-gray-600">Manage urgent announcements and notifications</p>
-        </div>
-        <Button onClick={() => setShowForm(true)} className="bg-college-primary">
-          <Plus className="h-4 w-4 mr-2" />
-          Add Announcement
-        </Button>
-      </div>
-
-      {/* Announcements Table */}
-      <Card>
+    <div className="space-y-6 max-w-5xl mx-auto py-8">
+      <Card className="shadow-lg">
+        <CardHeader className="flex flex-row items-center gap-3 border-b">
+          <Bell className="h-7 w-7 text-yellow-500" />
+          <div>
+            <CardTitle className="text-2xl font-bold">Announcements</CardTitle>
+            <p className="text-gray-500 text-sm">Manage urgent announcements and notifications</p>
+          </div>
+          <Button onClick={() => setShowForm(true)} className="ml-auto bg-college-primary">
+            <Plus className="h-4 w-4 mr-2" />
+            Add Announcement
+          </Button>
+        </CardHeader>
         <CardContent className="p-0">
           <Table>
             <TableHeader>
@@ -220,7 +223,11 @@ const AnnouncementManager = () => {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {announcements.map((announcement) => (
+              {announcements.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={7} className="text-center py-8 text-gray-400">No announcements found.</TableCell>
+                </TableRow>
+              ) : announcements.map((announcement) => (
                 <TableRow key={announcement.id}>
                   <TableCell>
                     <div className="flex items-center gap-2">
@@ -249,14 +256,8 @@ const AnnouncementManager = () => {
                     {announcement.end_date ? new Date(announcement.end_date).toLocaleDateString() : 'No expiry'}
                   </TableCell>
                   <TableCell>
-                    <div className="flex items-center gap-2">
-                      <Button variant="ghost" size="sm" onClick={() => handleEdit(announcement)}>
-                        <Edit className="h-4 w-4" />
-                      </Button>
-                      <Button variant="ghost" size="sm" className="text-red-600" onClick={() => handleDelete(announcement.id)}>
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
+                    <Button variant="ghost" size="sm" onClick={() => handleEdit(announcement)}><Edit className="h-4 w-4" /></Button>
+                    <Button variant="ghost" size="sm" className="text-red-600 hover:text-red-700" onClick={() => handleDelete(announcement.id)}><Trash2 className="h-4 w-4" /></Button>
                   </TableCell>
                 </TableRow>
               ))}

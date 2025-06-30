@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Phone, Mail, MapPin } from 'lucide-react';
 
@@ -12,7 +11,7 @@ const Header = () => {
             {/* College Logo */}
             <div className="flex-shrink-0">
               <img 
-                src="/lovable-uploads/18fee38c-1acf-462a-825a-cda10c5e7381.png" 
+                src="/assets/logo.png" 
                 alt="ISBM College Logo" 
                 className="w-16 h-16 object-contain"
               />
@@ -55,7 +54,7 @@ const Header = () => {
             {/* NAAC Logo */}
             <div className="flex flex-col items-center">
               <img 
-                src="/lovable-uploads/30216b9d-1287-4b01-8ab1-8429e5f6f329.png" 
+                src="/assets/nacc.png" 
                 alt="NAAC B++ Accredited" 
                 className="w-12 h-12 object-contain"
               />

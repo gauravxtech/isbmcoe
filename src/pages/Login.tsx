@@ -128,7 +128,7 @@ const Login = () => {
           <div className="flex items-center justify-center space-x-4 mb-6">
             <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl flex items-center justify-center shadow-lg">
               <img 
-                src="/lovable-uploads/18fee38c-1acf-462a-825a-cda10c5e7381.png" 
+                src="/assets/logo.png" 
                 alt="ISBM College Logo" 
                 className="w-10 h-10"
               />

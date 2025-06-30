@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Mail, ArrowLeft, CheckCircle } from 'lucide-react';
 import { Link } from 'react-router-dom';
@@ -71,7 +70,7 @@ const ForgotPassword = () => {
           </Link>
           <div className="flex items-center justify-center space-x-3 mb-4">
             <img 
-              src="/lovable-uploads/18fee38c-1acf-462a-825a-cda10c5e7381.png" 
+              src="/assets/logo.png" 
               alt="ISBM College Logo" 
               className="w-12 h-12"
             />

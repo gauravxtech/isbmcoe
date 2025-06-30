@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { 
   LayoutDashboard, 
@@ -30,7 +30,8 @@ import {
   Moon,
   User,
   ChevronLeft,
-  Globe
+  Globe,
+  HelpCircle
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -39,6 +40,15 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/component
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import UserSettingsDialog from '@/components/UserSettingsDialog';
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuLabel
+} from '@/components/ui/dropdown-menu';
+import { supabase } from '@/integrations/supabase/client';
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -53,6 +63,33 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   const navigate = useNavigate();
   const { user, signOut, userRole } = useAuth();
   const { toast } = useToast();
+  const [notifications, setNotifications] = useState<any[]>([]);
+  const [unreadCount, setUnreadCount] = useState(0);
+  const [notifOpen, setNotifOpen] = useState(false);
+
+  useEffect(() => {
+    if (user?.id) fetchNotifications();
+    // Optionally, poll every 30s
+    // const interval = setInterval(fetchNotifications, 30000);
+    // return () => clearInterval(interval);
+  }, [user]);
+
+  const fetchNotifications = async () => {
+    if (!user?.id) return;
+    const { data } = await supabase
+      .from('notifications')
+      .select('*')
+      .eq('user_id', user.id)
+      .order('created_at', { ascending: false });
+    setNotifications(data || []);
+    setUnreadCount((data || []).filter((n: any) => !n.read).length);
+  };
+
+  const markAllRead = async () => {
+    if (!user?.id) return;
+    await supabase.from('notifications').update({ read: true }).eq('user_id', user.id).eq('read', false);
+    fetchNotifications();
+  };
 
   const handleLogout = async () => {
     const { error } = await signOut();
@@ -318,14 +355,16 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
           : 'fixed inset-y-0 left-0 z-50 w-16 lg:relative lg:translate-x-0'
       } bg-white dark:bg-gray-800 shadow-lg transition-all duration-300 transform ${
         sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
-      } flex flex-col border-r border-gray-200 dark:border-gray-700`}>
+      } flex flex-col border-r border-gray-200 dark:border-gray-700`}
+        style={{ height: '100vh', maxHeight: '100vh', overflowY: 'auto' }}
+      >
         {/* Sidebar Header */}
         <div className="p-4 border-b border-gray-200 dark:border-gray-700">
           <div className="flex items-center justify-between">
             {sidebarOpen && (
               <div className="flex items-center space-x-3">
                 <img 
-                  src="/lovable-uploads/18fee38c-1acf-462a-825a-cda10c5e7381.png" 
+                  src="/assets/logo.png" 
                   alt="ISBM Logo" 
                   className="w-8 h-8"
                 />
@@ -375,7 +414,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
                 <CollapsibleContent className="space-y-1 ml-4">
                   {section.items.map((item) => (
                     <Link
-                      key={item.name}
+                      key={`${section.id}-${item.href}`}
                       to={item.href}
                       className={`flex items-center px-3 py-2 rounded-lg text-sm transition-colors ${
                         location.pathname === item.href
@@ -419,7 +458,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
                 <CollapsibleContent className="space-y-1 ml-4">
                   {appsSection.items.map((item) => (
                     <Link
-                      key={item.name}
+                      key={`apps-${item.href}`}
                       to={item.href}
                       className="flex items-center px-3 py-2 rounded-lg text-sm text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-gray-200 transition-colors"
                     >
@@ -447,14 +486,14 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 flex flex-col overflow-hidden">
+      <div className="flex-1 flex flex-col overflow-hidden" style={{ height: '100vh', maxHeight: '100vh' }}>
         {/* Top Header - Simplified */}
         <header className="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700 px-6 py-3">
           <div className="flex items-center justify-between">
             {/* Left: Logo + College Name */}
             <div className="flex items-center space-x-4">
               <img 
-                src="/lovable-uploads/18fee38c-1acf-462a-825a-cda10c5e7381.png" 
+                src="/assets/logo.png" 
                 alt="ISBM Logo" 
                 className="w-8 h-8"
               />
@@ -488,33 +527,46 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
               </Button>
 
               {/* Notifications */}
-              <Button variant="ghost" size="sm" className="relative text-gray-500 dark:text-gray-400">
+              <Button variant="ghost" size="sm" className="relative text-gray-500 dark:text-gray-400" onClick={() => { setNotifOpen(!notifOpen); if (!notifOpen) markAllRead(); }}>
                 <Bell className="h-4 w-4" />
-                <Badge className="absolute -top-2 -right-2 h-4 w-4 flex items-center justify-center text-xs bg-red-500">
-                  3
-                </Badge>
+                {unreadCount > 0 && (
+                  <Badge className="absolute -top-2 -right-2 h-4 w-4 flex items-center justify-center text-xs bg-red-500">
+                    {unreadCount}
+                  </Badge>
+                )}
               </Button>
               
-              {/* User Profile */}
-              <div className="flex items-center space-x-2">
-                <div className="text-right hidden md:block">
-                  <p className="text-sm font-medium text-gray-900 dark:text-white">{getUserDisplayName()}</p>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">{user?.email}</p>
-                </div>
-                <div className="relative">
-                  <div className="w-8 h-8 bg-college-primary rounded-full flex items-center justify-center text-white font-semibold text-sm">
+              {/* User Profile Dropdown */}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <button className="w-8 h-8 bg-college-primary rounded-full flex items-center justify-center text-white font-semibold text-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-college-primary">
                     {getUserInitial()}
-                  </div>
-                  <Button 
-                    variant="ghost" 
-                    size="sm"
-                    onClick={() => setSettingsOpen(true)}
-                    className="absolute -bottom-1 -right-1 h-5 w-5 p-0 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-full shadow-sm hover:bg-gray-50 dark:hover:bg-gray-700"
-                  >
-                    <Settings className="h-2.5 w-2.5 text-gray-600 dark:text-gray-400" />
-                  </Button>
-                </div>
-              </div>
+                  </button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuLabel>
+                    <div className="flex flex-col">
+                      <span className="font-medium">{getUserDisplayName()}</span>
+                      <span className="text-xs text-gray-500">{user?.email}</span>
+                    </div>
+                  </DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={() => setSettingsOpen(true)}>
+                    <Settings className="h-4 w-4 mr-2" /> Settings
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setDarkMode(!darkMode)}>
+                    {darkMode ? <Sun className="h-4 w-4 mr-2" /> : <Moon className="h-4 w-4 mr-2" />} Theme
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => alert('Help coming soon!')}>
+                    <HelpCircle className="h-4 w-4 mr-2" /> Help
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={handleLogout} className="text-red-600">
+                    <LogOut className="h-4 w-4 mr-2" /> Logout
+                  </DropdownMenuItem>
+                  {/* Add more menu items as needed */}
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
           </div>
         </header>
@@ -568,7 +620,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
         </div>
 
         {/* Page Content */}
-        <main className="flex-1 overflow-auto p-6 bg-gray-50 dark:bg-gray-900">
+        <main className="flex-1 overflow-auto p-6 bg-gray-50 dark:bg-gray-900" style={{ minHeight: 0 }}>
           {children}
         </main>
       </div>
@@ -578,6 +630,30 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
         open={settingsOpen} 
         onOpenChange={setSettingsOpen}
       />
+
+      {/* Notifications Dropdown */}
+      {notifOpen && (
+        <div className="absolute right-0 mt-2 w-80 bg-white dark:bg-gray-800 shadow-lg rounded-lg z-50 border">
+          <div className="p-4 border-b flex items-center justify-between">
+            <span className="font-semibold text-gray-900 dark:text-white">Notifications</span>
+            <Button variant="ghost" size="sm" onClick={markAllRead}>Mark all read</Button>
+          </div>
+          <div className="max-h-80 overflow-y-auto">
+            {notifications.length === 0 ? (
+              <div className="p-4 text-gray-500 text-center">No notifications</div>
+            ) : notifications.slice(0, 10).map(n => (
+              <div key={n.id} className={`px-4 py-3 border-b last:border-b-0 flex items-start gap-3 ${n.read ? 'bg-white dark:bg-gray-800' : 'bg-yellow-50 dark:bg-yellow-900/30'}`}>
+                <div className="mt-1"><Bell className="h-4 w-4 text-yellow-500" /></div>
+                <div>
+                  <div className="font-medium text-gray-900 dark:text-white">{n.title}</div>
+                  <div className="text-xs text-gray-500 dark:text-gray-400">{n.message}</div>
+                  <div className="text-xs text-gray-400 mt-1">{new Date(n.created_at).toLocaleString()}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 };

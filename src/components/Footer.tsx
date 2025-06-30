@@ -36,7 +36,7 @@ const Footer = () => {
             <div className="flex items-center space-x-3 mb-6">
               <div className="w-16 h-16 bg-white rounded-lg p-2 flex items-center justify-center">
                 <img 
-                  src="/lovable-uploads/18fee38c-1acf-462a-825a-cda10c5e7381.png" 
+                  src="/assets/logo.png" 
                   alt="ISBM College Logo" 
                   className="w-full h-full object-contain"
                 />

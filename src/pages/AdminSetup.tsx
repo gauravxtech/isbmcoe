@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
@@ -24,8 +23,6 @@ const AdminSetup = () => {
     setError('');
 
     try {
-      console.log('Creating admin user...');
-      
       // Sign up the admin user
       const { data: authData, error: authError } = await supabase.auth.signUp({
         email,
@@ -39,11 +36,8 @@ const AdminSetup = () => {
       });
 
       if (authError) {
-        console.error('Auth error:', authError);
         throw authError;
       }
-
-      console.log('Auth data:', authData);
 
       if (authData.user) {
         // Update the profile with admin role
@@ -57,7 +51,6 @@ const AdminSetup = () => {
           });
 
         if (profileError) {
-          console.error('Profile error:', profileError);
           throw profileError;
         }
 
@@ -70,7 +63,6 @@ const AdminSetup = () => {
         navigate('/login');
       }
     } catch (err: any) {
-      console.error('Setup error:', err);
       setError(err.message || 'Failed to create admin account');
     } finally {
       setLoading(false);

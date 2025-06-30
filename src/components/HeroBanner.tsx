@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { ChevronLeft, ChevronRight, Bell, FileText, Phone, Download, Star } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -11,7 +10,7 @@ const HeroBanner = () => {
       id: 1,
       title: "Excellence in Engineering Education",
       subtitle: "Shaping Future Engineers with Innovation and Technology",
-      image: "/lovable-uploads/a07dab32-a06d-4aa9-ab59-2d061f93201f.png",
+      image: "/assets/slider-1.png",
       cta: "Explore Programs",
       highlight: "NAAC B++ Accredited"
     },
@@ -19,7 +18,7 @@ const HeroBanner = () => {
       id: 2,
       title: "World-Class Infrastructure", 
       subtitle: "State-of-the-art Labs and Modern Campus Facilities",
-      image: "/lovable-uploads/b592b170-56b4-4e52-b3ff-c4f500363b94.png",
+      image: "/assets/slider-2.png",
       cta: "Campus Tour",
       highlight: "17 Acre Campus"
     },
@@ -27,7 +26,7 @@ const HeroBanner = () => {
       id: 3,
       title: "Industry Recognition",
       subtitle: "Approved by AICTE, Affiliated to SPPU & Promoted by IIT-ians",
-      image: "/lovable-uploads/c63a8ec4-3adb-47a0-9e29-d081de2cff06.png",
+      image: "/assets/slider-3.png",
       cta: "Our Accreditations",
       highlight: "Promoted by IIT-ians"
     },

@@ -1,11 +1,10 @@
-
 import React from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import DashboardLayout from '@/components/layouts/DashboardLayout';
 import SchoolDashboardOverview from '@/components/admin/SchoolDashboardOverview';
 import ContentManager from '@/components/admin/ContentManager';
 import AnalyticsPanel from '@/components/admin/AnalyticsPanel';
-import NewUserManager from '@/components/admin/NewUserManager';
+import UserManager from '@/components/admin/UserManager';
 import SettingsPanel from '@/components/admin/SettingsPanel';
 import { useSEO } from '@/hooks/useSEO';
 
@@ -46,7 +45,7 @@ const AdminDashboard = () => {
           </TabsContent>
 
           <TabsContent value="users">
-            <NewUserManager />
+            <UserManager />
           </TabsContent>
 
           <TabsContent value="settings">

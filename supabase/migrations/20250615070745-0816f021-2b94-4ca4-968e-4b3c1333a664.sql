@@ -1,4 +1,3 @@
-
 -- First, let's check what types are allowed in the marquee_texts table
 -- Looking at the error, it seems the type constraint is more restrictive than expected
 -- Let's insert the marquee data with allowed types
@@ -106,7 +105,7 @@ INSERT INTO public.media_library (filename, original_filename, file_url, file_ty
 (
   'college-campus-1.jpg',
   'college-campus-1.jpg',
-  '/lovable-uploads/college-campus-1.jpg',
+  '/assets/campus-1.jpg',
   'image',
   524288,
   'image/jpeg',
@@ -116,7 +115,7 @@ INSERT INTO public.media_library (filename, original_filename, file_url, file_ty
 (
   'college-campus-2.jpg',
   'college-campus-2.jpg',
-  '/lovable-uploads/college-campus-2.jpg',
+  '/assets/campus-2.jpg',
   'image',
   487234,
   'image/jpeg',
@@ -126,7 +125,7 @@ INSERT INTO public.media_library (filename, original_filename, file_url, file_ty
 (
   'placement-stats.png',
   'a07dab32-a06d-4aa9-ab59-2d061f93201f.png',
-  '/lovable-uploads/a07dab32-a06d-4aa9-ab59-2d061f93201f.png',
+  '/assets/slider-1.png',
   'image',
   654321,
   'image/png',
@@ -136,7 +135,7 @@ INSERT INTO public.media_library (filename, original_filename, file_url, file_ty
 (
   'facilities-lab.png',
   'b592b170-56b4-4e52-b3ff-c4f500363b94.png',
-  '/lovable-uploads/b592b170-56b4-4e52-b3ff-c4f500363b94.png',
+  '/assets/slider-2.png',
   'image',
   789012,
   'image/png',
@@ -146,7 +145,7 @@ INSERT INTO public.media_library (filename, original_filename, file_url, file_ty
 (
   'industry-partners.png',
   'c63a8ec4-3adb-47a0-9e29-d081de2cff06.png',
-  '/lovable-uploads/c63a8ec4-3adb-47a0-9e29-d081de2cff06.png',
+  '/assets/slider-3.png',
   'image',
   456789,
   'image/png',

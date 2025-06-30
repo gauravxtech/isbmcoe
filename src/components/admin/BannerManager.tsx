@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -50,7 +49,6 @@ const BannerManager = () => {
 
   const fetchBanners = async () => {
     try {
-      console.log('Fetching banners...');
       const { data, error } = await supabase
         .from('banners')
         .select('*')
@@ -61,7 +59,6 @@ const BannerManager = () => {
         throw error;
       }
       
-      console.log('Banners fetched successfully:', data);
       setBanners(data || []);
     } catch (error: any) {
       console.error('Error fetching banners:', error);

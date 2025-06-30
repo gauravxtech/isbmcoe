@@ -485,6 +485,36 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      },
+      teachers: {
+        Row: {
+          id: string;
+          name: string;
+          position: string;
+          qualification: string;
+          department: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          name: string;
+          position: string;
+          qualification: string;
+          department?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          name?: string;
+          position?: string;
+          qualification?: string;
+          department?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Relationships: [];
       }
     }
     Views: {
