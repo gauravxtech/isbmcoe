@@ -69,9 +69,6 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
 
   useEffect(() => {
     if (user?.id) fetchNotifications();
-    // Optionally, poll every 30s
-    // const interval = setInterval(fetchNotifications, 30000);
-    // return () => clearInterval(interval);
   }, [user]);
 
   const fetchNotifications = async () => {
@@ -79,16 +76,16 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
     const { data } = await supabase
       .from('notifications')
       .select('*')
-      .eq('user_id', user.id)
+      .eq('recipient_id', user.id)
       .order('created_at', { ascending: false });
     setNotifications(data || []);
-    setUnreadCount((data || []).filter((n: any) => !n.read).length);
+    // Since there's no 'read' field, we'll assume all are unread for now
+    setUnreadCount((data || []).length);
   };
 
   const markAllRead = async () => {
-    if (!user?.id) return;
-    await supabase.from('notifications').update({ read: true }).eq('user_id', user.id).eq('read', false);
-    fetchNotifications();
+    // Since there's no 'read' field in notifications table, we'll just clear the count
+    setUnreadCount(0);
   };
 
   const handleLogout = async () => {

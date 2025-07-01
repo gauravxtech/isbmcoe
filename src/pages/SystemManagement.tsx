@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -13,7 +14,10 @@ import {
   HardDrive, 
   Trash2, 
   Download, 
-  Upload 
+  Upload,
+  Users,
+  FileText,
+  Lock
 } from 'lucide-react';
 import DashboardLayout from '@/components/layouts/DashboardLayout';
 import { useSEO } from '@/hooks/useSEO';
@@ -34,7 +38,6 @@ const SystemManagement = () => {
   const handleSystemAction = async (action: string) => {
     setIsLoading(true);
     try {
-      // Log the action in the system_activities table
       await supabase
         .from('system_activities')
         .insert({
