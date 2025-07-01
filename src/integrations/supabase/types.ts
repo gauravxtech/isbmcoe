@@ -273,6 +273,42 @@ export type Database = {
         }
         Relationships: []
       }
+      notifications: {
+        Row: {
+          created_at: string | null
+          id: string
+          message: string
+          recipient_id: string | null
+          recipient_type: string | null
+          status: string | null
+          title: string
+          type: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          message: string
+          recipient_id?: string | null
+          recipient_type?: string | null
+          status?: string | null
+          title: string
+          type?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          message?: string
+          recipient_id?: string | null
+          recipient_type?: string | null
+          status?: string | null
+          title?: string
+          type?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -306,6 +342,36 @@ export type Database = {
           phone?: string | null
           role?: string
           updated_at?: string
+        }
+        Relationships: []
+      }
+      students: {
+        Row: {
+          created_at: string | null
+          department: string | null
+          email: string
+          enrollment_no: string | null
+          full_name: string
+          id: string
+          status: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          department?: string | null
+          email: string
+          enrollment_no?: string | null
+          full_name: string
+          id?: string
+          status?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          department?: string | null
+          email?: string
+          enrollment_no?: string | null
+          full_name?: string
+          id?: string
+          status?: string | null
         }
         Relationships: []
       }
@@ -402,6 +468,117 @@ export type Database = {
         }
         Relationships: []
       }
+      system_settings: {
+        Row: {
+          allowed_file_types: string[] | null
+          created_at: string | null
+          default_language: string | null
+          email_notifications: boolean | null
+          id: string
+          maintenance_mode: boolean | null
+          max_file_size: number | null
+          site_description: string | null
+          site_name: string
+          sms_notifications: boolean | null
+          timezone: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          allowed_file_types?: string[] | null
+          created_at?: string | null
+          default_language?: string | null
+          email_notifications?: boolean | null
+          id?: string
+          maintenance_mode?: boolean | null
+          max_file_size?: number | null
+          site_description?: string | null
+          site_name: string
+          sms_notifications?: boolean | null
+          timezone?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          allowed_file_types?: string[] | null
+          created_at?: string | null
+          default_language?: string | null
+          email_notifications?: boolean | null
+          id?: string
+          maintenance_mode?: boolean | null
+          max_file_size?: number | null
+          site_description?: string | null
+          site_name?: string
+          sms_notifications?: boolean | null
+          timezone?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      teachers: {
+        Row: {
+          created_at: string
+          department: string | null
+          id: string
+          name: string
+          position: string
+          qualification: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          department?: string | null
+          id?: string
+          name: string
+          position: string
+          qualification: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          department?: string | null
+          id?: string
+          name?: string
+          position?: string
+          qualification?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      user_preferences: {
+        Row: {
+          created_at: string | null
+          email_notifications: boolean | null
+          id: string
+          language: string | null
+          sms_notifications: boolean | null
+          theme: string | null
+          two_factor_auth: boolean | null
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          email_notifications?: boolean | null
+          id?: string
+          language?: string | null
+          sms_notifications?: boolean | null
+          theme?: string | null
+          two_factor_auth?: boolean | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          email_notifications?: boolean | null
+          id?: string
+          language?: string | null
+          sms_notifications?: boolean | null
+          theme?: string | null
+          two_factor_auth?: boolean | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       website_pages: {
         Row: {
           content: string | null
@@ -485,36 +662,6 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
-      },
-      teachers: {
-        Row: {
-          id: string;
-          name: string;
-          position: string;
-          qualification: string;
-          department: string | null;
-          created_at: string;
-          updated_at: string;
-        };
-        Insert: {
-          id?: string;
-          name: string;
-          position: string;
-          qualification: string;
-          department?: string | null;
-          created_at?: string;
-          updated_at?: string;
-        };
-        Update: {
-          id?: string;
-          name?: string;
-          position?: string;
-          qualification?: string;
-          department?: string | null;
-          created_at?: string;
-          updated_at?: string;
-        };
-        Relationships: [];
       }
     }
     Views: {
