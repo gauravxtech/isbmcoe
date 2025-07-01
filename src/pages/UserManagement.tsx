@@ -1,113 +1,83 @@
+
 import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
-import { 
-  Users, 
-  UserPlus, 
-  Search, 
-  Filter, 
-  Edit, 
-  Trash2, 
-  MoreHorizontal,
-  Mail,
-  Phone,
-  MapPin,
-  Calendar,
-  CheckCircle,
-  XCircle,
-  AlertTriangle,
-  Settings,
-  Download,
-  Upload,
-  RefreshCw
-} from 'lucide-react';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import DashboardLayout from '@/components/layouts/DashboardLayout';
-import { useSEO } from '@/hooks/useSEO';
-import { useToast } from '@/hooks/use-toast';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Textarea } from '@/components/ui/textarea';
+import { Switch } from '@/components/ui/switch';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
+import { Users, UserPlus, Search, Filter, MoreHorizontal, Edit2, Trash2, Mail, Phone, MapPin, Calendar, Shield, Lock, Unlock, Eye, EyeOff, Download, Upload, RefreshCw, Settings, AlertCircle, CheckCircle, XCircle, Clock } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/hooks/use-toast';
 
+// Updated User interface to match profiles table structure
 interface User {
   id: string;
-  full_name: string;
   email: string;
+  full_name: string | null;
   role: string;
-  status: string;
-  last_login: string;
   department: string | null;
   phone: string | null;
-  address: string | null;
+  avatar_url: string | null;
   created_at: string;
+  updated_at: string;
+  // Add optional fields for compatibility
+  status?: string;
+  last_login?: string;
+  address?: string;
 }
 
 const UserManagement = () => {
   const [users, setUsers] = useState<User[]>([]);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState('');
   const [filterRole, setFilterRole] = useState('all');
-  const [sortColumn, setSortColumn] = useState('full_name');
-  const [sortDirection, setSortDirection] = useState('asc');
+  const [filterStatus, setFilterStatus] = useState('all');
   const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
-  const [isBulkActionsOpen, setIsBulkActionsOpen] = useState(false);
   const [isAddUserOpen, setIsAddUserOpen] = useState(false);
   const [isEditUserOpen, setIsEditUserOpen] = useState(false);
-  const [selectedUser, setSelectedUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [editingUser, setEditingUser] = useState<User | null>(null);
+  const [newUser, setNewUser] = useState({
+    email: '',
+    full_name: '',
+    role: 'student',
+    department: '',
+    phone: ''
+  });
   const { toast } = useToast();
 
-  useSEO({
-    title: "User Management - ISBM College",
-    description: "Manage users, roles, and permissions",
-    canonical: "https://isbmcoe.edu.in/admin/users"
-  });
-
-  useEffect(() => {
-    fetchUsers();
-  }, []);
-
+  // Fetch users from profiles table
   const fetchUsers = async () => {
-    setLoading(true);
     try {
+      setLoading(true);
       const { data, error } = await supabase
         .from('profiles')
         .select('*')
-        .order(sortColumn, { ascending: sortDirection === 'asc' });
+        .order('created_at', { ascending: false });
 
       if (error) {
-        console.error('Error fetching users:', error);
-        toast({
-          title: "Error",
-          description: "Failed to fetch users",
-          variant: "destructive"
-        });
-        return;
+        throw error;
       }
 
-      setUsers(data || []);
+      // Transform data to match User interface, adding default values for missing fields
+      const transformedUsers = data.map(profile => ({
+        ...profile,
+        status: profile.role === 'student' ? 'active' : 'active', // Default status
+        last_login: new Date().toISOString(), // Default last login
+        address: '' // Default address
+      }));
+
+      setUsers(transformedUsers);
     } catch (error) {
-      console.error('Error:', error);
+      console.error('Error fetching users:', error);
       toast({
         title: "Error",
-        description: "An unexpected error occurred",
+        description: "Failed to fetch users",
         variant: "destructive"
       });
     } finally {
@@ -115,327 +85,339 @@ const UserManagement = () => {
     }
   };
 
-  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchQuery(e.target.value);
-  };
+  useEffect(() => {
+    fetchUsers();
+  }, []);
 
-  const handleFilterChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setFilterRole(e.target.value);
-  };
-
-  const handleSort = (column: string) => {
-    if (column === sortColumn) {
-      setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
-    } else {
-      setSortColumn(column);
-      setSortDirection('asc');
-    }
-  };
-
+  // Filter users based on search and filters
   const filteredUsers = users.filter(user => {
-    const searchRegex = new RegExp(searchQuery, 'i');
-    const searchMatch = searchRegex.test(user.full_name) || searchRegex.test(user.email);
-    const roleMatch = filterRole === 'all' || user.role === filterRole;
-    return searchMatch && roleMatch;
+    const matchesSearch = user.full_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         user.email.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesRole = filterRole === 'all' || user.role === filterRole;
+    const matchesStatus = filterStatus === 'all' || user.status === filterStatus;
+    
+    return matchesSearch && matchesRole && matchesStatus;
   });
 
-  const toggleUserSelection = (userId: string) => {
-    setSelectedUsers(prev =>
-      prev.includes(userId) ? prev.filter(id => id !== userId) : [...prev, userId]
+  const handleAddUser = async () => {
+    try {
+      const { data, error } = await supabase.auth.signUp({
+        email: newUser.email,
+        password: 'temp123456', // Temporary password
+        options: {
+          data: {
+            full_name: newUser.full_name,
+            role: newUser.role,
+            department: newUser.department,
+            phone: newUser.phone
+          }
+        }
+      });
+
+      if (error) throw error;
+
+      toast({
+        title: "Success",
+        description: "User added successfully",
+        variant: "default"
+      });
+
+      setIsAddUserOpen(false);
+      setNewUser({
+        email: '',
+        full_name: '',
+        role: 'student',
+        department: '',
+        phone: ''
+      });
+      fetchUsers();
+    } catch (error) {
+      console.error('Error adding user:', error);
+      toast({
+        title: "Error",
+        description: "Failed to add user",
+        variant: "destructive"
+      });
+    }
+  };
+
+  const getRoleBadgeVariant = (role: string) => {
+    switch (role) {
+      case 'super-admin':
+        return 'destructive';
+      case 'admin':
+        return 'destructive';
+      default:
+        return 'default';
+    }
+  };
+
+  const getStatusBadgeVariant = (status: string) => {
+    switch (status) {
+      case 'active':
+        return 'default';
+      case 'inactive':
+        return 'destructive';
+      default:
+        return 'default';
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <RefreshCw className="h-8 w-8 animate-spin" />
+        <span className="ml-2">Loading users...</span>
+      </div>
     );
-  };
-
-  const handleBulkAction = (action: string) => {
-    if (selectedUsers.length === 0) {
-      toast({
-        title: "Warning",
-        description: "Please select at least one user",
-        variant: "warning"
-      });
-      return;
-    }
-
-    if (action === 'delete') {
-      if (window.confirm(`Are you sure you want to delete ${selectedUsers.length} users?`)) {
-        // Implement delete logic here
-        toast({
-          title: "Success",
-          description: `Deleted ${selectedUsers.length} users`,
-        });
-      }
-    } else if (action === 'activate') {
-      // Implement activate logic here
-      toast({
-        title: "Success",
-        description: `Activated ${selectedUsers.length} users`,
-      });
-    } else if (action === 'deactivate') {
-      // Implement deactivate logic here
-      toast({
-        title: "Success",
-        description: `Deactivated ${selectedUsers.length} users`,
-      });
-    }
-
-    setIsBulkActionsOpen(false);
-    setSelectedUsers([]);
-  };
-
-  const handleEditUser = (user: User) => {
-    setSelectedUser(user);
-    setIsEditUserOpen(true);
-  };
-
-  const handleDeleteUser = (userId: string) => {
-    if (window.confirm("Are you sure you want to delete this user?")) {
-      // Implement delete logic here
-      toast({
-        title: "Success",
-        description: "User deleted successfully",
-      });
-    }
-  };
-
-  const handleAddUser = () => {
-    setIsAddUserOpen(true);
-  };
-
-  const handleCloseAddUser = () => {
-    setIsAddUserOpen(false);
-  };
-
-  const handleSaveUser = () => {
-    // Implement save logic here
-    toast({
-      title: "Success",
-      description: "User saved successfully",
-    });
-    setIsEditUserOpen(false);
-  };
+  }
 
   return (
-    <DashboardLayout>
-      <div className="space-y-6">
-        
-        <div className="flex justify-between items-center">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-white flex items-center gap-3">
-              <Users className="h-8 w-8 text-blue-500" />
-              User Management
-            </h1>
-            <p className="text-gray-600 dark:text-gray-400">Manage users, roles, and permissions</p>
-          </div>
-          <div className="flex gap-3">
-            <Button variant="outline">
-              <Download className="h-4 w-4 mr-2" />
-              Export Users
-            </Button>
-            <Button className="bg-blue-500 hover:bg-blue-600">
-              <UserPlus className="h-4 w-4 mr-2" />
-              Add User
-            </Button>
-          </div>
+    <div className="container mx-auto p-6 space-y-6">
+      {/* Header */}
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <div>
+          <h1 className="text-3xl font-bold flex items-center gap-2">
+            <Users className="h-8 w-8" />
+            User Management
+          </h1>
+          <p className="text-muted-foreground mt-1">
+            Manage system users, roles, and permissions
+          </p>
         </div>
-
         
-        
-        <Tabs defaultValue="all-users" className="space-y-6">
-          <TabsList className="grid grid-cols-4 w-full">
-            <TabsTrigger value="all-users">All Users</TabsTrigger>
-            <TabsTrigger value="roles">Roles & Permissions</TabsTrigger>
-            <TabsTrigger value="bulk-actions">Bulk Actions</TabsTrigger>
-            <TabsTrigger value="user-settings">Settings</TabsTrigger>
-          </TabsList>
-
-          
-          <TabsContent value="all-users" className="space-y-4">
-            <div className="flex justify-between items-center">
-              <div className="flex items-center gap-3">
-                <Input
-                  type="text"
-                  placeholder="Search users..."
-                  value={searchQuery}
-                  onChange={handleSearchChange}
-                  className="w-64"
-                />
-                <select
-                  value={filterRole}
-                  onChange={handleFilterChange}
-                  className="border border-gray-300 rounded-md px-3 py-2"
-                >
-                  <option value="all">All Roles</option>
-                  <option value="student">Student</option>
-                  <option value="faculty">Faculty</option>
-                  <option value="admin">Admin</option>
-                </select>
-              </div>
-              <Button variant="outline">
-                <Filter className="h-4 w-4 mr-2" />
-                Filters
+        <div className="flex gap-2">
+          <Dialog open={isAddUserOpen} onOpenChange={setIsAddUserOpen}>
+            <DialogTrigger asChild>
+              <Button>
+                <UserPlus className="h-4 w-4 mr-2" />
+                Add User
               </Button>
-            </div>
-
-            <Card>
-              <CardHeader>
-                <CardTitle>All Users</CardTitle>
-              </CardHeader>
-              <CardContent>
-                {loading ? (
-                  <div className="text-center py-8">
-                    <RefreshCw className="h-6 w-6 animate-spin mx-auto mb-2" />
-                    Loading users...
-                  </div>
-                ) : filteredUsers.length === 0 ? (
-                  <div className="text-center py-8">
-                    <Users className="h-10 w-10 text-gray-400 mx-auto mb-2" />
-                    No users found.
-                  </div>
-                ) : (
-                  <div className="overflow-x-auto">
-                    <Table>
-                      <TableHeader>
-                        <TableRow>
-                          <TableHead>
-                            <input
-                              type="checkbox"
-                              onChange={e => {
-                                if (e.target.checked) {
-                                  setSelectedUsers(filteredUsers.map(user => user.id));
-                                } else {
-                                  setSelectedUsers([]);
-                                }
-                              }}
-                              checked={selectedUsers.length === filteredUsers.length}
-                            />
-                          </TableHead>
-                          <TableHead onClick={() => handleSort('full_name')} className="cursor-pointer">
-                            Name {sortColumn === 'full_name' && (sortDirection === 'asc' ? '▲' : '▼')}
-                          </TableHead>
-                          <TableHead onClick={() => handleSort('email')} className="cursor-pointer">
-                            Email {sortColumn === 'email' && (sortDirection === 'asc' ? '▲' : '▼')}
-                          </TableHead>
-                          <TableHead>Role</TableHead>
-                          <TableHead>Status</TableHead>
-                          <TableHead>Last Login</TableHead>
-                          <TableHead>Actions</TableHead>
-                        </TableRow>
-                      </TableHeader>
-                      <TableBody>
-                        {filteredUsers.map(user => (
-                          <TableRow key={user.id}>
-                            <TableCell>
-                              <input
-                                type="checkbox"
-                                value={user.id}
-                                checked={selectedUsers.includes(user.id)}
-                                onChange={() => toggleUserSelection(user.id)}
-                              />
-                            </TableCell>
-                            <TableCell className="font-medium">
-                              <div className="flex items-center gap-2">
-                                <Users className="h-4 w-4 text-gray-500" />
-                                {user.full_name}
-                              </div>
-                            </TableCell>
-                            <TableCell>{user.email}</TableCell>
-                            <TableCell>
-                              <Badge variant="secondary">{user.role}</Badge>
-                            </TableCell>
-                            <TableCell>
-                              {user.status === 'active' ? (
-                                <Badge className="bg-green-100 text-green-700 gap-1">
-                                  <CheckCircle className="h-3 w-3" />
-                                  Active
-                                </Badge>
-                              ) : (
-                                <Badge className="bg-red-100 text-red-700 gap-1">
-                                  <XCircle className="h-3 w-3" />
-                                  Inactive
-                                </Badge>
-                              )}
-                            </TableCell>
-                            <TableCell>{user.last_login || 'N/A'}</TableCell>
-                            <TableCell>
-                              <DropdownMenu>
-                                <DropdownMenuTrigger asChild>
-                                  <Button variant="ghost" className="h-8 w-8 p-0">
-                                    <span className="sr-only">Open menu</span>
-                                    <MoreHorizontal className="h-4 w-4" />
-                                  </Button>
-                                </DropdownMenuTrigger>
-                                <DropdownMenuContent align="end">
-                                  <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                                  <DropdownMenuItem onClick={() => handleEditUser(user)}>
-                                    <Edit className="h-4 w-4 mr-2" />
-                                    Edit
-                                  </DropdownMenuItem>
-                                  <DropdownMenuItem onClick={() => handleDeleteUser(user.id)}>
-                                    <Trash2 className="h-4 w-4 mr-2" />
-                                    Delete
-                                  </DropdownMenuItem>
-                                  <DropdownMenuSeparator />
-                                  <DropdownMenuItem>
-                                    <AlertTriangle className="h-4 w-4 mr-2" />
-                                    Report
-                                  </DropdownMenuItem>
-                                </DropdownMenuContent>
-                              </DropdownMenu>
-                            </TableCell>
-                          </TableRow>
-                        ))}
-                      </TableBody>
-                    </Table>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          <TabsContent value="roles">
-            <Card>
-              <CardHeader>
-                <CardTitle>Roles & Permissions</CardTitle>
-                <CardDescription>Manage user roles and permissions</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <p>Coming Soon...</p>
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          <TabsContent value="bulk-actions">
-            <Card>
-              <CardHeader>
-                <CardTitle>Bulk Actions</CardTitle>
-                <CardDescription>Perform bulk actions on selected users</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  <p>Selected {selectedUsers.length} users</p>
-                  <div className="flex gap-3">
-                    <Button onClick={() => handleBulkAction('activate')}>Activate</Button>
-                    <Button onClick={() => handleBulkAction('deactivate')}>Deactivate</Button>
-                    <Button variant="destructive" onClick={() => handleBulkAction('delete')}>Delete</Button>
-                  </div>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-md">
+              <DialogHeader>
+                <DialogTitle>Add New User</DialogTitle>
+              </DialogHeader>
+              <div className="space-y-4">
+                <div>
+                  <Label htmlFor="email">Email</Label>
+                  <Input
+                    id="email"
+                    type="email"
+                    value={newUser.email}
+                    onChange={(e) => setNewUser({...newUser, email: e.target.value})}
+                    placeholder="user@example.com"
+                  />
                 </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          <TabsContent value="user-settings">
-            <Card>
-              <CardHeader>
-                <CardTitle>User Settings</CardTitle>
-                <CardDescription>Manage user settings</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <p>Coming Soon...</p>
-              </CardContent>
-            </Card>
-          </TabsContent>
-        </Tabs>
+                <div>
+                  <Label htmlFor="full_name">Full Name</Label>
+                  <Input
+                    id="full_name"
+                    value={newUser.full_name}
+                    onChange={(e) => setNewUser({...newUser, full_name: e.target.value})}
+                    placeholder="John Doe"
+                  />
+                </div>
+                <div>
+                  <Label>Role</Label>
+                  <Select value={newUser.role} onValueChange={(value) => setNewUser({...newUser, role: value})}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="student">Student</SelectItem>
+                      <SelectItem value="teacher">Teacher</SelectItem>
+                      <SelectItem value="admin">Admin</SelectItem>
+                      <SelectItem value="super-admin">Super Admin</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <Label htmlFor="department">Department</Label>
+                  <Input
+                    id="department"
+                    value={newUser.department}
+                    onChange={(e) => setNewUser({...newUser, department: e.target.value})}
+                    placeholder="Computer Science"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="phone">Phone</Label>
+                  <Input
+                    id="phone"
+                    value={newUser.phone}
+                    onChange={(e) => setNewUser({...newUser, phone: e.target.value})}
+                    placeholder="+1234567890"
+                  />
+                </div>
+                <Button onClick={handleAddUser} className="w-full">
+                  Add User
+                </Button>
+              </div>
+            </DialogContent>
+          </Dialog>
+        </div>
       </div>
-    </DashboardLayout>
+
+      {/* Search and Filters */}
+      <Card>
+        <CardContent className="p-4">
+          <div className="flex flex-col md:flex-row gap-4">
+            <div className="flex-1">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input
+                  placeholder="Search users by name or email..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-10"
+                />
+              </div>
+            </div>
+            <Select value={filterRole} onValueChange={setFilterRole}>
+              <SelectTrigger className="w-full md:w-48">
+                <SelectValue placeholder="Filter by role" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Roles</SelectItem>
+                <SelectItem value="student">Student</SelectItem>
+                <SelectItem value="teacher">Teacher</SelectItem>
+                <SelectItem value="admin">Admin</SelectItem>
+                <SelectItem value="super-admin">Super Admin</SelectItem>
+              </SelectContent>
+            </Select>
+            <Select value={filterStatus} onValueChange={setFilterStatus}>
+              <SelectTrigger className="w-full md:w-48">
+                <SelectValue placeholder="Filter by status" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Status</SelectItem>
+                <SelectItem value="active">Active</SelectItem>
+                <SelectItem value="inactive">Inactive</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* User Statistics */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium text-muted-foreground">Total Users</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{users.length}</div>
+            <CardDescription className="text-xs text-muted-foreground">
+              All registered users
+            </CardDescription>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium text-muted-foreground">Active Users</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-green-600">
+              {users.filter(u => u.status === 'active').length}
+            </div>
+            <CardDescription className="text-xs text-muted-foreground">
+              Currently active
+            </CardDescription>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium text-muted-foreground">Admins</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-blue-600">
+              {users.filter(u => u.role === 'admin' || u.role === 'super-admin').length}
+            </div>
+            <CardDescription className="text-xs text-muted-foreground">
+              Admin users
+            </CardDescription>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium text-muted-foreground">Students</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-purple-600">
+              {users.filter(u => u.role === 'student').length}
+            </div>
+            <CardDescription className="text-xs text-muted-foreground">
+              Student accounts
+            </CardDescription>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Users Table */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Users ({filteredUsers.length})</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead>
+                <tr className="border-b">
+                  <th className="text-left p-2">User</th>
+                  <th className="text-left p-2">Role</th>
+                  <th className="text-left p-2">Department</th>
+                  <th className="text-left p-2">Status</th>
+                  <th className="text-left p-2">Created</th>
+                  <th className="text-left p-2">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filteredUsers.map((user) => (
+                  <tr key={user.id} className="border-b hover:bg-muted/50">
+                    <td className="p-2">
+                      <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
+                          {user.full_name?.charAt(0) || user.email.charAt(0)}
+                        </div>
+                        <div>
+                          <div className="font-medium">{user.full_name || 'N/A'}</div>
+                          <div className="text-sm text-muted-foreground">{user.email}</div>
+                        </div>
+                      </div>
+                    </td>
+                    <td className="p-2">
+                      <Badge variant={getRoleBadgeVariant(user.role)}>
+                        {user.role}
+                      </Badge>
+                    </td>
+                    <td className="p-2">{user.department || 'N/A'}</td>
+                    <td className="p-2">
+                      <Badge variant={getStatusBadgeVariant(user.status || 'active')}>
+                        {user.status || 'active'}
+                      </Badge>
+                    </td>
+                    <td className="p-2">
+                      {new Date(user.created_at).toLocaleDateString()}
+                    </td>
+                    <td className="p-2">
+                      <div className="flex items-center gap-2">
+                        <Button variant="ghost" size="sm">
+                          <Edit2 className="h-4 w-4" />
+                        </Button>
+                        <Button variant="ghost" size="sm" className="text-red-600">
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
   );
 };
 
