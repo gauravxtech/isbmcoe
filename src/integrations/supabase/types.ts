@@ -96,6 +96,42 @@ export type Database = {
         }
         Relationships: []
       }
+      courses: {
+        Row: {
+          code: string
+          created_at: string
+          credits: number
+          department: string
+          description: string | null
+          id: string
+          name: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          credits?: number
+          department: string
+          description?: string | null
+          id?: string
+          name: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          credits?: number
+          department?: string
+          description?: string | null
+          id?: string
+          name?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       departments: {
         Row: {
           achievements: string[] | null
@@ -319,6 +355,7 @@ export type Database = {
           id: string
           phone: string | null
           role: string
+          status: string | null
           updated_at: string
         }
         Insert: {
@@ -330,6 +367,7 @@ export type Database = {
           id: string
           phone?: string | null
           role?: string
+          status?: string | null
           updated_at?: string
         }
         Update: {
@@ -341,6 +379,7 @@ export type Database = {
           id?: string
           phone?: string | null
           role?: string
+          status?: string | null
           updated_at?: string
         }
         Relationships: []
