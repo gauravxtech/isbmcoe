@@ -567,7 +567,9 @@ const SuperAdminDashboard = () => {
   const handleQuickLink = (action: string) => {
     switch (action) {
       case 'add-student':
-        navigate('/admin/students/add');
+        // Open the standardized add student dialog from StudentManager
+        setShowNoticeManager(false); // Make sure other dialogs are closed
+        // We'll trigger the StudentManager's add student dialog
         break;
       case 'manage-course':
         navigate('/admin/courses');
@@ -618,14 +620,14 @@ const SuperAdminDashboard = () => {
   return (
     <DashboardLayout>
       <div className="space-y-6 px-2 sm:px-4 md:px-0">
-        {/* Breadcrumb */}
+        {/* Fixed Breadcrumb - Remove duplicate Dashboard */}
         <div className="flex items-center space-x-2 text-sm text-gray-600 mb-4">
           <span>Dashboard</span>
           <span>/</span>
           <span className="text-blue-600 font-medium">Super Admin</span>
         </div>
 
-        {/* Header */}
+        {/* Header - Remove the duplicate breadcrumb */}
         <div className="flex items-center justify-between mb-6">
           <div>
             <h1 className="text-3xl font-bold text-gray-900 dark:text-white flex items-center gap-3">

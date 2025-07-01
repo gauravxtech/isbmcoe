@@ -39,7 +39,6 @@ const StudentManager = () => {
   const [addStudentOpen, setAddStudentOpen] = useState(false);
   const [editStudent, setEditStudent] = useState<Student | null>(null);
   const [editStudentOpen, setEditStudentOpen] = useState(false);
-  const [resetPasswordStudent, setResetPasswordStudent] = useState<Student | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [addStudentForm, setAddStudentForm] = useState({
     full_name: '',
@@ -149,7 +148,8 @@ const StudentManager = () => {
         department: '',
         phone: ''
       });
-      fetchStudents();
+      // Refresh the students list
+      await fetchStudents();
     } catch (error: any) {
       console.error('Error adding student:', error);
       toast({
@@ -375,7 +375,7 @@ const StudentManager = () => {
         </CardContent>
       </Card>
 
-      {/* Add Student Dialog */}
+      {/* Standardized Add Student Dialog */}
       <Dialog open={addStudentOpen} onOpenChange={setAddStudentOpen}>
         <DialogContent>
           <DialogHeader>
