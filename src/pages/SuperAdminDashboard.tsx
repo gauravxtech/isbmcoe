@@ -8,10 +8,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from '@/components/ui/dialog';
 import {
   DropdownMenu,
@@ -429,7 +427,6 @@ const SuperAdminDashboard = () => {
 
   const handleAddAdmin = async (e: React.FormEvent) => {
     e.preventDefault();
-    setAddAdminOpen(true);
     if (!addAdminForm.full_name || !addAdminForm.email || !addAdminForm.password || !addAdminForm.department) {
       toast({ title: 'Error', description: 'All fields are required.', variant: 'destructive' });
       return;
@@ -439,29 +436,34 @@ const SuperAdminDashboard = () => {
       return;
     }
     try {
-      // 1. Check if user exists in Auth
-      const { data: existingUser, error: fetchError } = await supabase.auth.admin.getUserByEmail(addAdminForm.email);
-      let userId = existingUser?.user?.id;
-      if (!userId) {
-        // 2. If not, create in Auth
-        const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
-          email: addAdminForm.email,
-          password: addAdminForm.password,
-          options: { data: { full_name: addAdminForm.full_name, role: addAdminForm.role, department: addAdminForm.department } }
-        });
-        if (signUpError) throw signUpError;
-        userId = signUpData.user?.id;
-      }
-      // 3. Upsert to profiles
-      const { error: profileError } = await supabase.from('profiles').upsert({
-        id: userId,
+      // Create user with sign up
+      const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
         email: addAdminForm.email,
-        full_name: addAdminForm.full_name,
-        department: addAdminForm.department,
-        role: addAdminForm.role,
-        status: 'active'
+        password: addAdminForm.password,
+        options: { 
+          data: { 
+            full_name: addAdminForm.full_name, 
+            role: addAdminForm.role, 
+            department: addAdminForm.department 
+          } 
+        }
       });
-      if (profileError) throw profileError;
+      
+      if (signUpError) throw signUpError;
+      
+      // Update profile if user was created
+      if (signUpData.user?.id) {
+        const { error: profileError } = await supabase.from('profiles').upsert({
+          id: signUpData.user.id,
+          email: addAdminForm.email,
+          full_name: addAdminForm.full_name,
+          department: addAdminForm.department,
+          role: addAdminForm.role,
+          status: 'active'
+        });
+        if (profileError) throw profileError;
+      }
+      
       toast({ title: 'Admin added successfully!' });
       setAddAdminOpen(false);
       setAddAdminForm({ full_name: '', email: '', password: '', department: '', role: 'admin' });
@@ -682,6 +684,7 @@ const SuperAdminDashboard = () => {
                         <option value="">Select Department/Cell</option>
                         {departmentOptions.map(dep => <option key={dep} value={dep}>{dep}</option>)}
                       </select>
+                      <Input placeholder="Password" type="password" value={addAdminForm.password} onChange={e => setAddAdminForm(f => ({ ...f, password: e.target.value }))} required />
                       <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700">Add Admin</Button>
                     </form>
                   </DialogContent>

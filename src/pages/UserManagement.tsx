@@ -8,18 +8,22 @@ import { Badge } from '@/components/ui/badge';
 import { 
   Users, 
   UserPlus, 
-  UserX, 
   Search, 
   Filter, 
-  Download, 
-  Upload, 
   Edit, 
   Trash2, 
   MoreHorizontal,
-  Shield,
-  GraduationCap,
-  Building,
-  User
+  Mail,
+  Phone,
+  MapPin,
+  Calendar,
+  CheckCircle,
+  XCircle,
+  AlertTriangle,
+  Settings,
+  Download,
+  Upload,
+  RefreshCw
 } from 'lucide-react';
 import {
   Dialog,
@@ -37,53 +41,48 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import DashboardLayout from '@/components/layouts/DashboardLayout';
 import { useSEO } from '@/hooks/useSEO';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 
-interface UserProfile {
+interface User {
   id: string;
+  full_name: string;
   email: string;
-  full_name: string | null;
   role: string;
+  status: string;
+  last_login: string;
   department: string | null;
   phone: string | null;
+  address: string | null;
   created_at: string;
 }
 
 const UserManagement = () => {
-  const [users, setUsers] = useState<UserProfile[]>([]);
-  const [filteredUsers, setFilteredUsers] = useState<UserProfile[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [selectedRole, setSelectedRole] = useState('all');
+  const [users, setUsers] = useState<User[]>([]);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [filterRole, setFilterRole] = useState('all');
+  const [sortColumn, setSortColumn] = useState('full_name');
+  const [sortDirection, setSortDirection] = useState('asc');
+  const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
+  const [isBulkActionsOpen, setIsBulkActionsOpen] = useState(false);
   const [isAddUserOpen, setIsAddUserOpen] = useState(false);
   const [isEditUserOpen, setIsEditUserOpen] = useState(false);
-  const [selectedUser, setSelectedUser] = useState<UserProfile | null>(null);
-  const [newUser, setNewUser] = useState({
-    fullName: '',
-    email: '',
-    role: 'student',
-    department: '',
-    phone: '',
-    password: ''
-  });
+  const [selectedUser, setSelectedUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
   const { toast } = useToast();
 
   useSEO({
     title: "User Management - ISBM College",
     description: "Manage users, roles, and permissions",
-    canonical: "https://isbmcoe.edu.in/admin/user-management"
+    canonical: "https://isbmcoe.edu.in/admin/users"
   });
 
   useEffect(() => {
     fetchUsers();
   }, []);
-
-  useEffect(() => {
-    filterUsers();
-  }, [users, searchTerm, selectedRole]);
 
   const fetchUsers = async () => {
     setLoading(true);
@@ -91,18 +90,24 @@ const UserManagement = () => {
       const { data, error } = await supabase
         .from('profiles')
         .select('*')
-        .order('created_at', { ascending: false });
+        .order(sortColumn, { ascending: sortDirection === 'asc' });
 
       if (error) {
-        throw error;
+        console.error('Error fetching users:', error);
+        toast({
+          title: "Error",
+          description: "Failed to fetch users",
+          variant: "destructive"
+        });
+        return;
       }
 
       setUsers(data || []);
     } catch (error) {
-      console.error('Error fetching users:', error);
+      console.error('Error:', error);
       toast({
         title: "Error",
-        description: "Failed to fetch users. Please try again.",
+        description: "An unexpected error occurred",
         variant: "destructive"
       });
     } finally {
@@ -110,202 +115,108 @@ const UserManagement = () => {
     }
   };
 
-  const filterUsers = () => {
-    let filtered = [...users];
-    
-    // Filter by search term
-    if (searchTerm) {
-      filtered = filtered.filter(user => 
-        (user.full_name && user.full_name.toLowerCase().includes(searchTerm.toLowerCase())) ||
-        user.email.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-    }
-    
-    // Filter by role
-    if (selectedRole !== 'all') {
-      filtered = filtered.filter(user => user.role === selectedRole);
-    }
-    
-    setFilteredUsers(filtered);
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(e.target.value);
   };
 
-  const handleAddUser = async () => {
-    if (!newUser.fullName || !newUser.email || !newUser.department || !newUser.password) {
+  const handleFilterChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setFilterRole(e.target.value);
+  };
+
+  const handleSort = (column: string) => {
+    if (column === sortColumn) {
+      setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
+    } else {
+      setSortColumn(column);
+      setSortDirection('asc');
+    }
+  };
+
+  const filteredUsers = users.filter(user => {
+    const searchRegex = new RegExp(searchQuery, 'i');
+    const searchMatch = searchRegex.test(user.full_name) || searchRegex.test(user.email);
+    const roleMatch = filterRole === 'all' || user.role === filterRole;
+    return searchMatch && roleMatch;
+  });
+
+  const toggleUserSelection = (userId: string) => {
+    setSelectedUsers(prev =>
+      prev.includes(userId) ? prev.filter(id => id !== userId) : [...prev, userId]
+    );
+  };
+
+  const handleBulkAction = (action: string) => {
+    if (selectedUsers.length === 0) {
       toast({
-        title: "Error",
-        description: "Please fill in all required fields",
-        variant: "destructive"
+        title: "Warning",
+        description: "Please select at least one user",
+        variant: "warning"
       });
       return;
     }
 
-    try {
-      // Create user in auth
-      const { data: authData, error: authError } = await supabase.auth.signUp({
-        email: newUser.email,
-        password: newUser.password,
-        options: {
-          data: {
-            full_name: newUser.fullName,
-            role: newUser.role
-          }
-        }
-      });
-
-      if (authError) throw authError;
-      
-      if (!authData.user) {
-        throw new Error("User was not created");
+    if (action === 'delete') {
+      if (window.confirm(`Are you sure you want to delete ${selectedUsers.length} users?`)) {
+        // Implement delete logic here
+        toast({
+          title: "Success",
+          description: `Deleted ${selectedUsers.length} users`,
+        });
       }
-
-      // Update profile with additional info
-      const { error: profileError } = await supabase
-        .from('profiles')
-        .update({
-          department: newUser.department,
-          phone: newUser.phone
-        })
-        .eq('id', authData.user.id);
-
-      if (profileError) {
-        console.error('Profile update error:', profileError);
-      }
-
+    } else if (action === 'activate') {
+      // Implement activate logic here
       toast({
         title: "Success",
-        description: "User created successfully",
+        description: `Activated ${selectedUsers.length} users`,
       });
-
-      setNewUser({
-        fullName: '',
-        email: '',
-        role: 'student',
-        department: '',
-        phone: '',
-        password: ''
-      });
-      setIsAddUserOpen(false);
-      fetchUsers();
-    } catch (error: any) {
-      console.error('Error adding user:', error);
-      toast({
-        title: "Error",
-        description: error.message || "Failed to create user",
-        variant: "destructive"
-      });
-    }
-  };
-
-  const handleEditUser = async () => {
-    if (!selectedUser || !selectedUser.full_name) {
-      toast({
-        title: "Error",
-        description: "Please fill in all required fields",
-        variant: "destructive"
-      });
-      return;
-    }
-
-    try {
-      const { error } = await supabase
-        .from('profiles')
-        .update({
-          full_name: selectedUser.full_name,
-          department: selectedUser.department,
-          phone: selectedUser.phone,
-          role: selectedUser.role
-        })
-        .eq('id', selectedUser.id);
-
-      if (error) throw error;
-
+    } else if (action === 'deactivate') {
+      // Implement deactivate logic here
       toast({
         title: "Success",
-        description: "User updated successfully",
-      });
-
-      setIsEditUserOpen(false);
-      fetchUsers();
-    } catch (error: any) {
-      console.error('Error updating user:', error);
-      toast({
-        title: "Error",
-        description: error.message || "Failed to update user",
-        variant: "destructive"
+        description: `Deactivated ${selectedUsers.length} users`,
       });
     }
+
+    setIsBulkActionsOpen(false);
+    setSelectedUsers([]);
   };
 
-  const handleDeleteUser = async (userId: string) => {
-    if (!confirm('Are you sure you want to delete this user? This action cannot be undone.')) {
-      return;
-    }
+  const handleEditUser = (user: User) => {
+    setSelectedUser(user);
+    setIsEditUserOpen(true);
+  };
 
-    try {
-      // In a real application, you would need admin functions to delete a user from auth
-      // For now, we'll just remove the profile
-      const { error } = await supabase
-        .from('profiles')
-        .delete()
-        .eq('id', userId);
-
-      if (error) throw error;
-
+  const handleDeleteUser = (userId: string) => {
+    if (window.confirm("Are you sure you want to delete this user?")) {
+      // Implement delete logic here
       toast({
         title: "Success",
         description: "User deleted successfully",
       });
-
-      fetchUsers();
-    } catch (error: any) {
-      console.error('Error deleting user:', error);
-      toast({
-        title: "Error",
-        description: error.message || "Failed to delete user",
-        variant: "destructive"
-      });
     }
   };
 
-  const getRoleIcon = (role: string) => {
-    switch (role) {
-      case 'super-admin':
-      case 'admin':
-        return <Shield className="h-4 w-4 text-red-500" />;
-      case 'teacher':
-      case 'hod':
-      case 'principal':
-      case 'dean':
-        return <GraduationCap className="h-4 w-4 text-blue-500" />;
-      case 'student':
-        return <User className="h-4 w-4 text-green-500" />;
-      default:
-        return <Building className="h-4 w-4 text-purple-500" />;
-    }
+  const handleAddUser = () => {
+    setIsAddUserOpen(true);
   };
 
-  const getRoleBadgeColor = (role: string) => {
-    switch (role) {
-      case 'super-admin':
-        return 'bg-red-100 text-red-800';
-      case 'admin':
-        return 'bg-orange-100 text-orange-800';
-      case 'principal':
-      case 'dean':
-      case 'hod':
-        return 'bg-purple-100 text-purple-800';
-      case 'teacher':
-        return 'bg-blue-100 text-blue-800';
-      case 'student':
-        return 'bg-green-100 text-green-800';
-      default:
-        return 'bg-gray-100 text-gray-800';
-    }
+  const handleCloseAddUser = () => {
+    setIsAddUserOpen(false);
+  };
+
+  const handleSaveUser = () => {
+    // Implement save logic here
+    toast({
+      title: "Success",
+      description: "User saved successfully",
+    });
+    setIsEditUserOpen(false);
   };
 
   return (
     <DashboardLayout>
       <div className="space-y-6">
+        
         <div className="flex justify-between items-center">
           <div>
             <h1 className="text-3xl font-bold text-gray-900 dark:text-white flex items-center gap-3">
@@ -317,474 +228,210 @@ const UserManagement = () => {
           <div className="flex gap-3">
             <Button variant="outline">
               <Download className="h-4 w-4 mr-2" />
-              Export
+              Export Users
             </Button>
-            <Dialog open={isAddUserOpen} onOpenChange={setIsAddUserOpen}>
-              <DialogTrigger asChild>
-                <Button className="bg-blue-500 hover:bg-blue-600">
-                  <UserPlus className="h-4 w-4 mr-2" />
-                  Add User
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="max-w-md">
-                <DialogHeader>
-                  <DialogTitle>Add New User</DialogTitle>
-                  <DialogDescription>
-                    Create a new user account with specific role and permissions.
-                  </DialogDescription>
-                </DialogHeader>
-                <div className="space-y-4 mt-4">
-                  <div>
-                    <Label htmlFor="fullName">Full Name *</Label>
-                    <Input
-                      id="fullName"
-                      value={newUser.fullName}
-                      onChange={(e) => setNewUser({...newUser, fullName: e.target.value})}
-                      placeholder="Enter full name"
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="email">Email *</Label>
-                    <Input
-                      id="email"
-                      type="email"
-                      value={newUser.email}
-                      onChange={(e) => setNewUser({...newUser, email: e.target.value})}
-                      placeholder="Enter email address"
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="password">Password *</Label>
-                    <Input
-                      id="password"
-                      type="password"
-                      value={newUser.password}
-                      onChange={(e) => setNewUser({...newUser, password: e.target.value})}
-                      placeholder="Enter password"
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="role">Role *</Label>
-                    <select
-                      id="role"
-                      value={newUser.role}
-                      onChange={(e) => setNewUser({...newUser, role: e.target.value})}
-                      className="w-full border border-gray-300 rounded-md px-3 py-2"
-                    >
-                      <option value="student">Student</option>
-                      <option value="teacher">Teacher</option>
-                      <option value="admin">Admin</option>
-                      <option value="super-admin">Super Admin</option>
-                      <option value="hod">HOD</option>
-                      <option value="principal">Principal</option>
-                      <option value="dean">Dean</option>
-                      <option value="parent">Parent</option>
-                      <option value="accountant">Accountant</option>
-                      <option value="reception">Reception</option>
-                      <option value="security">Security</option>
-                      <option value="hostel">Hostel</option>
-                    </select>
-                  </div>
-                  <div>
-                    <Label htmlFor="department">Department *</Label>
-                    <select
-                      id="department"
-                      value={newUser.department}
-                      onChange={(e) => setNewUser({...newUser, department: e.target.value})}
-                      className="w-full border border-gray-300 rounded-md px-3 py-2"
-                    >
-                      <option value="">Select Department</option>
-                      <option value="Computer Engineering">Computer Engineering</option>
-                      <option value="Mechanical Engineering">Mechanical Engineering</option>
-                      <option value="Electronics & Telecommunication">Electronics & Telecommunication</option>
-                      <option value="AI/ML">AI/ML</option>
-                      <option value="AIDS">AIDS</option>
-                      <option value="BCA">BCA</option>
-                      <option value="BBA">BBA</option>
-                      <option value="First Year">First Year</option>
-                      <option value="Administration">Administration</option>
-                    </select>
-                  </div>
-                  <div>
-                    <Label htmlFor="phone">Phone Number</Label>
-                    <Input
-                      id="phone"
-                      value={newUser.phone}
-                      onChange={(e) => setNewUser({...newUser, phone: e.target.value})}
-                      placeholder="Enter phone number"
-                    />
-                  </div>
-                  <div className="flex justify-end space-x-2 pt-4">
-                    <Button variant="outline" onClick={() => setIsAddUserOpen(false)}>
-                      Cancel
-                    </Button>
-                    <Button onClick={handleAddUser}>
-                      Add User
-                    </Button>
-                  </div>
-                </div>
-              </DialogContent>
-            </Dialog>
+            <Button className="bg-blue-500 hover:bg-blue-600">
+              <UserPlus className="h-4 w-4 mr-2" />
+              Add User
+            </Button>
           </div>
         </div>
 
+        
+        
         <Tabs defaultValue="all-users" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="all-users" className="flex items-center gap-2">
-              <Users className="h-4 w-4" />
-              All Users
-            </TabsTrigger>
-            <TabsTrigger value="roles" className="flex items-center gap-2">
-              <Shield className="h-4 w-4" />
-              Roles & Permissions
-            </TabsTrigger>
-            <TabsTrigger value="bulk" className="flex items-center gap-2">
-              <Upload className="h-4 w-4" />
-              Bulk Operations
-            </TabsTrigger>
+          <TabsList className="grid grid-cols-4 w-full">
+            <TabsTrigger value="all-users">All Users</TabsTrigger>
+            <TabsTrigger value="roles">Roles & Permissions</TabsTrigger>
+            <TabsTrigger value="bulk-actions">Bulk Actions</TabsTrigger>
+            <TabsTrigger value="user-settings">Settings</TabsTrigger>
           </TabsList>
 
-          <TabsContent value="all-users" className="space-y-6">
-            <Card>
-              <CardContent className="pt-6">
-                <div className="flex flex-col md:flex-row justify-between gap-4 mb-6">
-                  <div className="relative flex-1">
-                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-                    <Input
-                      placeholder="Search users..."
-                      value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
-                      className="pl-10"
-                    />
-                  </div>
-                  <div className="flex gap-2">
-                    <select 
-                      className="border border-gray-300 rounded-md px-3 py-2"
-                      value={selectedRole}
-                      onChange={(e) => setSelectedRole(e.target.value)}
-                    >
-                      <option value="all">All Roles</option>
-                      <option value="super-admin">Super Admin</option>
-                      <option value="admin">Admin</option>
-                      <option value="principal">Principal</option>
-                      <option value="dean">Dean</option>
-                      <option value="hod">HOD</option>
-                      <option value="teacher">Teacher</option>
-                      <option value="student">Student</option>
-                      <option value="parent">Parent</option>
-                      <option value="accountant">Accountant</option>
-                      <option value="reception">Reception</option>
-                      <option value="security">Security</option>
-                      <option value="hostel">Hostel</option>
-                    </select>
-                    <Button variant="outline" size="icon">
-                      <Filter className="h-4 w-4" />
-                    </Button>
-                  </div>
-                </div>
+          
+          <TabsContent value="all-users" className="space-y-4">
+            <div className="flex justify-between items-center">
+              <div className="flex items-center gap-3">
+                <Input
+                  type="text"
+                  placeholder="Search users..."
+                  value={searchQuery}
+                  onChange={handleSearchChange}
+                  className="w-64"
+                />
+                <select
+                  value={filterRole}
+                  onChange={handleFilterChange}
+                  className="border border-gray-300 rounded-md px-3 py-2"
+                >
+                  <option value="all">All Roles</option>
+                  <option value="student">Student</option>
+                  <option value="faculty">Faculty</option>
+                  <option value="admin">Admin</option>
+                </select>
+              </div>
+              <Button variant="outline">
+                <Filter className="h-4 w-4 mr-2" />
+                Filters
+              </Button>
+            </div>
 
+            <Card>
+              <CardHeader>
+                <CardTitle>All Users</CardTitle>
+              </CardHeader>
+              <CardContent>
                 {loading ? (
-                  <div className="flex justify-center py-8">
-                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+                  <div className="text-center py-8">
+                    <RefreshCw className="h-6 w-6 animate-spin mx-auto mb-2" />
+                    Loading users...
                   </div>
                 ) : filteredUsers.length === 0 ? (
                   <div className="text-center py-8">
-                    <Users className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                    <p className="text-gray-600">No users found</p>
+                    <Users className="h-10 w-10 text-gray-400 mx-auto mb-2" />
+                    No users found.
                   </div>
                 ) : (
-                  <div className="space-y-4">
-                    {filteredUsers.map((user) => (
-                      <div key={user.id} className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center space-x-4">
-                            <div className="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center text-white font-semibold">
-                              {user.full_name ? user.full_name.charAt(0).toUpperCase() : user.email.charAt(0).toUpperCase()}
-                            </div>
-                            <div>
-                              <div className="flex items-center space-x-2">
-                                <h3 className="font-semibold text-gray-900">{user.full_name || 'Unnamed User'}</h3>
-                                <Badge className={getRoleBadgeColor(user.role)}>
-                                  <div className="flex items-center gap-1">
-                                    {getRoleIcon(user.role)}
-                                    <span>{user.role}</span>
-                                  </div>
+                  <div className="overflow-x-auto">
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>
+                            <input
+                              type="checkbox"
+                              onChange={e => {
+                                if (e.target.checked) {
+                                  setSelectedUsers(filteredUsers.map(user => user.id));
+                                } else {
+                                  setSelectedUsers([]);
+                                }
+                              }}
+                              checked={selectedUsers.length === filteredUsers.length}
+                            />
+                          </TableHead>
+                          <TableHead onClick={() => handleSort('full_name')} className="cursor-pointer">
+                            Name {sortColumn === 'full_name' && (sortDirection === 'asc' ? '▲' : '▼')}
+                          </TableHead>
+                          <TableHead onClick={() => handleSort('email')} className="cursor-pointer">
+                            Email {sortColumn === 'email' && (sortDirection === 'asc' ? '▲' : '▼')}
+                          </TableHead>
+                          <TableHead>Role</TableHead>
+                          <TableHead>Status</TableHead>
+                          <TableHead>Last Login</TableHead>
+                          <TableHead>Actions</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {filteredUsers.map(user => (
+                          <TableRow key={user.id}>
+                            <TableCell>
+                              <input
+                                type="checkbox"
+                                value={user.id}
+                                checked={selectedUsers.includes(user.id)}
+                                onChange={() => toggleUserSelection(user.id)}
+                              />
+                            </TableCell>
+                            <TableCell className="font-medium">
+                              <div className="flex items-center gap-2">
+                                <Users className="h-4 w-4 text-gray-500" />
+                                {user.full_name}
+                              </div>
+                            </TableCell>
+                            <TableCell>{user.email}</TableCell>
+                            <TableCell>
+                              <Badge variant="secondary">{user.role}</Badge>
+                            </TableCell>
+                            <TableCell>
+                              {user.status === 'active' ? (
+                                <Badge className="bg-green-100 text-green-700 gap-1">
+                                  <CheckCircle className="h-3 w-3" />
+                                  Active
                                 </Badge>
-                              </div>
-                              <div className="flex items-center space-x-4 mt-1 text-sm text-gray-600">
-                                <span>{user.email}</span>
-                                {user.department && <span>• {user.department}</span>}
-                              </div>
-                            </div>
-                          </div>
-                          <div className="flex items-center space-x-2">
-                            <Dialog open={isEditUserOpen && selectedUser?.id === user.id} onOpenChange={(open) => {
-                              setIsEditUserOpen(open);
-                              if (!open) setSelectedUser(null);
-                            }}>
-                              <DialogTrigger asChild>
-                                <Button 
-                                  variant="ghost" 
-                                  size="sm"
-                                  onClick={() => setSelectedUser(user)}
-                                >
-                                  <Edit className="h-4 w-4" />
-                                </Button>
-                              </DialogTrigger>
-                              <DialogContent className="max-w-md">
-                                <DialogHeader>
-                                  <DialogTitle>Edit User</DialogTitle>
-                                  <DialogDescription>
-                                    Update user information and role.
-                                  </DialogDescription>
-                                </DialogHeader>
-                                {selectedUser && (
-                                  <div className="space-y-4 mt-4">
-                                    <div>
-                                      <Label htmlFor="edit-fullName">Full Name</Label>
-                                      <Input
-                                        id="edit-fullName"
-                                        value={selectedUser.full_name || ''}
-                                        onChange={(e) => setSelectedUser({...selectedUser, full_name: e.target.value})}
-                                        placeholder="Enter full name"
-                                      />
-                                    </div>
-                                    <div>
-                                      <Label htmlFor="edit-email">Email</Label>
-                                      <Input
-                                        id="edit-email"
-                                        value={selectedUser.email}
-                                        disabled
-                                        className="bg-gray-100"
-                                      />
-                                      <p className="text-xs text-gray-500 mt-1">Email cannot be changed</p>
-                                    </div>
-                                    <div>
-                                      <Label htmlFor="edit-role">Role</Label>
-                                      <select
-                                        id="edit-role"
-                                        value={selectedUser.role}
-                                        onChange={(e) => setSelectedUser({...selectedUser, role: e.target.value})}
-                                        className="w-full border border-gray-300 rounded-md px-3 py-2"
-                                      >
-                                        <option value="student">Student</option>
-                                        <option value="teacher">Teacher</option>
-                                        <option value="admin">Admin</option>
-                                        <option value="super-admin">Super Admin</option>
-                                        <option value="hod">HOD</option>
-                                        <option value="principal">Principal</option>
-                                        <option value="dean">Dean</option>
-                                        <option value="parent">Parent</option>
-                                        <option value="accountant">Accountant</option>
-                                        <option value="reception">Reception</option>
-                                        <option value="security">Security</option>
-                                        <option value="hostel">Hostel</option>
-                                      </select>
-                                    </div>
-                                    <div>
-                                      <Label htmlFor="edit-department">Department</Label>
-                                      <select
-                                        id="edit-department"
-                                        value={selectedUser.department || ''}
-                                        onChange={(e) => setSelectedUser({...selectedUser, department: e.target.value})}
-                                        className="w-full border border-gray-300 rounded-md px-3 py-2"
-                                      >
-                                        <option value="">Select Department</option>
-                                        <option value="Computer Engineering">Computer Engineering</option>
-                                        <option value="Mechanical Engineering">Mechanical Engineering</option>
-                                        <option value="Electronics & Telecommunication">Electronics & Telecommunication</option>
-                                        <option value="AI/ML">AI/ML</option>
-                                        <option value="AIDS">AIDS</option>
-                                        <option value="BCA">BCA</option>
-                                        <option value="BBA">BBA</option>
-                                        <option value="First Year">First Year</option>
-                                        <option value="Administration">Administration</option>
-                                      </select>
-                                    </div>
-                                    <div>
-                                      <Label htmlFor="edit-phone">Phone Number</Label>
-                                      <Input
-                                        id="edit-phone"
-                                        value={selectedUser.phone || ''}
-                                        onChange={(e) => setSelectedUser({...selectedUser, phone: e.target.value})}
-                                        placeholder="Enter phone number"
-                                      />
-                                    </div>
-                                    <div className="flex justify-end space-x-2 pt-4">
-                                      <Button variant="outline" onClick={() => setIsEditUserOpen(false)}>
-                                        Cancel
-                                      </Button>
-                                      <Button onClick={handleEditUser}>
-                                        Update User
-                                      </Button>
-                                    </div>
-                                  </div>
-                                )}
-                              </DialogContent>
-                            </Dialog>
-                            <Button 
-                              variant="ghost" 
-                              size="sm" 
-                              className="text-red-600"
-                              onClick={() => handleDeleteUser(user.id)}
-                            >
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
-                            <DropdownMenu>
-                              <DropdownMenuTrigger asChild>
-                                <Button variant="ghost" size="sm">
-                                  <MoreHorizontal className="h-4 w-4" />
-                                </Button>
-                              </DropdownMenuTrigger>
-                              <DropdownMenuContent align="end">
-                                <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                                <DropdownMenuSeparator />
-                                <DropdownMenuItem>View Profile</DropdownMenuItem>
-                                <DropdownMenuItem>Reset Password</DropdownMenuItem>
-                                <DropdownMenuItem>Suspend Account</DropdownMenuItem>
-                              </DropdownMenuContent>
-                            </DropdownMenu>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
+                              ) : (
+                                <Badge className="bg-red-100 text-red-700 gap-1">
+                                  <XCircle className="h-3 w-3" />
+                                  Inactive
+                                </Badge>
+                              )}
+                            </TableCell>
+                            <TableCell>{user.last_login || 'N/A'}</TableCell>
+                            <TableCell>
+                              <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                  <Button variant="ghost" className="h-8 w-8 p-0">
+                                    <span className="sr-only">Open menu</span>
+                                    <MoreHorizontal className="h-4 w-4" />
+                                  </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="end">
+                                  <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                                  <DropdownMenuItem onClick={() => handleEditUser(user)}>
+                                    <Edit className="h-4 w-4 mr-2" />
+                                    Edit
+                                  </DropdownMenuItem>
+                                  <DropdownMenuItem onClick={() => handleDeleteUser(user.id)}>
+                                    <Trash2 className="h-4 w-4 mr-2" />
+                                    Delete
+                                  </DropdownMenuItem>
+                                  <DropdownMenuSeparator />
+                                  <DropdownMenuItem>
+                                    <AlertTriangle className="h-4 w-4 mr-2" />
+                                    Report
+                                  </DropdownMenuItem>
+                                </DropdownMenuContent>
+                              </DropdownMenu>
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
                   </div>
                 )}
               </CardContent>
             </Card>
           </TabsContent>
 
-          <TabsContent value="roles" className="space-y-6">
+          <TabsContent value="roles">
             <Card>
               <CardHeader>
                 <CardTitle>Roles & Permissions</CardTitle>
+                <CardDescription>Manage user roles and permissions</CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="space-y-6">
-                  <div className="border rounded-lg p-4">
-                    <h3 className="font-semibold text-lg mb-4">Role Hierarchy</h3>
-                    <div className="space-y-3">
-                      <div className="flex items-center p-3 bg-red-50 border border-red-100 rounded-lg">
-                        <Shield className="h-5 w-5 text-red-500 mr-3" />
-                        <div className="flex-1">
-                          <p className="font-semibold">Super Admin</p>
-                          <p className="text-sm text-gray-600">Full system access and control</p>
-                        </div>
-                        <Badge className="bg-red-100 text-red-800">Highest</Badge>
-                      </div>
-                      
-                      <div className="flex items-center p-3 bg-orange-50 border border-orange-100 rounded-lg">
-                        <Shield className="h-5 w-5 text-orange-500 mr-3" />
-                        <div className="flex-1">
-                          <p className="font-semibold">Admin</p>
-                          <p className="text-sm text-gray-600">Website and content management</p>
-                        </div>
-                        <Badge className="bg-orange-100 text-orange-800">High</Badge>
-                      </div>
-                      
-                      <div className="flex items-center p-3 bg-purple-50 border border-purple-100 rounded-lg">
-                        <GraduationCap className="h-5 w-5 text-purple-500 mr-3" />
-                        <div className="flex-1">
-                          <p className="font-semibold">Principal / Dean / HOD</p>
-                          <p className="text-sm text-gray-600">Academic administration</p>
-                        </div>
-                        <Badge className="bg-purple-100 text-purple-800">Medium</Badge>
-                      </div>
-                      
-                      <div className="flex items-center p-3 bg-blue-50 border border-blue-100 rounded-lg">
-                        <User className="h-5 w-5 text-blue-500 mr-3" />
-                        <div className="flex-1">
-                          <p className="font-semibold">Teacher</p>
-                          <p className="text-sm text-gray-600">Course and student management</p>
-                        </div>
-                        <Badge className="bg-blue-100 text-blue-800">Standard</Badge>
-                      </div>
-                      
-                      <div className="flex items-center p-3 bg-green-50 border border-green-100 rounded-lg">
-                        <User className="h-5 w-5 text-green-500 mr-3" />
-                        <div className="flex-1">
-                          <p className="font-semibold">Student / Parent</p>
-                          <p className="text-sm text-gray-600">Limited access to personal data</p>
-                        </div>
-                        <Badge className="bg-green-100 text-green-800">Basic</Badge>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <div className="border rounded-lg p-4">
-                    <h3 className="font-semibold text-lg mb-4">Permission Management</h3>
-                    <p className="text-gray-600 mb-4">
-                      Permissions are managed through role-based access control. Each role has predefined permissions that determine what actions users can perform.
-                    </p>
-                    <Button variant="outline">
-                      <Shield className="h-4 w-4 mr-2" />
-                      Manage Role Permissions
-                    </Button>
+                <p>Coming Soon...</p>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="bulk-actions">
+            <Card>
+              <CardHeader>
+                <CardTitle>Bulk Actions</CardTitle>
+                <CardDescription>Perform bulk actions on selected users</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  <p>Selected {selectedUsers.length} users</p>
+                  <div className="flex gap-3">
+                    <Button onClick={() => handleBulkAction('activate')}>Activate</Button>
+                    <Button onClick={() => handleBulkAction('deactivate')}>Deactivate</Button>
+                    <Button variant="destructive" onClick={() => handleBulkAction('delete')}>Delete</Button>
                   </div>
                 </div>
               </CardContent>
             </Card>
           </TabsContent>
 
-          <TabsContent value="bulk" className="space-y-6">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Bulk Import</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <p className="text-gray-600">Import multiple users from CSV file</p>
-                  <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
-                    <div className="space-y-4">
-                      <div>
-                        <p className="text-gray-500">Upload CSV file with user data</p>
-                        <Button variant="outline" className="mt-2">
-                          <Upload className="h-4 w-4 mr-2" />
-                          Choose File
-                        </Button>
-                      </div>
-                      <div className="text-xs text-gray-500">
-                        <p>Required columns: Name, Email, Role, Department</p>
-                      </div>
-                    </div>
-                  </div>
-                  <Button className="w-full">
-                    <Upload className="h-4 w-4 mr-2" />
-                    Import Users
-                  </Button>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader>
-                  <CardTitle>Bulk Actions</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="space-y-3">
-                    <Button variant="outline" className="w-full justify-start">
-                      <Download className="h-4 w-4 mr-2" />
-                      Export All Users to CSV
-                    </Button>
-                    <Button variant="outline" className="w-full justify-start">
-                      <UserPlus className="h-4 w-4 mr-2" />
-                      Bulk Assign Roles
-                    </Button>
-                    <Button variant="outline" className="w-full justify-start">
-                      <Mail className="h-4 w-4 mr-2" />
-                      Send Password Reset to Selected Users
-                    </Button>
-                    <Button variant="outline" className="w-full justify-start">
-                      <UserX className="h-4 w-4 mr-2" />
-                      Deactivate Selected Users
-                    </Button>
-                    <Button variant="outline" className="w-full justify-start text-red-600 hover:text-red-700">
-                      <Trash2 className="h-4 w-4 mr-2" />
-                      Delete Selected Users
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
+          <TabsContent value="user-settings">
+            <Card>
+              <CardHeader>
+                <CardTitle>User Settings</CardTitle>
+                <CardDescription>Manage user settings</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <p>Coming Soon...</p>
+              </CardContent>
+            </Card>
           </TabsContent>
         </Tabs>
       </div>

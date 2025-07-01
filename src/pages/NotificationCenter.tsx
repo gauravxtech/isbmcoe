@@ -18,7 +18,8 @@ import {
   CheckCircle, 
   AlertCircle, 
   Info, 
-  Clock 
+  Clock,
+  Edit
 } from 'lucide-react';
 import DashboardLayout from '@/components/layouts/DashboardLayout';
 import { useSEO } from '@/hooks/useSEO';
