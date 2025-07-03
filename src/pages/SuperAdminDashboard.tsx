@@ -41,6 +41,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import SchoolDashboardOverview from '@/components/admin/SchoolDashboardOverview';
 
 interface SystemMonitoring {
   id: string;
@@ -722,8 +723,12 @@ const SuperAdminDashboard = () => {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <Tabs defaultValue="admins" className="w-full">
-              <TabsList className="grid w-full grid-cols-4">
+        <Tabs defaultValue="overview" className="w-full">
+              <TabsList className="grid w-full grid-cols-5">
+                <TabsTrigger value="overview" className="flex items-center gap-2">
+                  <TrendingUp className="h-4 w-4" />
+                  Dashboard Overview
+                </TabsTrigger>
                 <TabsTrigger value="admins" className="flex items-center gap-2">
                   <Shield className="h-4 w-4" />
                   Manage Admins
@@ -741,6 +746,10 @@ const SuperAdminDashboard = () => {
                   API & Integration
                 </TabsTrigger>
               </TabsList>
+
+              <TabsContent value="overview">
+                <SchoolDashboardOverview />
+              </TabsContent>
 
               <TabsContent value="admins">
                 <div className="flex justify-between items-center mb-4">

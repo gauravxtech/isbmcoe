@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
@@ -18,52 +18,114 @@ import {
   TrendingDown
 } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer, LineChart, Line, PieChart, Pie, Cell } from 'recharts';
+import { supabase } from '@/integrations/supabase/client';
+import { ModernLoader } from '@/components/ui/modern-loader';
 
 const SchoolDashboardOverview = () => {
+  const [loading, setLoading] = useState(true);
+  const [stats, setStats] = useState({
+    totalUsers: 0,
+    totalStudents: 0,
+    totalAdmins: 0,
+    totalDepartments: 0,
+    activeCourses: 0,
+    totalTeachers: 0,
+    recentStudents: [] as any[],
+    announcements: [] as any[]
+  });
+
+  useEffect(() => {
+    fetchDashboardData();
+  }, []);
+
+  const fetchDashboardData = async () => {
+    try {
+      // Fetch user counts
+      const [
+        { count: totalUsers },
+        { count: totalStudents },
+        { count: totalAdmins },
+        { count: totalDepartments },
+        { count: activeCourses },
+        { count: totalTeachers },
+        { data: recentStudents },
+        { data: announcements }
+      ] = await Promise.all([
+        supabase.from('profiles').select('*', { count: 'exact', head: true }),
+        supabase.from('profiles').select('*', { count: 'exact', head: true }).eq('role', 'student'),
+        supabase.from('profiles').select('*', { count: 'exact', head: true }).in('role', ['admin', 'super-admin']),
+        supabase.from('departments').select('*', { count: 'exact', head: true }),
+        supabase.from('courses').select('*', { count: 'exact', head: true }).eq('status', 'active'),
+        supabase.from('teachers').select('*', { count: 'exact', head: true }),
+        supabase.from('profiles').select('*').eq('role', 'student').order('created_at', { ascending: false }).limit(4),
+        supabase.from('announcements').select('*').eq('status', 'active').order('created_at', { ascending: false }).limit(5)
+      ]);
+
+      setStats({
+        totalUsers: totalUsers || 0,
+        totalStudents: totalStudents || 0,
+        totalAdmins: totalAdmins || 0,
+        totalDepartments: totalDepartments || 0,
+        activeCourses: activeCourses || 0,
+        totalTeachers: totalTeachers || 0,
+        recentStudents: recentStudents || [],
+        announcements: announcements || []
+      });
+    } catch (error) {
+      console.error('Error fetching dashboard data:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (loading) {
+    return <ModernLoader text="Loading dashboard overview..." />;
+  }
+
   const mainStats = [
     {
-      title: 'Total Sales',
-      value: '$1,500',
+      title: 'Total Users',
+      value: stats.totalUsers.toString(),
       change: '+12%',
       changeType: 'positive',
-      icon: DollarSign,
+      icon: Users,
+      color: 'bg-blue-500',
+      trend: 'up'
+    },
+    {
+      title: 'Total Students',
+      value: stats.totalStudents.toString(),
+      change: '+8%',
+      changeType: 'positive',
+      icon: GraduationCap,
       color: 'bg-green-500',
       trend: 'up'
     },
     {
-      title: 'Total Courses',
-      value: '125',
-      change: '-5%',
-      changeType: 'negative',
-      icon: BookOpen,
-      color: 'bg-blue-500',
-      trend: 'down'
-    },
-    {
-      title: 'Total Teachers',
-      value: '89',
-      change: '+12%',
+      title: 'Total Admins',
+      value: stats.totalAdmins.toString(),
+      change: '+2%',
       changeType: 'positive',
       icon: UserCheck,
       color: 'bg-purple-500',
       trend: 'up'
     },
     {
-      title: 'Fees Collected',
-      value: '$48,697',
-      change: '-22%',
-      changeType: 'negative',
-      icon: DollarSign,
+      title: 'Active Courses',
+      value: stats.activeCourses.toString(),
+      change: '+5%',
+      changeType: 'positive',
+      icon: BookOpen,
       color: 'bg-orange-500',
-      trend: 'down'
+      trend: 'up'
     }
   ];
 
   const secondaryStats = [
-    { title: 'Total Students', value: '2,847', icon: GraduationCap, color: 'bg-indigo-500' },
-    { title: 'Present Today', value: '2,654', icon: CheckCircle, color: 'bg-green-500' },
-    { title: 'Absent Today', value: '193', icon: AlertCircle, color: 'bg-red-500' },
-    { title: 'Active Staff', value: '156', icon: Users, color: 'bg-blue-500' },
+    { title: 'Total Students', value: stats.totalStudents.toString(), icon: GraduationCap, color: 'bg-indigo-500' },
+    { title: 'Total Admins', value: stats.totalAdmins.toString(), icon: CheckCircle, color: 'bg-green-500' },
+    { title: 'Departments', value: stats.totalDepartments.toString(), icon: AlertCircle, color: 'bg-blue-500' },
+    { title: 'Teachers', value: stats.totalTeachers.toString(), icon: Users, color: 'bg-purple-500' },
   ];
 
   const admissionData = [
@@ -97,12 +159,11 @@ const SchoolDashboardOverview = () => {
     { subject: 'Electronics', date: 'Dec 24', time: '2:00 PM', class: 'Third Year' },
   ];
 
-  const newStudents = [
-    { name: 'Rahul Sharma', course: 'Computer Engineering', date: 'Dec 10, 2024' },
-    { name: 'Priya Patel', course: 'AI/ML', date: 'Dec 11, 2024' },
-    { name: 'Amit Kumar', course: 'Mechanical', date: 'Dec 12, 2024' },
-    { name: 'Sneha Singh', course: 'Electronics', date: 'Dec 13, 2024' },
-  ];
+  const newStudents = stats.recentStudents.map(student => ({
+    name: student.full_name,
+    course: student.department,
+    date: new Date(student.created_at).toLocaleDateString()
+  }));
 
   const sportsAchievements = [
     { sport: 'Cricket', achievement: 'Inter-College Tournament - Winners', date: 'Nov 2024' },
@@ -267,17 +328,23 @@ const SchoolDashboardOverview = () => {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-2">
-              {newStudents.map((student, index) => (
-                <div key={index} className="flex items-center space-x-3 p-2 rounded-lg bg-gray-50 dark:bg-gray-800">
-                  <div className="w-8 h-8 bg-college-primary rounded-full flex items-center justify-center text-white text-xs font-semibold">
-                    {student.name.charAt(0)}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-gray-900 dark:text-white truncate">{student.name}</p>
-                    <p className="text-xs text-gray-500 dark:text-gray-400">{student.course}</p>
-                  </div>
+            {newStudents.length === 0 ? (
+                <div className="text-center py-4 text-gray-500">
+                  No recent students
                 </div>
-              ))}
+              ) : (
+                newStudents.map((student, index) => (
+                  <div key={index} className="flex items-center space-x-3 p-2 rounded-lg bg-gray-50 dark:bg-gray-800">
+                    <div className="w-8 h-8 bg-college-primary rounded-full flex items-center justify-center text-white text-xs font-semibold">
+                      {student.name?.charAt(0) || 'S'}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium text-gray-900 dark:text-white truncate">{student.name || 'Unknown'}</p>
+                      <p className="text-xs text-gray-500 dark:text-gray-400">{student.course || 'No Department'}</p>
+                    </div>
+                  </div>
+                ))
+              )}
             </CardContent>
           </Card>
 
