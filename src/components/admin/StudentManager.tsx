@@ -79,6 +79,7 @@ const StudentManager = () => {
         .order('created_at', { ascending: false });
 
       if (error) throw error;
+      console.log('Fetched students:', data); // Debug log
       setStudents(data || []);
     } catch (error: any) {
       console.error('Error fetching students:', error);

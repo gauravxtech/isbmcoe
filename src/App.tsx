@@ -75,6 +75,11 @@ const BookIssueReturn = lazy(() => import('./pages/admin/library/BookIssueReturn
 const LibraryMembers = lazy(() => import('./pages/admin/library/LibraryMembers'));
 const AllDepartments = lazy(() => import('./pages/admin/departments/AllDepartments'));
 const AddDepartment = lazy(() => import('./pages/admin/departments/AddDepartment'));
+const AllStaff = lazy(() => import('./pages/admin/staff/AllStaff'));
+const AddStaff = lazy(() => import('./pages/admin/staff/AddStaff'));
+const AllHolidays = lazy(() => import('./pages/admin/holidays/AllHolidays'));
+const AddHoliday = lazy(() => import('./pages/admin/holidays/AddHoliday'));
+const RoomManagement = lazy(() => import('./pages/admin/hostel/RoomManagement'));
 const AdminAnnouncementManagerPage = lazy(() => import('./pages/admin/AnnouncementManager'));
 const AnnouncementManager = lazy(() => import('./components/admin/AnnouncementManager'));
 
@@ -298,6 +303,31 @@ function App() {
                     <Route path="/admin/departments/add" element={
                       <ProtectedRoute allowedRoles={['admin', 'principal', 'hod', 'super-admin']}>
                         <AddDepartment />
+                      </ProtectedRoute>
+                    } />
+                    <Route path="/admin/staff" element={
+                      <ProtectedRoute allowedRoles={['admin', 'principal', 'hod', 'super-admin']}>
+                        <AllStaff />
+                      </ProtectedRoute>
+                    } />
+                    <Route path="/admin/staff/add" element={
+                      <ProtectedRoute allowedRoles={['admin', 'principal', 'hod', 'super-admin']}>
+                        <AddStaff />
+                      </ProtectedRoute>
+                    } />
+                    <Route path="/admin/holidays" element={
+                      <ProtectedRoute allowedRoles={['admin', 'principal', 'hod', 'super-admin']}>
+                        <AllHolidays />
+                      </ProtectedRoute>
+                    } />
+                    <Route path="/admin/holidays/add" element={
+                      <ProtectedRoute allowedRoles={['admin', 'principal', 'hod', 'super-admin']}>
+                        <AddHoliday />
+                      </ProtectedRoute>
+                    } />
+                    <Route path="/admin/hostel/rooms" element={
+                      <ProtectedRoute allowedRoles={['admin', 'principal', 'hod', 'super-admin', 'hostel']}>
+                        <RoomManagement />
                       </ProtectedRoute>
                     } />
                     <Route path="/admin/announcements" element={<AdminAnnouncementManagerPage />} />

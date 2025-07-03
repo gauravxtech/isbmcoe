@@ -147,11 +147,17 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
       isActive: false
     });
 
-    // Process path segments
+    // Process path segments, skip duplicate dashboard entries
     let currentPath = '';
-    pathSegments.forEach((segment, index) => {
+    const filteredSegments = pathSegments.filter((segment, index) => {
+      // Skip the first 'dashboard' segment to avoid duplication
+      if (segment === 'dashboard' && index === 0) return false;
+      return true;
+    });
+
+    filteredSegments.forEach((segment, index) => {
       currentPath += `/${segment}`;
-      const isLast = index === pathSegments.length - 1;
+      const isLast = index === filteredSegments.length - 1;
       
       // Format segment label
       let label = segment.replace(/-/g, ' ');
