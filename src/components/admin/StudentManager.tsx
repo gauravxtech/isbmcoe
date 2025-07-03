@@ -121,6 +121,7 @@ const StudentManager = () => {
       if (signUpError) throw signUpError;
 
       if (signUpData.user?.id) {
+        // Insert into profiles table
         const { error: profileError } = await supabase
           .from('profiles')
           .upsert({
@@ -134,6 +135,21 @@ const StudentManager = () => {
           });
 
         if (profileError) throw profileError;
+
+        // Also insert into students table for consistency
+        const { error: studentError } = await supabase
+          .from('students')
+          .insert({
+            id: signUpData.user.id,
+            full_name: addStudentForm.full_name,
+            email: addStudentForm.email,
+            department: addStudentForm.department,
+            status: 'active'
+          });
+
+        if (studentError) {
+          console.log('Student table insert error (non-critical):', studentError);
+        }
       }
 
       toast({
