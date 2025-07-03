@@ -105,60 +105,35 @@ const StudentManager = () => {
     }
 
     try {
-      const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
-        email: addStudentForm.email,
-        password: addStudentForm.password,
-        options: {
-          data: {
-            full_name: addStudentForm.full_name,
-            role: 'student',
-            department: addStudentForm.department,
-            phone: addStudentForm.phone
-          }
-        }
+      // Get current session to pass auth token
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      if (!session) {
+        throw new Error('No active session');
+      }
+
+      // Call the edge function to create user with proper permissions
+      const { data, error } = await supabase.functions.invoke('create-user', {
+        body: {
+          email: addStudentForm.email,
+          password: addStudentForm.password,
+          full_name: addStudentForm.full_name,
+          role: 'student',
+          department: addStudentForm.department,
+          phone: addStudentForm.phone
+        },
+        headers: {
+          Authorization: `Bearer ${session.access_token}`,
+        },
       });
 
-      if (signUpError) throw signUpError;
-
-      if (signUpData.user?.id) {
-        // Insert into profiles table
-        const { error: profileError } = await supabase
-          .from('profiles')
-          .upsert({
-            id: signUpData.user.id,
-            email: addStudentForm.email,
-            full_name: addStudentForm.full_name,
-            department: addStudentForm.department,
-            role: 'student',
-            phone: addStudentForm.phone,
-            status: 'active'
-          });
-
-        if (profileError) throw profileError;
-
-        // Also insert into students table for consistency
-        const { error: studentError } = await supabase
-          .from('students')
-          .insert({
-            id: signUpData.user.id,
-            full_name: addStudentForm.full_name,
-            email: addStudentForm.email,
-            department: addStudentForm.department,
-            status: 'active'
-          });
-
-        if (studentError) {
-          console.log('Student table insert error (non-critical):', studentError);
-        }
-      }
+      if (error) throw error;
 
       toast({
         title: "Success",
         description: "Student added successfully!"
       });
 
-      // Refresh the student list to show the new student
-      await fetchStudents();
       setAddStudentOpen(false);
       setAddStudentForm({
         full_name: '',
@@ -167,6 +142,7 @@ const StudentManager = () => {
         department: '',
         phone: ''
       });
+      
       // Refresh the students list
       await fetchStudents();
     } catch (error: any) {
