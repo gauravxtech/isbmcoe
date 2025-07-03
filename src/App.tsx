@@ -80,6 +80,7 @@ const AddStaff = lazy(() => import('./pages/admin/staff/AddStaff'));
 const AllHolidays = lazy(() => import('./pages/admin/holidays/AllHolidays'));
 const AddHoliday = lazy(() => import('./pages/admin/holidays/AddHoliday'));
 const RoomManagement = lazy(() => import('./pages/admin/hostel/RoomManagement'));
+const NoticeHistory = lazy(() => import('./pages/admin/NoticeHistory'));
 const AdminAnnouncementManagerPage = lazy(() => import('./pages/admin/AnnouncementManager'));
 const AnnouncementManager = lazy(() => import('./components/admin/AnnouncementManager'));
 
@@ -331,6 +332,11 @@ function App() {
                       </ProtectedRoute>
                     } />
                     <Route path="/admin/announcements" element={<AdminAnnouncementManagerPage />} />
+                    <Route path="/admin/notice-history" element={
+                      <ProtectedRoute allowedRoles={['admin', 'principal', 'hod', 'super-admin']}>
+                        <NoticeHistory />
+                      </ProtectedRoute>
+                    } />
                     
                     {/* Super Admin Announcements Route */}
                     <Route path="/dashboard/super-admin/announcements" element={

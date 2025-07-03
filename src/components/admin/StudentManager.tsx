@@ -157,6 +157,8 @@ const StudentManager = () => {
         description: "Student added successfully!"
       });
 
+      // Refresh the student list to show the new student
+      await fetchStudents();
       setAddStudentOpen(false);
       setAddStudentForm({
         full_name: '',
