@@ -15,6 +15,7 @@ import { Suspense, lazy } from "react";
 const Index = lazy(() => import("./pages/Index"));
 const Login = lazy(() => import("./pages/Login"));
 const ForgotPassword = lazy(() => import("./pages/ForgotPassword"));
+const ResetPassword = lazy(() => import("./pages/ResetPassword"));
 const AdminSetup = lazy(() => import("./pages/AdminSetup"));
 const About = lazy(() => import("./pages/About"));
 const VisionMission = lazy(() => import("./pages/VisionMission"));
@@ -121,6 +122,7 @@ function App() {
                     <Route path="/" element={<Index />} />
                     <Route path="/login" element={<Login />} />
                     <Route path="/forgot-password" element={<ForgotPassword />} />
+                    <Route path="/reset-password" element={<ResetPassword />} />
                     <Route path="/admin-setup" element={<AdminSetup />} />
                     
                     {/* About Pages */}

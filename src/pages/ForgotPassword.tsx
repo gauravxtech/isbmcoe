@@ -5,51 +5,52 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { useToast } from '@/hooks/use-toast';
+import { supabase } from '@/integrations/supabase/client';
 
 const ForgotPassword = () => {
-  const [step, setStep] = useState(1);
   const [formData, setFormData] = useState({
     email: '',
-    otp: '',
-    newPassword: '',
-    confirmPassword: ''
   });
   const [isLoading, setIsLoading] = useState(false);
+  const [emailSent, setEmailSent] = useState(false);
+  const { toast } = useToast();
 
   const handleEmailSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsLoading(true);
     
-    setTimeout(() => {
-      setIsLoading(false);
-      setStep(2);
-    }, 2000);
-  };
-
-  const handleOTPSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
-    
-    setTimeout(() => {
-      setIsLoading(false);
-      setStep(3);
-    }, 1500);
-  };
-
-  const handlePasswordReset = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    if (formData.newPassword !== formData.confirmPassword) {
-      alert('Passwords do not match');
+    if (!formData.email) {
+      toast({
+        title: "Error",
+        description: "Please enter your email address.",
+        variant: "destructive",
+      });
       return;
     }
-    
+
     setIsLoading(true);
     
-    setTimeout(() => {
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(formData.email, {
+        redirectTo: `${window.location.origin}/reset-password`,
+      });
+
+      if (error) throw error;
+
+      setEmailSent(true);
+      toast({
+        title: "Reset Email Sent",
+        description: "Check your email for password reset instructions.",
+      });
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to send reset email. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
       setIsLoading(false);
-      setStep(4);
-    }, 2000);
+    }
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -87,14 +88,11 @@ const ForgotPassword = () => {
               Reset Password
             </CardTitle>
             <p className="text-gray-600 mt-2">
-              {step === 1 && "Enter your email to receive OTP"}
-              {step === 2 && "Enter the OTP sent to your email"}
-              {step === 3 && "Create a new password"}
-              {step === 4 && "Password reset successful"}
+              {emailSent ? "Check your email for reset instructions" : "Enter your email to receive reset instructions"}
             </p>
           </CardHeader>
           <CardContent>
-            {step === 1 && (
+            {!emailSent ? (
               <form onSubmit={handleEmailSubmit} className="space-y-6">
                 <div className="space-y-2">
                   <Label htmlFor="email">Email Address</Label>
@@ -117,87 +115,34 @@ const ForgotPassword = () => {
                   className="w-full bg-college-primary hover:bg-blue-800"
                   disabled={isLoading}
                 >
-                  {isLoading ? 'Sending OTP...' : 'Send OTP'}
+                  {isLoading ? 'Sending Reset Link...' : 'Send Reset Link'}
                 </Button>
               </form>
-            )}
-
-            {step === 2 && (
-              <form onSubmit={handleOTPSubmit} className="space-y-6">
-                <div className="space-y-2">
-                  <Label htmlFor="otp">Enter OTP</Label>
-                  <Input
-                    id="otp"
-                    name="otp"
-                    type="text"
-                    required
-                    placeholder="Enter 6-digit OTP"
-                    value={formData.otp}
-                    onChange={handleInputChange}
-                  />
-                </div>
-                <Button 
-                  type="submit" 
-                  className="w-full bg-college-primary hover:bg-blue-800"
-                  disabled={isLoading}
-                >
-                  {isLoading ? 'Verifying...' : 'Verify OTP'}
-                </Button>
-              </form>
-            )}
-
-            {step === 3 && (
-              <form onSubmit={handlePasswordReset} className="space-y-6">
-                <div className="space-y-2">
-                  <Label htmlFor="newPassword">New Password</Label>
-                  <Input
-                    id="newPassword"
-                    name="newPassword"
-                    type="password"
-                    required
-                    placeholder="Enter new password"
-                    value={formData.newPassword}
-                    onChange={handleInputChange}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="confirmPassword">Confirm Password</Label>
-                  <Input
-                    id="confirmPassword"
-                    name="confirmPassword"
-                    type="password"
-                    required
-                    placeholder="Confirm new password"
-                    value={formData.confirmPassword}
-                    onChange={handleInputChange}
-                  />
-                </div>
-                <Button 
-                  type="submit" 
-                  className="w-full bg-college-primary hover:bg-blue-800"
-                  disabled={isLoading}
-                >
-                  {isLoading ? 'Resetting...' : 'Reset Password'}
-                </Button>
-              </form>
-            )}
-
-            {step === 4 && (
+            ) : (
               <div className="text-center space-y-6">
                 <CheckCircle className="h-16 w-16 text-green-500 mx-auto" />
                 <div>
                   <h3 className="text-lg font-semibold text-green-600 mb-2">
-                    Password Reset Successful
+                    Reset Email Sent
                   </h3>
                   <p className="text-gray-600">
-                    Your password has been reset successfully.
+                    We've sent password reset instructions to {formData.email}
                   </p>
                 </div>
-                <Link to="/login">
-                  <Button className="w-full bg-college-primary hover:bg-blue-800">
-                    Back to Login
+                <div className="space-y-4">
+                  <Button 
+                    onClick={() => setEmailSent(false)}
+                    variant="outline"
+                    className="w-full"
+                  >
+                    Send Another Email
                   </Button>
-                </Link>
+                  <Link to="/login">
+                    <Button className="w-full bg-college-primary hover:bg-blue-800">
+                      Back to Login
+                    </Button>
+                  </Link>
+                </div>
               </div>
             )}
           </CardContent>
