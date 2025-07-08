@@ -8,7 +8,7 @@ const About = () => {
   useSEO({
     title: "About ISBM College of Engineering - Premier Engineering Institution",
     description: "Learn about ISBM College of Engineering, a premier institution offering quality technical education with NAAC B++ accreditation.",
-    canonical: "https://isbmcoe.edu.in/about"
+    canonical: "https://isbmcoe.netlify.app/about"
   });
 
   return (

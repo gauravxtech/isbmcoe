@@ -16,13 +16,13 @@ const Index = () => {
     title: "ISBM College of Engineering - Best Engineering College in Pune | NAAC B++ Accredited",
     description: "ISBM College of Engineering, Pune - Premier engineering institution affiliated to Savitribai Phule Pune University. NAAC B++ Accredited, AICTE Approved. Offering B.E. programs in CSE, AI/ML, Mechanical, Electronics. 95% placement record with top companies.",
     keywords: "ISBM College Engineering, Pune Engineering College, NAAC B++, AICTE Approved, Computer Science Engineering, Artificial Intelligence, Machine Learning, Mechanical Engineering, Electronics Engineering, Engineering Admissions Pune, Best Engineering College Maharashtra",
-    canonical: "https://isbmcoe.edu.in",
+    canonical: "https://isbmcoe.netlify.app",
     structuredData: {
       "@context": "https://schema.org",
       "@type": "EducationalOrganization",
       "name": "ISBM College of Engineering",
       "alternateName": "ISBM COE",
-      "url": "https://isbmcoe.edu.in",
+      "url": "https://isbmcoe.netlify.app",
       "logo": "/lovable-uploads/18fee38c-1acf-462a-825a-cda10c5e7381.png",
       "image": "/lovable-uploads/18fee38c-1acf-462a-825a-cda10c5e7381.png",
       "description": "Premier engineering institution affiliated to Savitribai Phule Pune University with NAAC B++ accreditation",
@@ -65,7 +65,7 @@ const Index = () => {
           "@type": "ListItem",
           "position": 1,
           "name": "Home",
-          "item": "https://isbmcoe.edu.in"
+          "item": "https://isbmcoe.netlify.app"
         }
       ]
     };

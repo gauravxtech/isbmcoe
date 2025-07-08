@@ -11,7 +11,7 @@ const Infrastructure = () => {
   useSEO({
     title: "Infrastructure - ISBM College of Engineering",
     description: "State-of-the-art infrastructure and facilities at ISBM College of Engineering",
-    canonical: "https://isbmcoe.edu.in/infrastructure"
+    canonical: "https://isbmcoe.netlify.app/infrastructure"
   });
 
   const facilities = [

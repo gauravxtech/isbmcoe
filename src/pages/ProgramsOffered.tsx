@@ -9,7 +9,7 @@ const ProgramsOffered = () => {
   useSEO({
     title: "Programs Offered - ISBM College of Engineering",
     description: "Explore our comprehensive range of undergraduate and postgraduate engineering programs.",
-    canonical: "https://isbmcoe.edu.in/programs-offered"
+    canonical: "https://isbmcoe.netlify.app/programs-offered"
   });
 
   const programs = [

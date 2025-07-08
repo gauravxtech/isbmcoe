@@ -11,7 +11,7 @@ const AwardsRecognition = () => {
   useSEO({
     title: "Awards & Recognition - ISBM College of Engineering",
     description: "Awards, recognitions, and achievements of ISBM College of Engineering",
-    canonical: "https://isbmcoe.edu.in/awards-recognition"
+    canonical: "https://isbmcoe.netlify.app/awards-recognition"
   });
 
   const achievements = [

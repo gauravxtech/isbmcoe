@@ -8,7 +8,7 @@ const VisionMission = () => {
   useSEO({
     title: "Vision & Mission - ISBM College of Engineering",
     description: "Discover our vision and mission to create world-class engineers and contribute to technological advancement.",
-    canonical: "https://isbmcoe.edu.in/vision-mission"
+    canonical: "https://isbmcoe.netlify.app/vision-mission"
   });
 
   return (

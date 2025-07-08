@@ -38,7 +38,7 @@ const SettingsPanel = () => {
     address: 'Pune, Maharashtra, India',
     phone: '+91-20-12345678',
     email: 'info@isbmcoe.edu.in',
-    website: 'https://isbmcoe.edu.in',
+    website: 'https://isbmcoe.netlify.app',
     establishedYear: '2010',
     affiliatedUniversity: 'Pune University',
     

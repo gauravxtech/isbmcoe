@@ -45,7 +45,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
     
     // Special case for the super admin email - set role immediately
-    if (user.email === 'llm@isbmcoe.org') {
+    if (user.email === 'admin@isbmcoe.netlify.app') {
       role = 'super-admin';
       
       // Also try to create/update profile in database

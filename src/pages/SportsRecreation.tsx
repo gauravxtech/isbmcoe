@@ -12,7 +12,7 @@ const SportsRecreation = () => {
   useSEO({
     title: "Sports & Recreation - ISBM College of Engineering",
     description: "Sports facilities, recreation activities, and fitness programs at ISBM College of Engineering",
-    canonical: "https://isbmcoe.edu.in/sports-recreation"
+    canonical: "https://isbmcoe.netlify.app/sports-recreation"
   });
 
   const sportsCategories = [
