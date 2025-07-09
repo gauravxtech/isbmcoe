@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
@@ -14,13 +14,14 @@ import {
   Award
 } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer, LineChart, Line, PieChart, Pie, Cell } from 'recharts';
+import { supabase } from '@/integrations/supabase/client';
 
 const DashboardOverview = () => {
-  const stats = [
+  const [stats, setStats] = useState([
     {
       title: 'Total Students',
-      value: '2,847',
-      change: '+12%',
+      value: '0',
+      change: '+0%',
       changeType: 'positive',
       icon: Users,
       color: 'bg-blue-500'
@@ -49,7 +50,62 @@ const DashboardOverview = () => {
       icon: Award,
       color: 'bg-orange-500'
     }
-  ];
+  ]);
+  const [departmentData, setDepartmentData] = useState([
+    { name: 'Computer Engineering', students: 890, color: '#3B82F6' },
+    { name: 'Mechanical Engineering', students: 650, color: '#10B981' },
+    { name: 'AI/ML', students: 420, color: '#F59E0B' },
+    { name: 'Electronics', students: 380, color: '#EF4444' },
+    { name: 'Others', students: 507, color: '#8B5CF6' },
+  ]);
+
+  useEffect(() => {
+    fetchDashboardData();
+  }, []);
+
+  const fetchDashboardData = async () => {
+    try {
+      // Fetch total students
+      const { count: studentCount } = await supabase
+        .from('students')
+        .select('*', { count: 'exact', head: true })
+        .eq('status', 'active');
+
+      // Fetch departments with student counts
+      const { data: departments } = await supabase
+        .from('departments')
+        .select('*')
+        .eq('status', 'active');
+
+      // Fetch total profiles
+      const { count: totalProfiles } = await supabase
+        .from('profiles')
+        .select('*', { count: 'exact', head: true });
+
+      if (departments) {
+        const deptData = departments.map((dept, index) => ({
+          name: dept.name,
+          students: dept.student_count || 0,
+          color: ['#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6', '#F97316', '#06B6D4', '#8B5CF6'][index % 8]
+        }));
+        setDepartmentData(deptData);
+      }
+
+      // Update stats
+      setStats(prev => prev.map(stat => {
+        if (stat.title === 'Total Students') {
+          return { ...stat, value: (studentCount || 0).toString() };
+        }
+        if (stat.title === 'Active Programs') {
+          return { ...stat, value: (departments?.length || 0).toString() };
+        }
+        return stat;
+      }));
+
+    } catch (error) {
+      console.error('Error fetching dashboard data:', error);
+    }
+  };
 
   const monthlyData = [
     { month: 'Jan', visitors: 4000, applications: 240 },
@@ -58,14 +114,6 @@ const DashboardOverview = () => {
     { month: 'Apr', visitors: 2780, applications: 290 },
     { month: 'May', visitors: 1890, applications: 320 },
     { month: 'Jun', visitors: 2390, applications: 450 },
-  ];
-
-  const departmentData = [
-    { name: 'Computer Engineering', students: 890, color: '#3B82F6' },
-    { name: 'Mechanical Engineering', students: 650, color: '#10B981' },
-    { name: 'AI/ML', students: 420, color: '#F59E0B' },
-    { name: 'Electronics', students: 380, color: '#EF4444' },
-    { name: 'Others', students: 507, color: '#8B5CF6' },
   ];
 
   const recentActivities = [

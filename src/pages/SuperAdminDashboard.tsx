@@ -11,6 +11,7 @@ import { ModernLoader } from '@/components/ui/modern-loader';
 import NoticeManager from '@/components/admin/NoticeManager';
 import StudentManager from '@/components/admin/StudentManager';
 import WebsiteSettingsManager from '@/components/admin/WebsiteSettingsManager';
+import SuperAdminUserManager from '@/components/admin/SuperAdminUserManager';
 import {
   Shield, 
   Users, 
@@ -752,86 +753,7 @@ const SuperAdminDashboard = () => {
               </TabsContent>
 
               <TabsContent value="admins">
-                <div className="flex justify-between items-center mb-4">
-                  <h3 className="text-lg font-semibold flex items-center gap-2">
-                    <Shield className="h-5 w-5" /> 
-                    Admin Users ({admins.length})
-                  </h3>
-                  <Button onClick={() => setAddAdminOpen(true)} className="bg-blue-600 hover:bg-blue-700">
-                    <Plus className="h-4 w-4 mr-1" /> Add Admin
-                  </Button>
-                </div>
-                
-                <div className="overflow-x-auto rounded-lg shadow bg-white">
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>Name</TableHead>
-                        <TableHead>Email</TableHead>
-                        <TableHead>Department</TableHead>
-                        <TableHead>Role</TableHead>
-                        <TableHead>Status</TableHead>
-                        <TableHead>Actions</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {userLoading ? (
-                        <TableRow>
-                          <TableCell colSpan={6} className="text-center py-8">
-                            <ModernLoader size="sm" text="Loading admins..." />
-                          </TableCell>
-                        </TableRow>
-                      ) : admins.length === 0 ? (
-                        <TableRow>
-                          <TableCell colSpan={6} className="text-center py-8">
-                            <div className="flex flex-col items-center space-y-2">
-                              <Shield className="h-8 w-8 text-gray-400" />
-                              <p className="text-gray-500">No admin users found</p>
-                            </div>
-                          </TableCell>
-                        </TableRow>
-                      ) : (
-                        admins.map(admin => (
-                          <TableRow key={admin.id}>
-                            <TableCell className="font-semibold flex items-center gap-2">
-                              <Shield className="h-4 w-4 text-blue-600" /> 
-                              {admin.full_name}
-                            </TableCell>
-                            <TableCell>{admin.email}</TableCell>
-                            <TableCell>
-                              <Badge variant="outline" className="bg-gray-100">
-                                {admin.department}
-                              </Badge>
-                            </TableCell>
-                            <TableCell>
-                              <Badge className={admin.role === 'super-admin' ? 'bg-red-100 text-red-800' : 'bg-blue-100 text-blue-800'}>
-                                {admin.role}
-                              </Badge>
-                            </TableCell>
-                            <TableCell>
-                              <Badge className={admin.status === 'active' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}>
-                                {admin.status || 'active'}
-                              </Badge>
-                            </TableCell>
-                            <TableCell>
-                              <div className="flex space-x-1">
-                                <Button variant="ghost" size="sm" onClick={() => handleEditAdmin(admin)} className="text-blue-600 hover:text-blue-700">
-                                  <Edit className="h-4 w-4" />
-                                </Button>
-                                <Button variant="ghost" size="sm" onClick={() => handleResetPassword(admin)} className="text-orange-600 hover:text-orange-700">
-                                  <Key className="h-4 w-4" />
-                                </Button>
-                                <Button variant="ghost" size="sm" onClick={() => handleDeleteAdmin(admin.id)} className="text-red-600 hover:text-red-700">
-                                  <Trash2 className="h-4 w-4" />
-                                </Button>
-                              </div>
-                            </TableCell>
-                          </TableRow>
-                        ))
-                      )}
-                    </TableBody>
-                  </Table>
-                </div>
+                <SuperAdminUserManager />
               </TabsContent>
 
               <TabsContent value="students">
