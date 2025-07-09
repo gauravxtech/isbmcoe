@@ -1,221 +1,266 @@
-
-import React, { useState } from 'react';
-import { MessageCircle, X, Send, User, Bot } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Card } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { MessageCircle, X, Send, User, Bot, Brain, Download, Trash2, ThumbsUp, ThumbsDown, Globe, Zap } from 'lucide-react';
+import { useAdvancedChatbot } from '@/hooks/useAdvancedChatbot';
+import { cn } from '@/lib/utils';
 
-interface Message {
-  id: number;
-  text: string;
-  sender: 'user' | 'bot';
-  timestamp: Date;
-}
-
-const Chatbot = () => {
+const Chatbot: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      id: 1,
-      text: "Hello! I'm Gaurav, your virtual assistant for ISBM College of Engineering. How can I help you today?",
-      sender: 'bot',
-      timestamp: new Date()
-    }
-  ]);
   const [inputMessage, setInputMessage] = useState('');
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+  
+  const {
+    messages,
+    isLoading,
+    sendMessage,
+    giveFeedback,
+    clearConversation,
+    exportConversation,
+    sessionId
+  } = useAdvancedChatbot({
+    enableLearning: true,
+    enableWebData: true,
+    maxMessages: 100
+  });
 
-  const collegeData = {
-    name: "ISBM College of Engineering (ISBM COE)",
-    established: "2010",
-    affiliation: "Savitribai Phule Pune University (SPPU)",
-    accreditation: "NAAC B++",
-    institutionCode: "6622",
-    address: "Survey No. 44/1, 44/1/2, Nande Village, Ahead of Pashan Sus Road, Pune - 412115, Maharashtra, India",
-    phone: "+91-7410769206, 020-35012011/2012",
-    email: "admissionscoe@isbm.ac.in",
-    website: "https://www.isbmcoe.org/",
-    programs: {
-      "Computer Engineering": "180 seats",
-      "Artificial Intelligence & Machine Learning": "120 seats", 
-      "Artificial Intelligence & Data Science": "120 seats",
-      "Electronics & Telecommunication Engineering": "30 seats",
-      "Mechanical Engineering": "60 seats",
-      "Computer Science Engineering": "60 seats"
-    },
-    placement: {
-      highest: "16 Lakhs",
-      average: "5.5 Lakhs",
-      rate: "75%",
-      companies: "130+"
-    },
-    principal: "Dr. P. K. Srivastava",
-    founder: "Dr. Pramod Kumar",
-    campusSize: "17 acre"
-  };
+  // Auto-scroll to bottom when new messages arrive
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages]);
 
-  const getResponse = (message: string): string => {
-    const lowerMessage = message.toLowerCase();
+  const handleSendMessage = async () => {
+    if (inputMessage.trim() === '' || isLoading) return;
     
-    if (lowerMessage.includes('hello') || lowerMessage.includes('hi') || lowerMessage.includes('hey')) {
-      return "Hello! I'm Gaurav from ISBM COE. I can help you with information about our college, admissions, courses, placements, and more. What would you like to know?";
-    }
-    
-    if (lowerMessage.includes('name') || lowerMessage.includes('college name')) {
-      return `Our college is ${collegeData.name}, established in ${collegeData.established}.`;
-    }
-    
-    if (lowerMessage.includes('address') || lowerMessage.includes('location') || lowerMessage.includes('where')) {
-      return `ISBM College of Engineering is located at ${collegeData.address}`;
-    }
-    
-    if (lowerMessage.includes('contact') || lowerMessage.includes('phone') || lowerMessage.includes('call')) {
-      return `You can contact us at:\nPhone: ${collegeData.phone}\nEmail: ${collegeData.email}`;
-    }
-    
-    if (lowerMessage.includes('course') || lowerMessage.includes('program') || lowerMessage.includes('degree') || lowerMessage.includes('branch')) {
-      const programs = Object.entries(collegeData.programs)
-        .map(([program, seats]) => `• ${program}: ${seats}`)
-        .join('\n');
-      return `We offer the following undergraduate engineering programs:\n${programs}`;
-    }
-    
-    if (lowerMessage.includes('placement') || lowerMessage.includes('job') || lowerMessage.includes('salary')) {
-      return `Our placement statistics:\n• Highest Package: ₹${collegeData.placement.highest}\n• Average Package: ₹${collegeData.placement.average}\n• Placement Rate: ${collegeData.placement.rate}\n• Partner Companies: ${collegeData.placement.companies}`;
-    }
-    
-    if (lowerMessage.includes('admission') || lowerMessage.includes('apply') || lowerMessage.includes('eligibility')) {
-      return "For admissions:\n• Online registration through official portal\n• Document verification at Facilitation Centers\n• Merit-based selection through CAP rounds\n• Contact: 7410769206 for admission queries";
-    }
-    
-    if (lowerMessage.includes('naac') || lowerMessage.includes('accreditation') || lowerMessage.includes('grade')) {
-      return `ISBM COE is accredited by NAAC with grade ${collegeData.accreditation}. We are also approved by AICTE and affiliated to ${collegeData.affiliation}.`;
-    }
-    
-    if (lowerMessage.includes('fee') || lowerMessage.includes('cost') || lowerMessage.includes('fees')) {
-      return "For detailed fee structure, please contact our admissions office at 7410769206 or email admissionscoe@isbm.ac.in. Fee varies by program and category.";
-    }
-    
-    if (lowerMessage.includes('facility') || lowerMessage.includes('infrastructure') || lowerMessage.includes('lab')) {
-      return `Our ${collegeData.campusSize} campus features:\n• State-of-the-art laboratories\n• Modern classrooms\n• Comprehensive library\n• Separate hostel facilities\n• Sports & recreation facilities\n• Various student clubs`;
-    }
-    
-    if (lowerMessage.includes('principal') || lowerMessage.includes('head') || lowerMessage.includes('management')) {
-      return `Our Principal is ${collegeData.principal}. The college was founded by ${collegeData.founder} and is part of People's Empowerment Group.`;
-    }
-    
-    if (lowerMessage.includes('about') || lowerMessage.includes('story') || lowerMessage.includes('history')) {
-      return `ISBM College of Engineering is a NAAC B++ accredited institution, part of People's Empowerment Group. Founded in ${collegeData.established} by ${collegeData.founder}, we maintain high educational standards and focus on creating industry-ready engineers. We're pioneers of extended library hours & laboratory access in Pune!`;
-    }
-    
-    return "I can help you with information about ISBM COE including admissions, courses, placements, facilities, contact details, and more. Could you please be more specific about what you'd like to know?";
-  };
-
-  const handleSendMessage = () => {
-    if (!inputMessage.trim()) return;
-
-    const userMessage: Message = {
-      id: messages.length + 1,
-      text: inputMessage,
-      sender: 'user',
-      timestamp: new Date()
-    };
-
-    const botResponse: Message = {
-      id: messages.length + 2,
-      text: getResponse(inputMessage),
-      sender: 'bot',
-      timestamp: new Date()
-    };
-
-    setMessages(prev => [...prev, userMessage, botResponse]);
+    await sendMessage(inputMessage);
     setInputMessage('');
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
       handleSendMessage();
     }
   };
 
+  const handleFeedback = (messageId: string, isPositive: boolean) => {
+    giveFeedback(messageId, isPositive ? 5 : 1);
+  };
+
   return (
     <>
-      {/* Chat Button */}
+      {/* Enhanced Chat Button */}
       <div className="fixed bottom-6 right-6 z-50">
         <Button
           onClick={() => setIsOpen(true)}
-          className="bg-gradient-to-r from-college-accent to-college-warning hover:from-orange-600 hover:to-red-500 text-white p-4 rounded-full shadow-2xl transition-all duration-300 transform hover:scale-110"
+          className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white p-4 rounded-full shadow-2xl transition-all duration-300 transform hover:scale-110 relative"
         >
           <MessageCircle className="h-6 w-6" />
+          <div className="absolute -top-1 -right-1 w-3 h-3 bg-green-400 rounded-full animate-pulse"></div>
+          <Badge className="absolute -top-2 -left-2 bg-orange-500 text-white text-xs px-1">
+            AI
+          </Badge>
         </Button>
       </div>
 
-      {/* Chat Window */}
+      {/* Enhanced Chat Window */}
       {isOpen && (
-        <div className="fixed bottom-24 right-6 w-96 h-[500px] bg-white rounded-lg shadow-2xl border z-50 flex flex-col">
-          {/* Header */}
-          <div className="bg-gradient-to-r from-college-primary to-college-secondary text-white p-4 rounded-t-lg flex items-center justify-between">
-            <div className="flex items-center space-x-3">
-              <div className="w-8 h-8 bg-college-accent rounded-full flex items-center justify-center">
-                <Bot className="h-5 w-5" />
+        <div className="fixed bottom-24 right-6 w-96 h-[600px] bg-white dark:bg-gray-900 rounded-lg shadow-2xl border z-50 flex flex-col">
+          {/* Enhanced Header */}
+          <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white p-4 rounded-t-lg">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-3">
+                <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
+                  <Brain className="h-6 w-6" />
+                </div>
+                <div>
+                  <h3 className="font-semibold flex items-center gap-2">
+                    AI Assistant
+                    <Zap className="h-4 w-4 text-yellow-300" />
+                  </h3>
+                  <p className="text-xs opacity-80 flex items-center gap-1">
+                    <Globe className="h-3 w-3" />
+                    Smart • Learning • Real-time
+                  </p>
+                </div>
               </div>
-              <div>
-                <h3 className="font-semibold">Gaurav</h3>
-                <p className="text-xs opacity-80">ISBM COE Assistant</p>
+              <div className="flex items-center space-x-1">
+                <Button
+                  onClick={exportConversation}
+                  className="bg-transparent hover:bg-white/20 p-1 rounded"
+                  size="sm"
+                  title="Export conversation"
+                >
+                  <Download className="h-4 w-4" />
+                </Button>
+                <Button
+                  onClick={clearConversation}
+                  className="bg-transparent hover:bg-white/20 p-1 rounded"
+                  size="sm"
+                  title="Clear conversation"
+                >
+                  <Trash2 className="h-4 w-4" />
+                </Button>
+                <Button
+                  onClick={() => setIsOpen(false)}
+                  className="bg-transparent hover:bg-white/20 p-1 rounded"
+                  size="sm"
+                >
+                  <X className="h-4 w-4" />
+                </Button>
               </div>
             </div>
-            <Button
-              onClick={() => setIsOpen(false)}
-              className="bg-transparent hover:bg-white/20 p-1 rounded"
-            >
-              <X className="h-5 w-5" />
-            </Button>
+            
+            {/* Status Indicators */}
+            <div className="flex justify-between items-center mt-2 text-xs">
+              <div className="flex items-center gap-2">
+                <Badge variant="secondary" className="text-[10px] bg-white/20">
+                  Session: {sessionId.slice(-8)}
+                </Badge>
+                <Badge variant="secondary" className="text-[10px] bg-green-500/20">
+                  Learning: ON
+                </Badge>
+              </div>
+              <div className="text-white/70">
+                {messages.length} messages
+              </div>
+            </div>
           </div>
 
-          {/* Messages */}
-          <div className="flex-1 p-4 overflow-y-auto space-y-4">
+          {/* Messages Area */}
+          <div className="flex-1 p-4 overflow-y-auto space-y-4 bg-gray-50 dark:bg-gray-800">
+            {messages.length === 0 && (
+              <div className="text-center py-8">
+                <Brain className="h-12 w-12 mx-auto text-blue-500 mb-4" />
+                <h3 className="font-semibold text-gray-800 dark:text-gray-200 mb-2">
+                  AI-Powered Assistant
+                </h3>
+                <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+                  I'm your intelligent assistant for ISBM College of Engineering. I can:
+                </p>
+                <div className="text-xs text-left space-y-1 bg-white dark:bg-gray-700 p-3 rounded-lg">
+                  <div className="flex items-center gap-2">
+                    <Brain className="h-3 w-3 text-blue-500" />
+                    <span>Learn from our conversations</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Globe className="h-3 w-3 text-green-500" />
+                    <span>Fetch real-time web data</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Zap className="h-3 w-3 text-yellow-500" />
+                    <span>Provide contextual responses</span>
+                  </div>
+                </div>
+              </div>
+            )}
+
             {messages.map((message) => (
               <div
                 key={message.id}
                 className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}
               >
                 <div
-                  className={`max-w-xs p-3 rounded-lg ${
+                  className={cn(
+                    "max-w-[85%] p-3 rounded-lg shadow-sm",
                     message.sender === 'user'
-                      ? 'bg-college-accent text-white'
-                      : 'bg-gray-100 text-gray-800'
-                  }`}
+                      ? 'bg-blue-600 text-white'
+                      : 'bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200',
+                    message.isTyping && 'animate-pulse'
+                  )}
                 >
                   <div className="flex items-start space-x-2">
                     {message.sender === 'bot' && (
-                      <Bot className="h-4 w-4 mt-1 text-college-primary" />
+                      <div className="w-6 h-6 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center flex-shrink-0">
+                        <Bot className="h-3 w-3 text-white" />
+                      </div>
                     )}
                     {message.sender === 'user' && (
-                      <User className="h-4 w-4 mt-1" />
+                      <div className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center flex-shrink-0">
+                        <User className="h-3 w-3 text-white" />
+                      </div>
                     )}
-                    <p className="text-sm whitespace-pre-line">{message.text}</p>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm whitespace-pre-line break-words">
+                        {message.text}
+                      </p>
+                      {message.hasLearned && (
+                        <Badge className="mt-2 bg-green-100 text-green-800 text-xs">
+                          <Brain className="h-3 w-3 mr-1" />
+                          Learned
+                        </Badge>
+                      )}
+                    </div>
                   </div>
-                  <p className="text-xs opacity-70 mt-1">
-                    {message.timestamp.toLocaleTimeString()}
-                  </p>
+                  
+                  <div className="flex items-center justify-between mt-2">
+                    <p className="text-xs opacity-70">
+                      {message.timestamp.toLocaleTimeString()}
+                    </p>
+                    
+                    {message.sender === 'bot' && !message.isTyping && (
+                      <div className="flex items-center gap-1">
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          className="h-6 w-6 p-0 hover:bg-green-100"
+                          onClick={() => handleFeedback(message.id, true)}
+                        >
+                          <ThumbsUp className="h-3 w-3" />
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          className="h-6 w-6 p-0 hover:bg-red-100"
+                          onClick={() => handleFeedback(message.id, false)}
+                        >
+                          <ThumbsDown className="h-3 w-3" />
+                        </Button>
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
             ))}
+            <div ref={messagesEndRef} />
           </div>
 
-          {/* Input */}
-          <div className="p-4 border-t flex space-x-2">
-            <Input
-              value={inputMessage}
-              onChange={(e) => setInputMessage(e.target.value)}
-              onKeyPress={handleKeyPress}
-              placeholder="Ask me about ISBM COE..."
-              className="flex-1"
-            />
-            <Button
-              onClick={handleSendMessage}
-              className="bg-college-accent hover:bg-orange-600"
-            >
-              <Send className="h-4 w-4" />
-            </Button>
+          {/* Enhanced Input Area */}
+          <div className="p-4 border-t bg-white dark:bg-gray-900">
+            <div className="flex space-x-2 items-end">
+              <div className="flex-1">
+                <Input
+                  value={inputMessage}
+                  onChange={(e) => setInputMessage(e.target.value)}
+                  onKeyPress={handleKeyPress}
+                  placeholder="Ask me anything about ISBM COE..."
+                  className="w-full resize-none min-h-[40px] max-h-[120px]"
+                  disabled={isLoading}
+                />
+                <div className="flex items-center justify-between mt-1 text-xs text-gray-500">
+                  <span>Press Enter to send</span>
+                  {isLoading && (
+                    <span className="flex items-center gap-1">
+                      <div className="w-2 h-2 bg-blue-500 rounded-full animate-bounce"></div>
+                      <div className="w-2 h-2 bg-blue-500 rounded-full animate-bounce" style={{animationDelay: '0.1s'}}></div>
+                      <div className="w-2 h-2 bg-blue-500 rounded-full animate-bounce" style={{animationDelay: '0.2s'}}></div>
+                    </span>
+                  )}
+                </div>
+              </div>
+              <Button
+                onClick={handleSendMessage}
+                disabled={isLoading || !inputMessage.trim()}
+                className={cn(
+                  "bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 transition-all duration-200",
+                  isLoading && "opacity-50 cursor-not-allowed"
+                )}
+              >
+                <Send className="h-4 w-4" />
+              </Button>
+            </div>
           </div>
         </div>
       )}

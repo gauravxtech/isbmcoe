@@ -101,6 +101,75 @@ export type Database = {
         }
         Relationships: []
       }
+      chatbot_conversations: {
+        Row: {
+          bot_response: string
+          context_data: Json | null
+          created_at: string
+          id: string
+          session_id: string
+          updated_at: string
+          user_feedback: number | null
+          user_message: string
+        }
+        Insert: {
+          bot_response: string
+          context_data?: Json | null
+          created_at?: string
+          id?: string
+          session_id: string
+          updated_at?: string
+          user_feedback?: number | null
+          user_message: string
+        }
+        Update: {
+          bot_response?: string
+          context_data?: Json | null
+          created_at?: string
+          id?: string
+          session_id?: string
+          updated_at?: string
+          user_feedback?: number | null
+          user_message?: string
+        }
+        Relationships: []
+      }
+      chatbot_knowledge: {
+        Row: {
+          confidence_score: number | null
+          content: string
+          created_at: string
+          id: string
+          last_used_at: string | null
+          source_url: string | null
+          topic: string
+          updated_at: string
+          usage_count: number | null
+        }
+        Insert: {
+          confidence_score?: number | null
+          content: string
+          created_at?: string
+          id?: string
+          last_used_at?: string | null
+          source_url?: string | null
+          topic: string
+          updated_at?: string
+          usage_count?: number | null
+        }
+        Update: {
+          confidence_score?: number | null
+          content?: string
+          created_at?: string
+          id?: string
+          last_used_at?: string | null
+          source_url?: string | null
+          topic?: string
+          updated_at?: string
+          usage_count?: number | null
+        }
+        Relationships: []
+      }
       courses: {
         Row: {
           code: string
@@ -620,6 +689,36 @@ export type Database = {
           two_factor_auth?: boolean | null
           updated_at?: string | null
           user_id?: string | null
+        }
+        Relationships: []
+      }
+      web_scraping_cache: {
+        Row: {
+          content: string
+          expires_at: string
+          hit_count: number | null
+          id: string
+          scraped_at: string
+          title: string | null
+          url: string
+        }
+        Insert: {
+          content: string
+          expires_at?: string
+          hit_count?: number | null
+          id?: string
+          scraped_at?: string
+          title?: string | null
+          url: string
+        }
+        Update: {
+          content?: string
+          expires_at?: string
+          hit_count?: number | null
+          id?: string
+          scraped_at?: string
+          title?: string | null
+          url?: string
         }
         Relationships: []
       }
