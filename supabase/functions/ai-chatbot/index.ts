@@ -98,7 +98,7 @@ Please provide a helpful, conversational, and informative response. Be friendly 
           }
         ],
         generationConfig: {
-          maxOutputTokens: 500,
+          maxOutputTokens: 150,
           temperature: 0.7
         }
       }),
