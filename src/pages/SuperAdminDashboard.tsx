@@ -607,35 +607,53 @@ const SuperAdminDashboard = () => {
               </TabsContent>
 
               <TabsContent value="users" className="mt-6">
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+                  {/* Add New User Section */}
+                  <Card className="border-0 shadow-lg bg-gradient-to-br from-green-50 to-emerald-50">
+                    <CardHeader>
+                      <CardTitle className="flex items-center gap-2">
+                        <UserPlus className="h-5 w-5 text-green-600" />
+                        Add New User
+                      </CardTitle>
+                      <p className="text-sm text-muted-foreground">Create new admin or system admin accounts</p>
+                    </CardHeader>
+                    <CardContent>
+                      <SuperAdminUserManager />
+                    </CardContent>
+                  </Card>
+
                   {/* System Admin Section */}
                   <Card className="border-0 shadow-lg bg-gradient-to-br from-purple-50 to-indigo-50">
                     <CardHeader>
-                      <CardTitle className="flex items-center gap-2">
-                        <Shield className="h-5 w-5 text-purple-600" />
-                        System Admin ({superAdmins.length})
-                      </CardTitle>
-                      <p className="text-sm text-muted-foreground">Super administrators with full system access</p>
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <CardTitle className="flex items-center gap-2">
+                            <Shield className="h-5 w-5 text-purple-600" />
+                            System Admin ({superAdmins.length})
+                          </CardTitle>
+                          <p className="text-sm text-muted-foreground">Super administrators with full system access</p>
+                        </div>
+                      </div>
                     </CardHeader>
                     <CardContent>
-                      <div className="space-y-3 max-h-96 overflow-y-auto">
+                      <div className="space-y-3 max-h-80 overflow-y-auto scrollbar-thin scrollbar-thumb-purple-200">
                         {superAdmins.length > 0 ? superAdmins.map(admin => (
-                          <div key={admin.id} className="p-4 rounded-lg border bg-gradient-to-r from-purple-50 to-white border-purple-200 hover:shadow-md transition-all">
+                          <div key={admin.id} className="p-3 rounded-lg border bg-gradient-to-r from-purple-50 to-white border-purple-200 hover:shadow-md transition-all animate-fade-in">
                             <div className="flex items-center justify-between">
                               <div className="flex items-center space-x-3">
-                                <div className="w-10 h-10 bg-gradient-to-r from-purple-500 to-indigo-500 rounded-full flex items-center justify-center">
-                                  <User className="h-5 w-5 text-white" />
+                                <div className="w-8 h-8 bg-gradient-to-r from-purple-500 to-indigo-500 rounded-full flex items-center justify-center">
+                                  <Shield className="h-4 w-4 text-white" />
                                 </div>
-                                <div>
-                                  <p className="font-medium text-foreground">{admin.full_name || admin.email}</p>
-                                  <p className="text-sm text-muted-foreground">{admin.email}</p>
+                                <div className="min-w-0 flex-1">
+                                  <p className="font-medium text-foreground text-sm truncate">{admin.full_name || admin.email}</p>
+                                  <p className="text-xs text-muted-foreground truncate">{admin.email}</p>
                                   {admin.department && (
-                                    <p className="text-xs text-purple-600 font-medium">{admin.department}</p>
+                                    <p className="text-xs text-purple-600 font-medium truncate">{admin.department}</p>
                                   )}
                                 </div>
                               </div>
                               <div className="flex flex-col items-end space-y-1">
-                                <Badge variant="default" className="bg-purple-600 hover:bg-purple-700">
+                                <Badge variant="default" className="bg-purple-600 hover:bg-purple-700 text-xs">
                                   {admin.role}
                                 </Badge>
                                 <Badge variant={admin.status === 'active' ? 'default' : 'secondary'} className="text-xs">
@@ -647,7 +665,8 @@ const SuperAdminDashboard = () => {
                         )) : (
                           <div className="text-center py-8 text-muted-foreground">
                             <Shield className="h-12 w-12 mx-auto mb-2 opacity-50" />
-                            <p>No system administrators found</p>
+                            <p className="text-sm">No system administrators found</p>
+                            <p className="text-xs mt-1">Use the form to add new system admins</p>
                           </div>
                         )}
                       </div>
@@ -657,38 +676,42 @@ const SuperAdminDashboard = () => {
                   {/* All Admin Section */}
                   <Card className="border-0 shadow-lg bg-gradient-to-br from-blue-50 to-cyan-50">
                     <CardHeader>
-                      <CardTitle className="flex items-center gap-2">
-                        <Users className="h-5 w-5 text-blue-600" />
-                        All Admin ({allAdmins.length})
-                      </CardTitle>
-                      <p className="text-sm text-muted-foreground">Administrative users across departments</p>
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <CardTitle className="flex items-center gap-2">
+                            <Users className="h-5 w-5 text-blue-600" />
+                            All Admin ({allAdmins.length})
+                          </CardTitle>
+                          <p className="text-sm text-muted-foreground">Administrative users across departments</p>
+                        </div>
+                      </div>
                     </CardHeader>
                     <CardContent>
-                      <div className="space-y-3 max-h-96 overflow-y-auto">
+                      <div className="space-y-3 max-h-80 overflow-y-auto scrollbar-thin scrollbar-thumb-blue-200">
                         {allAdmins.length > 0 ? allAdmins.map(admin => (
-                          <div key={admin.id} className="p-4 rounded-lg border bg-gradient-to-r from-blue-50 to-white border-blue-200 hover:shadow-md transition-all">
+                          <div key={admin.id} className="p-3 rounded-lg border bg-gradient-to-r from-blue-50 to-white border-blue-200 hover:shadow-md transition-all animate-fade-in">
                             <div className="flex items-center justify-between">
                               <div className="flex items-center space-x-3">
-                                <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full flex items-center justify-center">
-                                  <User className="h-5 w-5 text-white" />
+                                <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full flex items-center justify-center">
+                                  <User className="h-4 w-4 text-white" />
                                 </div>
-                                <div>
-                                  <p className="font-medium text-foreground">{admin.full_name || admin.email}</p>
-                                  <p className="text-sm text-muted-foreground">{admin.email}</p>
+                                <div className="min-w-0 flex-1">
+                                  <p className="font-medium text-foreground text-sm truncate">{admin.full_name || admin.email}</p>
+                                  <p className="text-xs text-muted-foreground truncate">{admin.email}</p>
                                   {admin.department && (
-                                    <p className="text-xs text-blue-600 font-medium">{admin.department}</p>
+                                    <p className="text-xs text-blue-600 font-medium truncate">{admin.department}</p>
                                   )}
                                 </div>
                               </div>
                               <div className="flex flex-col items-end space-y-1">
                                 <Badge 
                                   variant={admin.role === 'principal' ? 'default' : admin.role === 'hod' ? 'secondary' : 'outline'}
-                                  className={
+                                  className={`text-xs ${
                                     admin.role === 'principal' ? 'bg-green-600 hover:bg-green-700' :
                                     admin.role === 'hod' ? 'bg-orange-600 hover:bg-orange-700' :
                                     admin.role === 'dean' ? 'bg-purple-600 hover:bg-purple-700' :
                                     'bg-blue-600 hover:bg-blue-700 text-white'
-                                  }
+                                  }`}
                                 >
                                   {admin.role}
                                 </Badge>
@@ -701,7 +724,8 @@ const SuperAdminDashboard = () => {
                         )) : (
                           <div className="text-center py-8 text-muted-foreground">
                             <Users className="h-12 w-12 mx-auto mb-2 opacity-50" />
-                            <p>No administrative users found</p>
+                            <p className="text-sm">No administrative users found</p>
+                            <p className="text-xs mt-1">Use the form to add new admin users</p>
                           </div>
                         )}
                       </div>
