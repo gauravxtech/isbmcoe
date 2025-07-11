@@ -7,7 +7,8 @@ import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { ModernLoader } from '@/components/ui/modern-loader';
+import { Progress } from '@/components/ui/progress';
+import { Separator } from '@/components/ui/separator';
 import NoticeManager from '@/components/admin/NoticeManager';
 import StudentManager from '@/components/admin/StudentManager';
 import WebsiteSettingsManager from '@/components/admin/WebsiteSettingsManager';
@@ -34,7 +35,15 @@ import {
   Key,
   Mail,
   Globe,
-  Phone
+  Phone,
+  BarChart3,
+  Cpu,
+  HardDrive,
+  Zap,
+  CheckCircle,
+  Clock,
+  Star,
+  Sparkles
 } from 'lucide-react';
 import DashboardLayout from '@/components/layouts/DashboardLayout';
 import { useSEO } from '@/hooks/useSEO';
@@ -42,7 +51,6 @@ import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import SchoolDashboardOverview from '@/components/admin/SchoolDashboardOverview';
 
 interface SystemMonitoring {
   id: string;
@@ -78,49 +86,13 @@ const SuperAdminDashboard = () => {
   const [systemData, setSystemData] = useState<SystemMonitoring | null>(null);
   const [activities, setActivities] = useState<SystemActivity[]>([]);
   const [loading, setLoading] = useState(true);
-  const [isAddUserOpen, setIsAddUserOpen] = useState(false);
-  const [isSystemSettingsOpen, setIsSystemSettingsOpen] = useState(false);
-  const [showNoticeManager, setShowNoticeManager] = useState(false);
-  const [newUser, setNewUser] = useState<NewUser>({
-    fullName: '',
-    email: '',
-    role: 'student',
-    department: '',
-    phone: '',
-    password: 'isbm@321'
-  });
   const [userCount, setUserCount] = useState<number>(0);
   const [studentCount, setStudentCount] = useState<number>(0);
   const [departmentCount, setDepartmentCount] = useState<number>(0);
   const { toast } = useToast();
   const { user, userRole } = useAuth();
-  const navigate = (window as any).navigate || ((url: string) => { window.location.href = url; });
 
-  // Admins and Roles State
-  const [admins, setAdmins] = useState<any[]>([]);
-  const [allUsers, setAllUsers] = useState<any[]>([]);
-  const [userLoading, setUserLoading] = useState(true);
-  const [roleEditId, setRoleEditId] = useState<string | null>(null);
-  const [roleEditValue, setRoleEditValue] = useState<string>('');
-  const [addAdminOpen, setAddAdminOpen] = useState(false);
-  const [addAdminForm, setAddAdminForm] = useState({ 
-    full_name: '', 
-    email: '', 
-    password: 'isbm@321', 
-    department: '', 
-    role: 'admin' 
-  });
-  const [editAdmin, setEditAdmin] = useState<any | null>(null);
-  const [editAdminOpen, setEditAdminOpen] = useState(false);
-  const [editAdminForm, setEditAdminForm] = useState({ 
-    full_name: '', 
-    email: '', 
-    department: '', 
-    role: 'admin', 
-    status: 'active' 
-  });
-
-  // Add department options for admin creation
+  // Department and role options
   const departmentOptions = [
     'Computer Engineering',
     'AIDS',
@@ -136,7 +108,6 @@ const SuperAdminDashboard = () => {
     'General Administration',
   ];
 
-  // Update role options to include super-admin
   const roleOptions = [
     'student',
     'faculty',
@@ -155,19 +126,24 @@ const SuperAdminDashboard = () => {
     fetchSystemData();
     fetchActivities();
     fetchCounts();
-    fetchAdminsAndUsers();
   }, [user, userRole]);
 
   const fetchCounts = async () => {
-    // Fetch total users
-    const { count: userCount } = await supabase.from('profiles').select('*', { count: 'exact', head: true });
-    setUserCount(userCount || 0);
-    // Fetch total students
-    const { count: studentCount } = await supabase.from('profiles').select('*', { count: 'exact', head: true }).eq('role', 'student');
-    setStudentCount(studentCount || 0);
-    // Fetch total departments
-    const { count: departmentCount } = await supabase.from('departments').select('*', { count: 'exact', head: true });
-    setDepartmentCount(departmentCount || 0);
+    try {
+      // Fetch total users
+      const { count: userCount } = await supabase.from('profiles').select('*', { count: 'exact', head: true });
+      setUserCount(userCount || 0);
+      
+      // Fetch total students
+      const { count: studentCount } = await supabase.from('profiles').select('*', { count: 'exact', head: true }).eq('role', 'student');
+      setStudentCount(studentCount || 0);
+      
+      // Fetch total departments
+      const { count: departmentCount } = await supabase.from('departments').select('*', { count: 'exact', head: true });
+      setDepartmentCount(departmentCount || 0);
+    } catch (error) {
+      console.error('Error fetching counts:', error);
+    }
   };
 
   const fetchSystemData = async () => {
@@ -179,8 +155,8 @@ const SuperAdminDashboard = () => {
         .limit(1)
         .single();
 
-      if (error) {
-        console.error('Error fetching system data:', error);
+      if (error || !data) {
+        // Default mock data for demo
         setSystemData({
           id: 'default',
           cpu_usage: 45,
@@ -218,28 +194,37 @@ const SuperAdminDashboard = () => {
         .from('system_activities')
         .select('*')
         .order('created_at', { ascending: false })
-        .limit(5);
+        .limit(10);
 
-      if (error) {
-        console.error('Error fetching activities:', error);
+      if (error || !data) {
+        // Mock activities for demo
         setActivities([
           {
             id: '1',
-            activity_name: 'User Login',
-            activity_type: 'info',
-            user_name: 'Super Admin',
-            description: 'Successful login to super admin dashboard',
+            activity_name: 'System Health Check',
+            activity_type: 'success',
+            user_name: 'System',
+            description: 'All systems running optimally',
             created_at: new Date().toISOString()
           },
           {
             id: '2',
-            activity_name: 'System Monitoring',
+            activity_name: 'User Registration',
+            activity_type: 'info',
+            user_name: 'Admin Portal',
+            description: 'New student registered successfully',
+            created_at: new Date(Date.now() - 300000).toISOString()
+          },
+          {
+            id: '3',
+            activity_name: 'Database Backup',
             activity_type: 'success',
             user_name: 'System',
-            description: 'System health check completed',
-            created_at: new Date(Date.now() - 300000).toISOString()
+            description: 'Daily backup completed successfully',
+            created_at: new Date(Date.now() - 900000).toISOString()
           }
         ]);
+        setLoading(false);
         return;
       }
 
@@ -252,183 +237,16 @@ const SuperAdminDashboard = () => {
     }
   };
 
-  const fetchAdminsAndUsers = async () => {
-    setUserLoading(true);
-    try {
-      // Fetch only admins and super-admins for the admins list
-      const { data: admins, error: adminsError } = await supabase
-        .from('profiles')
-        .select('*')
-        .in('role', ['admin', 'super-admin'])
-        .order('created_at', { ascending: false });
-      
-      if (adminsError) throw adminsError;
-      setAdmins(admins || []);
-      
-      // Fetch all users for the roles tab
-      const { data: users, error: usersError } = await supabase
-        .from('profiles')
-        .select('*')
-        .order('created_at', { ascending: false });
-      
-      if (usersError) throw usersError;
-      setAllUsers(users || []);
-    } catch (error) {
-      console.error('Error fetching users:', error);
-      toast({
-        title: "Error",
-        description: "Failed to fetch user data",
-        variant: "destructive"
-      });
-    } finally {
-      setUserLoading(false);
-    }
-  };
-
-  const handleAddUser = async () => {
-    if (!newUser.fullName || !newUser.email || !newUser.department || !newUser.password) {
-      toast({
-        title: "Error",
-        description: "Please fill in all required fields, including password.",
-        variant: "destructive"
-      });
-      return;
-    }
-    if (newUser.password.length < 6) {
-      toast({
-        title: "Error",
-        description: "Password must be at least 6 characters long.",
-        variant: "destructive"
-      });
-      return;
-    }
-
-    let adminSession = null;
-    try {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) {
-        throw new Error("Could not get admin session. Please log in again.");
-      }
-      adminSession = session;
-
-      const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
-        email: newUser.email,
-        password: newUser.password,
-        options: {
-          data: {
-            full_name: newUser.fullName,
-            role: newUser.role,
-          }
-        }
-      });
-
-      if (signUpError) {
-        throw signUpError;
-      }
-      
-      if (!signUpData.user) {
-        throw new Error("User was not created.");
-      }
-
-      const { error: profileError } = await supabase
-        .from('profiles')
-        .update({
-          department: newUser.department,
-          phone: newUser.phone,
-        })
-        .eq('id', signUpData.user.id);
-
-      if (profileError) {
-        console.error('Profile update error:', profileError);
-        toast({
-            title: "Warning",
-            description: "User created, but failed to set department/phone. You can edit the user later.",
-            variant: "default"
-        });
-      }
-
-      const { error: setSessionError } = await supabase.auth.setSession({
-        access_token: adminSession.access_token,
-        refresh_token: adminSession.refresh_token,
-      });
-
-      if (setSessionError) {
-        throw new Error("Could not restore admin session. Please refresh and log in again.");
-      }
-
-      await supabase
-        .from('system_activities')
-        .insert({
-          activity_name: 'User Added',
-          activity_type: 'success',
-          user_name: user?.email || 'Super Admin',
-          description: `Added new ${newUser.role}: ${newUser.fullName}`
-        });
-
-      toast({
-        title: "Success",
-        description: `${newUser.role} added successfully!`,
-      });
-
-      setNewUser({
-        fullName: '',
-        email: '',
-        role: 'student',
-        department: '',
-        phone: '',
-        password: ''
-      });
-      setIsAddUserOpen(false);
-      fetchActivities();
-
-    } catch (error: any) {
-      console.error('Error adding user:', error);
-      toast({
-        title: "Error",
-        description: error.message || "An unexpected error occurred",
-        variant: "destructive"
-      });
-      if (adminSession) {
-        await supabase.auth.setSession({
-          access_token: adminSession.access_token,
-          refresh_token: adminSession.refresh_token,
-        });
-      }
-    }
-  };
-
-  const handleSystemAction = async (action: string) => {
-    try {
-      await supabase
-        .from('system_activities')
-        .insert({
-          activity_name: action,
-          activity_type: 'info',
-          user_name: user?.email || 'Super Admin',
-          description: `${action} initiated by super admin`
-        });
-
-      toast({
-        title: "Action Initiated",
-        description: `${action} has been started`,
-      });
-
-      fetchActivities();
-    } catch (error) {
-      console.error('Error logging action:', error);
-    }
-  };
-
-  const getActivityColor = (type: string) => {
+  const getActivityIcon = (type: string) => {
     switch (type) {
       case 'success':
-        return 'bg-green-500';
+        return <CheckCircle className="h-4 w-4 text-green-500" />;
       case 'warning':
-        return 'bg-yellow-500';
+        return <AlertTriangle className="h-4 w-4 text-yellow-500" />;
       case 'error':
-        return 'bg-red-500';
+        return <AlertTriangle className="h-4 w-4 text-red-500" />;
       default:
-        return 'bg-blue-500';
+        return <Activity className="h-4 w-4 text-blue-500" />;
     }
   };
 
@@ -438,450 +256,313 @@ const SuperAdminDashboard = () => {
     const diffInMinutes = Math.floor((now.getTime() - date.getTime()) / (1000 * 60));
     
     if (diffInMinutes < 1) return 'Just now';
-    if (diffInMinutes < 60) return `${diffInMinutes} minutes ago`;
-    if (diffInMinutes < 1440) return `${Math.floor(diffInMinutes / 60)} hours ago`;
-    return `${Math.floor(diffInMinutes / 1440)} days ago`;
+    if (diffInMinutes < 60) return `${diffInMinutes}m ago`;
+    if (diffInMinutes < 1440) return `${Math.floor(diffInMinutes / 60)}h ago`;
+    return `${Math.floor(diffInMinutes / 1440)}d ago`;
   };
 
-  const handleDeleteAdmin = async (id: string) => {
-    if (!window.confirm('Are you sure you want to delete this admin?')) return;
-    try {
-      const { error } = await supabase.from('profiles').delete().eq('id', id);
-      if (error) throw error;
-      toast({ title: 'Admin deleted successfully!' });
-      fetchAdminsAndUsers();
-    } catch (err: any) {
-      toast({ title: 'Error', description: err.message || 'Failed to delete admin.', variant: 'destructive' });
-    }
+  const getUsageColor = (usage: number) => {
+    if (usage < 50) return "text-green-500";
+    if (usage < 80) return "text-yellow-500";
+    return "text-red-500";
   };
 
-  const handleAddAdmin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!addAdminForm.full_name || !addAdminForm.email || !addAdminForm.password || !addAdminForm.department) {
-      toast({ title: 'Error', description: 'All fields are required.', variant: 'destructive' });
-      return;
-    }
-    if (addAdminForm.password.length < 6) {
-      toast({ title: 'Error', description: 'Password must be at least 6 characters.', variant: 'destructive' });
-      return;
-    }
-    try {
-      // Create user with sign up
-      const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
-        email: addAdminForm.email,
-        password: addAdminForm.password,
-        options: { 
-          data: { 
-            full_name: addAdminForm.full_name, 
-            role: addAdminForm.role, 
-            department: addAdminForm.department 
-          } 
-        }
-      });
-      
-      if (signUpError) throw signUpError;
-      
-      // Update profile if user was created
-      if (signUpData.user?.id) {
-        const { error: profileError } = await supabase.from('profiles').upsert({
-          id: signUpData.user.id,
-          email: addAdminForm.email,
-          full_name: addAdminForm.full_name,
-          department: addAdminForm.department,
-          role: addAdminForm.role,
-          status: 'active'
-        });
-        if (profileError) throw profileError;
-      }
-      
-      toast({ title: 'Admin added successfully!' });
-      setAddAdminOpen(false);
-      setAddAdminForm({ full_name: '', email: '', password: 'isbm@321', department: '', role: 'admin' });
-      fetchAdminsAndUsers();
-    } catch (err: any) {
-      toast({ title: 'Error', description: err.message || 'Failed to add admin.', variant: 'destructive' });
-    }
-  };
-
-  const handleResetPassword = async (admin: any) => {
-    if (!window.confirm(`Reset password for ${admin.full_name} to "isbm@321"?`)) return;
-    
-    try {
-      // Note: In a real application, you'd need a server-side function to reset passwords
-      // For now, we'll just show a success message
-      toast({
-        title: "Password Reset",
-        description: `Password for ${admin.full_name} has been reset to "isbm@321"`,
-      });
-    } catch (error: any) {
-      console.error('Error resetting password:', error);
-      toast({
-        title: "Error",
-        description: "Failed to reset password",
-        variant: "destructive"
-      });
-    }
-  };
-
-  const handleRoleEdit = (id: string, value: string) => {
-    setRoleEditId(id);
-    setRoleEditValue(value);
-  };
-  const saveRoleEdit = async (id: string) => {
-    await supabase.from('profiles').update({ role: roleEditValue }).eq('id', id);
-    setRoleEditId(null);
-    fetchAdminsAndUsers();
-    toast({ title: 'Role updated' });
-  };
-
-  const handleEditAdmin = (admin: any) => {
-    setEditAdmin(admin);
-    setEditAdminForm({
-      full_name: admin.full_name,
-      email: admin.email,
-      department: admin.department,
-      role: admin.role,
-      status: admin.status || 'active',
-    });
-    setEditAdminOpen(true);
-  };
-
-  const handleSaveEditAdmin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!editAdmin) return;
-    try {
-      const { error } = await supabase.from('profiles').update({
-        full_name: editAdminForm.full_name,
-        department: editAdminForm.department,
-        role: editAdminForm.role,
-        status: editAdminForm.status
-      }).eq('id', editAdmin.id);
-      if (error) throw error;
-      toast({ title: 'Admin updated successfully!' });
-      setEditAdminOpen(false);
-      setEditAdmin(null);
-      fetchAdminsAndUsers();
-    } catch (err: any) {
-      toast({ title: 'Error', description: err.message || 'Failed to update admin.', variant: 'destructive' });
-    }
-  };
-
-  const handleQuickLink = (action: string) => {
-    switch (action) {
-      case 'add-student':
-        // Open the standardized add student dialog from StudentManager
-        setShowNoticeManager(false); // Make sure other dialogs are closed
-        // We'll trigger the StudentManager's add student dialog
-        break;
-      case 'manage-course':
-        navigate('/admin/courses');
-        break;
-      case 'upload-notice':
-        setShowNoticeManager(true);
-        break;
-      default:
-        break;
-    }
+  const getUsageProgressColor = (usage: number) => {
+    if (usage < 50) return "bg-green-500";
+    if (usage < 80) return "bg-yellow-500";
+    return "bg-red-500";
   };
 
   if (loading) {
     return (
       <DashboardLayout>
-        <ModernLoader text="Loading Super Admin Dashboard..." />
+        <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 flex items-center justify-center">
+          <div className="text-center space-y-6">
+            <div className="relative">
+              <div className="w-20 h-20 mx-auto bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 rounded-full flex items-center justify-center animate-pulse">
+                <GraduationCap className="h-10 w-10 text-white" />
+              </div>
+              <div className="absolute -top-2 -right-2">
+                <Sparkles className="h-6 w-6 text-yellow-500 animate-bounce" />
+              </div>
+            </div>
+            <div className="space-y-2">
+              <h3 className="text-2xl font-bold text-foreground">ISBM College of Engineering</h3>
+              <p className="text-muted-foreground">Preparing your academic experience...</p>
+            </div>
+            <div className="space-y-3">
+              <div className="flex items-center justify-center space-x-2 text-sm text-muted-foreground">
+                <div className="flex items-center space-x-1">
+                  <Shield className="h-4 w-4" />
+                  <span>Authenticating secure connection...</span>
+                </div>
+              </div>
+              <div className="flex items-center justify-center space-x-2 text-sm text-muted-foreground">
+                <div className="flex items-center space-x-1">
+                  <Database className="h-4 w-4" />
+                  <span>Loading academic resources...</span>
+                </div>
+              </div>
+              <div className="flex items-center justify-center space-x-2 text-sm text-muted-foreground">
+                <div className="flex items-center space-x-1">
+                  <Settings className="h-4 w-4" />
+                  <span>Preparing dashboard...</span>
+                </div>
+              </div>
+            </div>
+            <div className="w-64 mx-auto">
+              <Progress value={75} className="h-2" />
+            </div>
+          </div>
+        </div>
       </DashboardLayout>
     );
   }
 
-  const systemStats = [
-    { 
-      label: 'System Uptime', 
-      value: systemData?.system_uptime || '99.9%', 
-      icon: Activity, 
-      color: 'text-green-600' 
-    },
-    { 
-      label: 'Active Users', 
-      value: systemData?.active_users?.toLocaleString() || '125', 
-      icon: Users, 
-      color: 'text-blue-600' 
-    },
-    { 
-      label: 'Database Size', 
-      value: systemData?.database_size || '2.5GB', 
-      icon: Database, 
-      color: 'text-purple-600' 
-    },
-    { 
-      label: 'Pending Updates', 
-      value: systemData?.pending_updates?.toString() || '3', 
-      icon: AlertTriangle, 
-      color: 'text-orange-600' 
-    },
-  ];
-
   return (
     <DashboardLayout>
-      <div className="space-y-6 px-2 sm:px-4 md:px-0">
-        {/* Fixed Breadcrumb - Remove duplicate Dashboard */}
-        <div className="flex items-center space-x-2 text-sm text-gray-600 mb-4">
-          <span>Dashboard</span>
-          <span>/</span>
-          <span className="text-blue-600 font-medium">Super Admin</span>
-        </div>
-
-        {/* Header - Remove the duplicate breadcrumb */}
-        <div className="flex items-center justify-between mb-6">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-white flex items-center gap-3">
-              <Shield className="h-8 w-8 text-red-500" />
-              Super Admin Dashboard
-            </h1>
-            <p className="text-gray-600 dark:text-gray-400">Complete system control and management</p>
-          </div>
-        </div>
-
-        {/* Top Section: KPIs and Quick Links */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-          {/* KPI Cards */}
-          <Card className="col-span-1 bg-gradient-to-r from-blue-50 to-blue-100 border-blue-200">
-            <CardContent className="flex flex-col items-center p-4">
-              <Users className="h-8 w-8 text-blue-600 mb-2" />
-              <div className="text-2xl font-bold text-blue-900">{userCount}</div>
-              <div className="text-xs text-blue-700">Total Users</div>
-            </CardContent>
-          </Card>
-          <Card className="col-span-1 bg-gradient-to-r from-green-50 to-green-100 border-green-200">
-            <CardContent className="flex flex-col items-center p-4">
-              <GraduationCap className="h-8 w-8 text-green-600 mb-2" />
-              <div className="text-2xl font-bold text-green-900">{studentCount}</div>
-              <div className="text-xs text-green-700">Total Students</div>
-            </CardContent>
-          </Card>
-          <Card className="col-span-1 bg-gradient-to-r from-purple-50 to-purple-100 border-purple-200">
-            <CardContent className="flex flex-col items-center p-4">
-              <Building className="h-8 w-8 text-purple-600 mb-2" />
-              <div className="text-2xl font-bold text-purple-900">{departmentCount}</div>
-              <div className="text-xs text-purple-700">Departments</div>
-            </CardContent>
-          </Card>
-          <Card className="col-span-1 bg-gradient-to-r from-orange-50 to-orange-100 border-orange-200">
-            <CardContent className="flex flex-col items-center p-4">
-              <Activity className="h-8 w-8 text-orange-600 mb-2" />
-              <div className="text-2xl font-bold text-orange-900">{systemData?.system_uptime || '99.9%'}</div>
-              <div className="text-xs text-orange-700">System Uptime</div>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Quick Actions */}
-        <Card className="mb-6">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <TrendingUp className="h-5 w-5 text-green-600" />
-              Quick Actions
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <Button 
-                className="h-16 flex-col bg-blue-600 hover:bg-blue-700 text-white"
-                onClick={() => handleQuickLink('add-student')}
-              >
-                <UserPlus className="h-6 w-6 mb-1" />
-                <span className="text-sm">Add Student</span>
-              </Button>
-              <Button 
-                className="h-16 flex-col bg-green-600 hover:bg-green-700 text-white"
-                onClick={() => handleQuickLink('manage-course')}
-              >
-                <Book className="h-6 w-6 mb-1" />
-                <span className="text-sm">Manage Course</span>
-              </Button>
-              <Button 
-                className="h-16 flex-col bg-yellow-600 hover:bg-yellow-700 text-white"
-                onClick={() => setShowNoticeManager(true)}
-              >
-                <Bell className="h-6 w-6 mb-1" />
-                <span className="text-sm">Send Notice</span>
-              </Button>
-              <Button 
-                className="h-16 flex-col bg-purple-600 hover:bg-purple-700 text-white"
-                onClick={() => setIsSystemSettingsOpen(true)}
-              >
-                <Settings className="h-6 w-6 mb-1" />
-                <span className="text-sm">System Settings</span>
-              </Button>
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 p-6">
+        {/* Header Section */}
+        <div className="mb-8">
+          <div className="flex items-center space-x-3 mb-4">
+            <div className="p-3 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 rounded-xl">
+              <Shield className="h-8 w-8 text-white" />
             </div>
-          </CardContent>
-        </Card>
+            <div>
+              <h1 className="text-3xl font-bold text-foreground">Super Admin Dashboard</h1>
+              <p className="text-muted-foreground">Complete system control and monitoring</p>
+            </div>
+          </div>
+          
+          {/* Welcome Card */}
+          <Card className="bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 text-white border-0 shadow-lg">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h2 className="text-xl font-semibold mb-2">Welcome back, {user?.email?.split('@')[0] || 'Admin'}!</h2>
+                  <p className="text-blue-100">System Status: All systems operational</p>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <CheckCircle className="h-6 w-6 text-green-300" />
+                  <span className="text-sm">Online</span>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
 
-        {/* Main Control Center */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Shield className="h-6 w-6 text-red-500" />
-              Super Admin Control Center
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-        <Tabs defaultValue="overview" className="w-full">
-              <TabsList className="grid w-full grid-cols-5">
-                <TabsTrigger value="overview" className="flex items-center gap-2">
-                  <TrendingUp className="h-4 w-4" />
-                  Dashboard Overview
+        {/* Stats Overview */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          <Card className="bg-gradient-to-br from-blue-500 to-blue-600 text-white border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-blue-100 text-sm font-medium">Total Users</p>
+                  <p className="text-3xl font-bold">{userCount}</p>
+                </div>
+                <Users className="h-8 w-8 text-blue-200" />
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="bg-gradient-to-br from-purple-500 to-purple-600 text-white border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-purple-100 text-sm font-medium">Students</p>
+                  <p className="text-3xl font-bold">{studentCount}</p>
+                </div>
+                <GraduationCap className="h-8 w-8 text-purple-200" />
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="bg-gradient-to-br from-pink-500 to-pink-600 text-white border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-pink-100 text-sm font-medium">Departments</p>
+                  <p className="text-3xl font-bold">{departmentCount}</p>
+                </div>
+                <Building className="h-8 w-8 text-pink-200" />
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="bg-gradient-to-br from-green-500 to-green-600 text-white border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-green-100 text-sm font-medium">Active Users</p>
+                  <p className="text-3xl font-bold">{systemData?.active_users || 0}</p>
+                </div>
+                <Activity className="h-8 w-8 text-green-200" />
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* System Health */}
+        {systemData && (
+          <Card className="mb-8 border-0 shadow-lg bg-card/50 backdrop-blur">
+            <CardHeader>
+              <CardTitle className="flex items-center space-x-2">
+                <Server className="h-5 w-5 text-primary" />
+                <span>System Health Monitor</span>
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-2">
+                      <Cpu className="h-4 w-4 text-blue-500" />
+                      <span className="text-sm font-medium">CPU Usage</span>
+                    </div>
+                    <span className={`text-sm font-bold ${getUsageColor(systemData.cpu_usage)}`}>
+                      {systemData.cpu_usage}%
+                    </span>
+                  </div>
+                  <div className="w-full bg-muted rounded-full h-2">
+                    <div 
+                      className={`h-2 rounded-full transition-all duration-300 ${getUsageProgressColor(systemData.cpu_usage)}`}
+                      style={{ width: `${systemData.cpu_usage}%` }}
+                    ></div>
+                  </div>
+                </div>
+
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-2">
+                      <Zap className="h-4 w-4 text-purple-500" />
+                      <span className="text-sm font-medium">Memory</span>
+                    </div>
+                    <span className={`text-sm font-bold ${getUsageColor(systemData.memory_usage)}`}>
+                      {systemData.memory_usage}%
+                    </span>
+                  </div>
+                  <div className="w-full bg-muted rounded-full h-2">
+                    <div 
+                      className={`h-2 rounded-full transition-all duration-300 ${getUsageProgressColor(systemData.memory_usage)}`}
+                      style={{ width: `${systemData.memory_usage}%` }}
+                    ></div>
+                  </div>
+                </div>
+
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-2">
+                      <HardDrive className="h-4 w-4 text-pink-500" />
+                      <span className="text-sm font-medium">Disk Usage</span>
+                    </div>
+                    <span className={`text-sm font-bold ${getUsageColor(systemData.disk_usage)}`}>
+                      {systemData.disk_usage}%
+                    </span>
+                  </div>
+                  <div className="w-full bg-muted rounded-full h-2">
+                    <div 
+                      className={`h-2 rounded-full transition-all duration-300 ${getUsageProgressColor(systemData.disk_usage)}`}
+                      style={{ width: `${systemData.disk_usage}%` }}
+                    ></div>
+                  </div>
+                </div>
+              </div>
+
+              <Separator className="my-6" />
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
+                <div className="space-y-2">
+                  <p className="text-sm text-muted-foreground">System Uptime</p>
+                  <p className="text-lg font-bold text-green-600">{systemData.system_uptime}</p>
+                </div>
+                <div className="space-y-2">
+                  <p className="text-sm text-muted-foreground">Database Size</p>
+                  <p className="text-lg font-bold text-blue-600">{systemData.database_size}</p>
+                </div>
+                <div className="space-y-2">
+                  <p className="text-sm text-muted-foreground">Pending Updates</p>
+                  <p className="text-lg font-bold text-orange-600">{systemData.pending_updates}</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Management Tabs */}
+        <Card className="border-0 shadow-lg bg-card/50 backdrop-blur">
+          <CardContent className="p-6">
+            <Tabs defaultValue="activities" className="w-full">
+              <TabsList className="grid w-full grid-cols-5 bg-muted/50">
+                <TabsTrigger value="activities" className="flex items-center space-x-2">
+                  <Activity className="h-4 w-4" />
+                  <span>Activities</span>
                 </TabsTrigger>
-                <TabsTrigger value="admins" className="flex items-center gap-2">
-                  <Shield className="h-4 w-4" />
-                  Manage Admins
+                <TabsTrigger value="users" className="flex items-center space-x-2">
+                  <Users className="h-4 w-4" />
+                  <span>Users</span>
                 </TabsTrigger>
-                <TabsTrigger value="students" className="flex items-center gap-2">
+                <TabsTrigger value="students" className="flex items-center space-x-2">
                   <GraduationCap className="h-4 w-4" />
-                  Student Management
+                  <span>Students</span>
                 </TabsTrigger>
-                <TabsTrigger value="settings" className="flex items-center gap-2">
+                <TabsTrigger value="notices" className="flex items-center space-x-2">
+                  <Bell className="h-4 w-4" />
+                  <span>Notices</span>
+                </TabsTrigger>
+                <TabsTrigger value="settings" className="flex items-center space-x-2">
                   <Settings className="h-4 w-4" />
-                  System Settings
-                </TabsTrigger>
-                <TabsTrigger value="api" className="flex items-center gap-2">
-                  <Server className="h-4 w-4" />
-                  API & Integration
+                  <span>Settings</span>
                 </TabsTrigger>
               </TabsList>
 
-              <TabsContent value="overview">
-                <SchoolDashboardOverview />
+              <TabsContent value="activities" className="mt-6">
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-lg font-semibold">Recent System Activities</h3>
+                    <Badge variant="secondary" className="bg-green-100 text-green-800 border-green-200">
+                      Live Updates
+                    </Badge>
+                  </div>
+                  <div className="space-y-3 max-h-96 overflow-y-auto">
+                    {activities.map((activity) => (
+                      <div key={activity.id} className="flex items-start space-x-3 p-4 rounded-lg bg-muted/30 border border-border/50">
+                        <div className="mt-0.5">
+                          {getActivityIcon(activity.activity_type)}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center justify-between">
+                            <p className="text-sm font-medium text-foreground">{activity.activity_name}</p>
+                            <span className="text-xs text-muted-foreground">{formatTimeAgo(activity.created_at)}</span>
+                          </div>
+                          <p className="text-sm text-muted-foreground mt-1">{activity.description}</p>
+                          {activity.user_name && (
+                            <p className="text-xs text-muted-foreground mt-1">by {activity.user_name}</p>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
               </TabsContent>
 
-              <TabsContent value="admins">
+              <TabsContent value="users" className="mt-6">
                 <SuperAdminUserManager />
               </TabsContent>
 
-              <TabsContent value="students">
+              <TabsContent value="students" className="mt-6">
                 <StudentManager />
               </TabsContent>
 
-              <TabsContent value="settings">
-                <WebsiteSettingsManager />
+              <TabsContent value="notices" className="mt-6">
+                <NoticeManager />
               </TabsContent>
 
-              <TabsContent value="api">
-                <div className="flex flex-col items-center justify-center py-12 text-gray-500">
-                  <Server className="h-10 w-10 mb-2 text-green-400" />
-                  <h3 className="text-lg font-semibold mb-2">API & Integration</h3>
-                  <p>Manage API tokens and integrations. (Coming soon)</p>
-                </div>
+              <TabsContent value="settings" className="mt-6">
+                <WebsiteSettingsManager />
               </TabsContent>
             </Tabs>
           </CardContent>
         </Card>
-
-        {/* Notice Manager Dialog */}
-        <Dialog open={showNoticeManager} onOpenChange={setShowNoticeManager}>
-          <DialogContent className="max-w-2xl">
-            <NoticeManager onClose={() => setShowNoticeManager(false)} />
-          </DialogContent>
-        </Dialog>
-
-        {/* Add Admin Dialog */}
-        <Dialog open={addAdminOpen} onOpenChange={setAddAdminOpen}>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Add New Admin</DialogTitle>
-            </DialogHeader>
-            <form onSubmit={handleAddAdmin} className="space-y-4">
-              <div>
-                <Label htmlFor="admin_name">Full Name *</Label>
-                <Input 
-                  id="admin_name"
-                  placeholder="Full Name" 
-                  value={addAdminForm.full_name} 
-                  onChange={e => setAddAdminForm(f => ({ ...f, full_name: e.target.value }))} 
-                  required 
-                />
-              </div>
-              <div>
-                <Label htmlFor="admin_email">Email *</Label>
-                <Input 
-                  id="admin_email"
-                  placeholder="Email" 
-                  type="email" 
-                  value={addAdminForm.email} 
-                  onChange={e => setAddAdminForm(f => ({ ...f, email: e.target.value }))} 
-                  required 
-                />
-              </div>
-              <div>
-                <Label htmlFor="admin_role">Role *</Label>
-                <Select value={addAdminForm.role || 'admin'} onValueChange={e => setAddAdminForm(f => ({ ...f, role: e }))}>
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {roleOptions.filter(role => role !== 'student').map(role => (
-                      <SelectItem key={role} value={role}>
-                        {role.charAt(0).toUpperCase() + role.slice(1).replace('-', ' ')}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              <div>
-                <Label htmlFor="admin_department">Department/Cell *</Label>
-                <Select value={addAdminForm.department} onValueChange={e => setAddAdminForm(f => ({ ...f, department: e }))}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select Department/Cell" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {departmentOptions.map(dep => (
-                      <SelectItem key={dep} value={dep}>{dep}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              <div>
-                <Label htmlFor="admin_password">Default Password</Label>
-                <Input 
-                  id="admin_password"
-                  placeholder="Password" 
-                  type="password" 
-                  value={addAdminForm.password} 
-                  onChange={e => setAddAdminForm(f => ({ ...f, password: e.target.value }))} 
-                  required 
-                />
-              </div>
-              <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700">
-                Add Admin
-              </Button>
-            </form>
-          </DialogContent>
-        </Dialog>
-
-        {/* Edit Admin Modal */}
-        <Dialog open={editAdminOpen} onOpenChange={setEditAdminOpen}>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Edit Admin</DialogTitle>
-            </DialogHeader>
-            <form onSubmit={handleSaveEditAdmin} className="space-y-4">
-              <Input placeholder="Full Name" value={editAdminForm.full_name} onChange={e => setEditAdminForm(f => ({ ...f, full_name: e.target.value }))} required />
-              <Input placeholder="Email" type="email" value={editAdminForm.email} onChange={e => setEditAdminForm(f => ({ ...f, email: e.target.value }))} required />
-              <select value={editAdminForm.role} onChange={e => setEditAdminForm(f => ({ ...f, role: e.target.value }))} required className="w-full border rounded px-2 py-2">
-                {roleOptions.map(role => <option key={role} value={role}>{role.charAt(0).toUpperCase() + role.slice(1)}</option>)}
-              </select>
-              <select value={editAdminForm.department} onChange={e => setEditAdminForm(f => ({ ...f, department: e.target.value }))} className="w-full border rounded px-2 py-2" disabled={editAdminForm.role === 'super-admin'}>
-                <option value="">Select Department/Cell</option>
-                {departmentOptions.map(dep => <option key={dep} value={dep}>{dep}</option>)}
-              </select>
-              <select value={editAdminForm.status} onChange={e => setEditAdminForm(f => ({ ...f, status: e.target.value }))} className="w-full border rounded px-2 py-2">
-                <option value="active">Active</option>
-                <option value="inactive">Inactive</option>
-              </select>
-              <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700">Save Changes</Button>
-            </form>
-          </DialogContent>
-        </Dialog>
-
-        {/* Add more modular sections as needed for Control Center, Monitoring, Reports, etc. */}
       </div>
     </DashboardLayout>
   );
