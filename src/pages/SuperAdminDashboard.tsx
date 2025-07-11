@@ -515,29 +515,46 @@ const SuperAdminDashboard = () => {
               </TabsList>
 
               <TabsContent value="activities" className="mt-6">
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between">
-                    <h3 className="text-lg font-semibold">Recent System Activities</h3>
-                    <Badge variant="secondary" className="bg-green-100 text-green-800 border-green-200">
-                      Live Updates
-                    </Badge>
-                  </div>
-                  <div className="space-y-3 max-h-96 overflow-y-auto">
-                    {activities.map(activity => <div key={activity.id} className="flex items-start space-x-3 p-4 rounded-lg bg-muted/30 border border-border/50">
-                        <div className="mt-0.5">
-                          {getActivityIcon(activity.activity_type)}
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center justify-between">
-                            <p className="text-sm font-medium text-foreground">{activity.activity_name}</p>
-                            <span className="text-xs text-muted-foreground">{formatTimeAgo(activity.created_at)}</span>
+                <Card className="border-0 shadow-lg bg-gradient-to-br from-emerald-50 to-teal-50">
+                  <CardHeader>
+                    <div className="flex items-center justify-between">
+                      <CardTitle className="flex items-center gap-2">
+                        <Activity className="h-5 w-5 text-emerald-600" />
+                        Recent System Activities
+                      </CardTitle>
+                      <Badge variant="secondary" className="bg-emerald-100 text-emerald-800 border-emerald-200">
+                        Live Updates
+                      </Badge>
+                    </div>
+                    <p className="text-sm text-muted-foreground">Real-time system activity monitoring</p>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-3 max-h-96 overflow-y-auto">
+                      {activities.map(activity => (
+                        <div key={activity.id} className="flex items-start space-x-3 p-4 rounded-lg bg-gradient-to-r from-emerald-50 to-white border border-emerald-200 hover:shadow-md transition-all">
+                          <div className="mt-0.5 w-8 h-8 rounded-full bg-gradient-to-r from-emerald-500 to-teal-500 flex items-center justify-center">
+                            {getActivityIcon(activity.activity_type)}
                           </div>
-                          <p className="text-sm text-muted-foreground mt-1">{activity.description}</p>
-                          {activity.user_name && <p className="text-xs text-muted-foreground mt-1">by {activity.user_name}</p>}
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center justify-between mb-1">
+                              <p className="text-sm font-medium text-foreground">{activity.activity_name}</p>
+                              <span className="text-xs text-muted-foreground bg-muted px-2 py-1 rounded-full">
+                                {formatTimeAgo(activity.created_at)}
+                              </span>
+                            </div>
+                            <p className="text-sm text-muted-foreground mb-1">{activity.description}</p>
+                            {activity.user_name && (
+                              <div className="flex items-center gap-1">
+                                <User className="h-3 w-3 text-emerald-600" />
+                                <p className="text-xs text-emerald-600 font-medium">{activity.user_name}</p>
+                              </div>
+                            )}
+                          </div>
                         </div>
-                      </div>)}
-                  </div>
-                </div>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
               </TabsContent>
 
               <TabsContent value="users" className="mt-6">
@@ -645,54 +662,90 @@ const SuperAdminDashboard = () => {
               </TabsContent>
 
               <TabsContent value="students" className="mt-6">
-                <StudentManager />
+                <Card className="border-0 shadow-lg bg-gradient-to-br from-amber-50 to-orange-50">
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <GraduationCap className="h-5 w-5 text-amber-600" />
+                      Student Management
+                    </CardTitle>
+                    <p className="text-sm text-muted-foreground">Comprehensive student data management and analytics</p>
+                  </CardHeader>
+                  <CardContent>
+                    <StudentManager />
+                  </CardContent>
+                </Card>
               </TabsContent>
 
               <TabsContent value="notices" className="mt-6">
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                   {/* Add Notice Form */}
-                  <div>
-                    <NoticeManager onClose={() => fetchSentNotices()} />
-                  </div>
-                  
-                  {/* Sent Notices List */}
-                  <Card>
+                  <Card className="border-0 shadow-lg bg-gradient-to-br from-rose-50 to-red-50">
                     <CardHeader>
                       <CardTitle className="flex items-center gap-2">
-                        <FileText className="h-5 w-5 text-blue-500" />
+                        <Bell className="h-5 w-5 text-rose-600" />
+                        Create Notice
+                      </CardTitle>
+                      <p className="text-sm text-muted-foreground">Send announcements and notifications</p>
+                    </CardHeader>
+                    <CardContent>
+                      <NoticeManager onClose={() => fetchSentNotices()} />
+                    </CardContent>
+                  </Card>
+                  
+                  {/* Sent Notices List */}
+                  <Card className="border-0 shadow-lg bg-gradient-to-br from-indigo-50 to-purple-50">
+                    <CardHeader>
+                      <CardTitle className="flex items-center gap-2">
+                        <FileText className="h-5 w-5 text-indigo-600" />
                         Sent Notices ({sentNotices.length})
                       </CardTitle>
                       <p className="text-sm text-muted-foreground">Recently sent announcements and notices</p>
                     </CardHeader>
                     <CardContent>
                       <div className="space-y-3 max-h-96 overflow-y-auto">
-                        {sentNotices.length > 0 ? sentNotices.map(notice => <div key={notice.id} className="p-4 rounded-lg border bg-gradient-to-r from-slate-50 to-blue-50 border-slate-200">
-                              <div className="flex items-start justify-between mb-2">
-                                <div className="flex-1">
-                                  <h4 className="font-medium text-foreground mb-1">{notice.title}</h4>
-                                  <p className="text-sm text-muted-foreground line-clamp-2">{notice.content}</p>
-                                </div>
-                                <div className="ml-3 flex flex-col items-end space-y-1">
-                                  <Badge variant={notice.type === 'urgent' ? 'destructive' : notice.type === 'academic' ? 'default' : 'secondary'} className="text-xs">
-                                    {notice.type}
-                                  </Badge>
-                                  <Badge variant={notice.status === 'active' ? 'default' : 'secondary'} className="text-xs">
-                                    {notice.status}
-                                  </Badge>
-                                </div>
+                        {sentNotices.length > 0 ? sentNotices.map(notice => (
+                          <div key={notice.id} className="p-4 rounded-lg border bg-gradient-to-r from-indigo-50 to-white border-indigo-200 hover:shadow-md transition-all">
+                            <div className="flex items-start justify-between mb-2">
+                              <div className="flex-1">
+                                <h4 className="font-medium text-foreground mb-1">{notice.title}</h4>
+                                <p className="text-sm text-muted-foreground line-clamp-2">{notice.content}</p>
                               </div>
-                              <div className="flex items-center justify-between text-xs text-muted-foreground">
-                                <div className="flex items-center space-x-3">
+                              <div className="ml-3 flex flex-col items-end space-y-1">
+                                <Badge 
+                                  variant={notice.type === 'urgent' ? 'destructive' : notice.type === 'academic' ? 'default' : 'secondary'} 
+                                  className="text-xs"
+                                >
+                                  {notice.type}
+                                </Badge>
+                                <Badge 
+                                  variant={notice.status === 'active' ? 'default' : 'secondary'} 
+                                  className="text-xs"
+                                >
+                                  {notice.status}
+                                </Badge>
+                              </div>
+                            </div>
+                            <div className="flex items-center justify-between text-xs text-muted-foreground">
+                              <div className="flex items-center space-x-3">
+                                <div className="flex items-center gap-1">
+                                  <Users className="h-3 w-3 text-indigo-600" />
                                   <span>Target: {notice.target_audience}</span>
+                                </div>
+                                <div className="flex items-center gap-1">
+                                  <Star className="h-3 w-3 text-indigo-600" />
                                   <span>Priority: {notice.priority}</span>
                                 </div>
-                                <span>{formatTimeAgo(notice.created_at)}</span>
                               </div>
-                            </div>) : <div className="text-center py-8 text-muted-foreground">
+                              <span className="bg-muted px-2 py-1 rounded-full">{formatTimeAgo(notice.created_at)}</span>
+                            </div>
+                          </div>
+                        )) : (
+                          <div className="text-center py-8 text-muted-foreground">
                             <Bell className="h-12 w-12 mx-auto mb-2 opacity-50" />
                             <p>No notices sent yet</p>
                             <p className="text-xs mt-1">Sent notices will appear here</p>
-                          </div>}
+                          </div>
+                        )}
                       </div>
                     </CardContent>
                   </Card>
@@ -700,7 +753,18 @@ const SuperAdminDashboard = () => {
               </TabsContent>
 
               <TabsContent value="settings" className="mt-6">
-                <WebsiteSettingsManager />
+                <Card className="border-0 shadow-lg bg-gradient-to-br from-slate-50 to-gray-50">
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <Settings className="h-5 w-5 text-slate-600" />
+                      Website Settings
+                    </CardTitle>
+                    <p className="text-sm text-muted-foreground">Configure system preferences and website settings</p>
+                  </CardHeader>
+                  <CardContent>
+                    <WebsiteSettingsManager />
+                  </CardContent>
+                </Card>
               </TabsContent>
             </Tabs>
           </CardContent>
