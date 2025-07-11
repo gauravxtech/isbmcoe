@@ -80,6 +80,13 @@ const SuperAdminDashboard = () => {
   const [superAdmins, setSuperAdmins] = useState<Profile[]>([]);
   const [allAdmins, setAllAdmins] = useState<Profile[]>([]);
   const [sentNotices, setSentNotices] = useState<Announcement[]>([]);
+  const [newUserForm, setNewUserForm] = useState({
+    fullName: '',
+    email: '',
+    role: '',
+    department: '',
+    password: 'isbm@321'
+  });
   const {
     toast
   } = useToast();
@@ -294,6 +301,74 @@ const SuperAdminDashboard = () => {
       setActivities([]);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleAddUser = async () => {
+    if (!newUserForm.fullName || !newUserForm.email || !newUserForm.role) {
+      toast({
+        title: "Error",
+        description: "Please fill in all required fields",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    try {
+      // Create auth user
+      const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
+        email: newUserForm.email,
+        password: newUserForm.password,
+        options: {
+          data: {
+            full_name: newUserForm.fullName,
+            role: newUserForm.role,
+          }
+        }
+      });
+
+      if (signUpError) throw signUpError;
+
+      if (signUpData.user) {
+        // Update profile with additional info
+        const { error: profileError } = await supabase
+          .from('profiles')
+          .upsert({
+            id: signUpData.user.id,
+            email: newUserForm.email,
+            full_name: newUserForm.fullName,
+            role: newUserForm.role,
+            department: newUserForm.department,
+            status: 'active'
+          });
+
+        if (profileError) throw profileError;
+      }
+
+      toast({
+        title: "Success",
+        description: `${newUserForm.role} added successfully!`
+      });
+
+      // Reset form
+      setNewUserForm({
+        fullName: '',
+        email: '',
+        role: '',
+        department: '',
+        password: 'isbm@321'
+      });
+
+      // Refresh data
+      fetchCounts();
+      fetchAdminUsers();
+    } catch (error: any) {
+      console.error('Error adding user:', error);
+      toast({
+        title: "Error",
+        description: error.message || "Failed to add user",
+        variant: "destructive"
+      });
     }
   };
   const getActivityIcon = (type: string) => {
@@ -618,7 +693,69 @@ const SuperAdminDashboard = () => {
                       <p className="text-sm text-muted-foreground">Create new admin or system admin accounts</p>
                     </CardHeader>
                     <CardContent>
-                      <SuperAdminUserManager />
+                      <div className="space-y-4">
+                        <div className="grid grid-cols-1 gap-3">
+                          <div>
+                            <Label htmlFor="fullName" className="text-sm font-medium">Full Name</Label>
+                            <Input
+                              id="fullName"
+                              value={newUserForm.fullName}
+                              onChange={(e) => setNewUserForm({...newUserForm, fullName: e.target.value})}
+                              placeholder="Enter full name"
+                              className="bg-white border-green-200 focus:border-green-400"
+                            />
+                          </div>
+                          <div>
+                            <Label htmlFor="email" className="text-sm font-medium">Email</Label>
+                            <Input
+                              id="email"
+                              type="email"
+                              value={newUserForm.email}
+                              onChange={(e) => setNewUserForm({...newUserForm, email: e.target.value})}
+                              placeholder="user@isbmcoe.edu.in"
+                              className="bg-white border-green-200 focus:border-green-400"
+                            />
+                          </div>
+                          <div>
+                            <Label htmlFor="role" className="text-sm font-medium">Role</Label>
+                            <Select value={newUserForm.role} onValueChange={(value) => setNewUserForm({...newUserForm, role: value})}>
+                              <SelectTrigger className="bg-white border-green-200 focus:border-green-400">
+                                <SelectValue placeholder="Select role" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="super-admin">Super Admin</SelectItem>
+                                <SelectItem value="admin">Admin</SelectItem>
+                                <SelectItem value="principal">Principal</SelectItem>
+                                <SelectItem value="hod">HOD</SelectItem>
+                                <SelectItem value="dean">Dean</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </div>
+                          <div>
+                            <Label htmlFor="department" className="text-sm font-medium">Department</Label>
+                            <Select value={newUserForm.department} onValueChange={(value) => setNewUserForm({...newUserForm, department: value})}>
+                              <SelectTrigger className="bg-white border-green-200 focus:border-green-400">
+                                <SelectValue placeholder="Select department" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {departmentOptions.map(dept => (
+                                  <SelectItem key={dept} value={dept}>{dept}</SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          </div>
+                        </div>
+                        <div className="flex gap-2">
+                          <Button onClick={handleAddUser} className="flex-1 bg-green-600 hover:bg-green-700">
+                            <UserPlus className="h-4 w-4 mr-2" />
+                            Add User
+                          </Button>
+                          <Button variant="outline" className="flex-1 border-green-200 text-green-700 hover:bg-green-50">
+                            <Shield className="h-4 w-4 mr-2" />
+                            Advanced
+                          </Button>
+                        </div>
+                      </div>
                     </CardContent>
                   </Card>
 
