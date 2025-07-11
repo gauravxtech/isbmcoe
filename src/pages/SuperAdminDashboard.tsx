@@ -82,6 +82,30 @@ interface NewUser {
   password?: string;
 }
 
+interface Profile {
+  id: string;
+  email: string;
+  full_name: string | null;
+  role: string;
+  department: string | null;
+  phone: string | null;
+  status: string | null;
+  created_at: string;
+}
+
+interface Announcement {
+  id: string;
+  title: string;
+  content: string;
+  type: string;
+  target_audience: string;
+  priority: number;
+  status: string;
+  created_at: string;
+  start_date: string | null;
+  end_date: string | null;
+}
+
 const SuperAdminDashboard = () => {
   const [systemData, setSystemData] = useState<SystemMonitoring | null>(null);
   const [activities, setActivities] = useState<SystemActivity[]>([]);
@@ -89,6 +113,9 @@ const SuperAdminDashboard = () => {
   const [userCount, setUserCount] = useState<number>(0);
   const [studentCount, setStudentCount] = useState<number>(0);
   const [departmentCount, setDepartmentCount] = useState<number>(0);
+  const [superAdmins, setSuperAdmins] = useState<Profile[]>([]);
+  const [allAdmins, setAllAdmins] = useState<Profile[]>([]);
+  const [sentNotices, setSentNotices] = useState<Announcement[]>([]);
   const { toast } = useToast();
   const { user, userRole } = useAuth();
 
@@ -126,7 +153,44 @@ const SuperAdminDashboard = () => {
     fetchSystemData();
     fetchActivities();
     fetchCounts();
+    fetchAdminUsers();
+    fetchSentNotices();
   }, [user, userRole]);
+
+  const fetchAdminUsers = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .in('role', ['super-admin', 'admin', 'principal', 'hod', 'dean'])
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+
+      const superAdminUsers = data?.filter(user => user.role === 'super-admin') || [];
+      const adminUsers = data?.filter(user => user.role !== 'super-admin') || [];
+      
+      setSuperAdmins(superAdminUsers);
+      setAllAdmins(adminUsers);
+    } catch (error) {
+      console.error('Error fetching admin users:', error);
+    }
+  };
+
+  const fetchSentNotices = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('announcements')
+        .select('*')
+        .order('created_at', { ascending: false })
+        .limit(10);
+
+      if (error) throw error;
+      setSentNotices(data || []);
+    } catch (error) {
+      console.error('Error fetching notices:', error);
+    }
+  };
 
   const fetchCounts = async () => {
     try {
@@ -402,6 +466,85 @@ const SuperAdminDashboard = () => {
           </Card>
         </div>
 
+        {/* Admin Overview Sections */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+          {/* System Admin Section */}
+          <Card className="border-0 shadow-lg bg-card/50 backdrop-blur">
+            <CardHeader>
+              <CardTitle className="flex items-center space-x-2">
+                <Shield className="h-5 w-5 text-red-500" />
+                <span>System Admin ({superAdmins.length})</span>
+              </CardTitle>
+              <p className="text-sm text-muted-foreground">Super administrators with full system access</p>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-3">
+                {superAdmins.length > 0 ? (
+                  superAdmins.map((admin) => (
+                    <div key={admin.id} className="flex items-center justify-between p-3 rounded-lg bg-gradient-to-r from-red-50 to-pink-50 border border-red-100">
+                      <div className="flex items-center space-x-3">
+                        <div className="w-10 h-10 rounded-full bg-gradient-to-r from-red-500 to-pink-500 flex items-center justify-center">
+                          <User className="h-5 w-5 text-white" />
+                        </div>
+                        <div>
+                          <p className="font-medium text-foreground">{admin.full_name || 'Super Admin'}</p>
+                          <p className="text-sm text-muted-foreground">{admin.email}</p>
+                          <p className="text-xs text-muted-foreground">{admin.department || 'ISBM COE'}</p>
+                        </div>
+                      </div>
+                      <Badge variant="destructive">super-admin</Badge>
+                    </div>
+                  ))
+                ) : (
+                  <div className="text-center py-6 text-muted-foreground">
+                    <Shield className="h-12 w-12 mx-auto mb-2 opacity-50" />
+                    <p>No super admins found</p>
+                  </div>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* All Admin Section */}
+          <Card className="border-0 shadow-lg bg-card/50 backdrop-blur">
+            <CardHeader>
+              <CardTitle className="flex items-center space-x-2">
+                <Users className="h-5 w-5 text-blue-500" />
+                <span>All Admin ({allAdmins.length})</span>
+              </CardTitle>
+              <p className="text-sm text-muted-foreground">Department administrators and staff</p>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-3 max-h-80 overflow-y-auto">
+                {allAdmins.length > 0 ? (
+                  allAdmins.map((admin) => (
+                    <div key={admin.id} className="flex items-center justify-between p-3 rounded-lg bg-gradient-to-r from-blue-50 to-purple-50 border border-blue-100">
+                      <div className="flex items-center space-x-3">
+                        <div className="w-8 h-8 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 flex items-center justify-center">
+                          <User className="h-4 w-4 text-white" />
+                        </div>
+                        <div>
+                          <p className="font-medium text-foreground text-sm">{admin.full_name || 'Admin'}</p>
+                          <p className="text-xs text-muted-foreground">{admin.email}</p>
+                          <p className="text-xs text-muted-foreground">{admin.department || 'Not assigned'}</p>
+                        </div>
+                      </div>
+                      <Badge variant={admin.role === 'admin' ? 'default' : 'secondary'} className="text-xs">
+                        {admin.role}
+                      </Badge>
+                    </div>
+                  ))
+                ) : (
+                  <div className="text-center py-6 text-muted-foreground">
+                    <Users className="h-12 w-12 mx-auto mb-2 opacity-50" />
+                    <p>No admin users found</p>
+                  </div>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
         {/* System Health */}
         {systemData && (
           <Card className="mb-8 border-0 shadow-lg bg-card/50 backdrop-blur">
@@ -554,7 +697,60 @@ const SuperAdminDashboard = () => {
               </TabsContent>
 
               <TabsContent value="notices" className="mt-6">
-                <NoticeManager />
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  {/* Add Notice Form */}
+                  <div>
+                    <NoticeManager onClose={() => fetchSentNotices()} />
+                  </div>
+                  
+                  {/* Sent Notices List */}
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="flex items-center gap-2">
+                        <FileText className="h-5 w-5 text-blue-500" />
+                        Sent Notices ({sentNotices.length})
+                      </CardTitle>
+                      <p className="text-sm text-muted-foreground">Recently sent announcements and notices</p>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-3 max-h-96 overflow-y-auto">
+                        {sentNotices.length > 0 ? (
+                          sentNotices.map((notice) => (
+                            <div key={notice.id} className="p-4 rounded-lg border bg-gradient-to-r from-slate-50 to-blue-50 border-slate-200">
+                              <div className="flex items-start justify-between mb-2">
+                                <div className="flex-1">
+                                  <h4 className="font-medium text-foreground mb-1">{notice.title}</h4>
+                                  <p className="text-sm text-muted-foreground line-clamp-2">{notice.content}</p>
+                                </div>
+                                <div className="ml-3 flex flex-col items-end space-y-1">
+                                  <Badge variant={notice.type === 'urgent' ? 'destructive' : notice.type === 'academic' ? 'default' : 'secondary'} className="text-xs">
+                                    {notice.type}
+                                  </Badge>
+                                  <Badge variant={notice.status === 'active' ? 'default' : 'secondary'} className="text-xs">
+                                    {notice.status}
+                                  </Badge>
+                                </div>
+                              </div>
+                              <div className="flex items-center justify-between text-xs text-muted-foreground">
+                                <div className="flex items-center space-x-3">
+                                  <span>Target: {notice.target_audience}</span>
+                                  <span>Priority: {notice.priority}</span>
+                                </div>
+                                <span>{formatTimeAgo(notice.created_at)}</span>
+                              </div>
+                            </div>
+                          ))
+                        ) : (
+                          <div className="text-center py-8 text-muted-foreground">
+                            <Bell className="h-12 w-12 mx-auto mb-2 opacity-50" />
+                            <p>No notices sent yet</p>
+                            <p className="text-xs mt-1">Sent notices will appear here</p>
+                          </div>
+                        )}
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
               </TabsContent>
 
               <TabsContent value="settings" className="mt-6">
