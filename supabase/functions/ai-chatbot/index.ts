@@ -80,30 +80,38 @@ USER QUESTION: ${message}
 
 Please provide a helpful, conversational, and informative response. Be friendly and personable while maintaining professionalism.`;
 
-    // Call OpenAI API
-    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+    // Call Gemini API
+    const response = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${Deno.env.get('OPENAI_API_KEY')}`,
         'Content-Type': 'application/json',
+        'X-goog-api-key': Deno.env.get('GEMINI_API_KEY'),
       },
       body: JSON.stringify({
-        model: 'gpt-4o-mini',
-        messages: [
-          { role: 'system', content: contextPrompt },
-          { role: 'user', content: message }
+        contents: [
+          {
+            parts: [
+              {
+                text: `${contextPrompt}\n\nUser: ${message}`
+              }
+            ]
+          }
         ],
-        temperature: 0.7,
-        max_tokens: 500,
+        generationConfig: {
+          maxOutputTokens: 500,
+          temperature: 0.7
+        }
       }),
     });
 
     if (!response.ok) {
-      throw new Error(`OpenAI API error: ${response.status}`);
+      const errorText = await response.text();
+      console.error('Gemini API error:', response.status, errorText);
+      throw new Error(`Gemini API error: ${response.status}`);
     }
 
     const data = await response.json();
-    const botResponse = data.choices[0].message.content;
+    const botResponse = data.candidates[0].content.parts[0].text;
 
     // Store conversation in database
     const { error: insertError } = await supabase
