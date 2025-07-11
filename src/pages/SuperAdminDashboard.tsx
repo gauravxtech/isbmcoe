@@ -173,14 +173,16 @@ const SuperAdminDashboard = () => {
   };
   const fetchCounts = async () => {
     try {
-      // Fetch total users
-      const {
-        count: userCount
-      } = await supabase.from('profiles').select('*', {
-        count: 'exact',
-        head: true
-      });
+      // Fetch total registered users from profiles table
+      const { data: allUsers, count: userCount, error: userError } = await supabase
+        .from('profiles')
+        .select('*', { count: 'exact', head: true });
+      
+      if (userError) {
+        console.error('Error fetching user count:', userError);
+      }
       setUserCount(userCount || 0);
+      console.log('Total registered users:', userCount);
 
       // Fetch total students
       const {
