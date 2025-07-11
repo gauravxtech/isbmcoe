@@ -75,6 +75,7 @@ const SuperAdminDashboard = () => {
   const [loading, setLoading] = useState(true);
   const [userCount, setUserCount] = useState<number>(0);
   const [studentCount, setStudentCount] = useState<number>(0);
+  const [activeUserCount, setActiveUserCount] = useState<number>(0);
   const [departmentCount, setDepartmentCount] = useState<number>(0);
   const [superAdmins, setSuperAdmins] = useState<Profile[]>([]);
   const [allAdmins, setAllAdmins] = useState<Profile[]>([]);
@@ -101,6 +102,43 @@ const SuperAdminDashboard = () => {
     fetchCounts();
     fetchAdminUsers();
     fetchSentNotices();
+
+    // Set up real-time subscriptions for dynamic updates
+    const profilesChannel = supabase
+      .channel('profiles-changes')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'profiles' }, () => {
+        fetchCounts();
+        fetchAdminUsers();
+      })
+      .subscribe();
+
+    const studentsChannel = supabase
+      .channel('students-changes')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'students' }, () => {
+        fetchCounts();
+      })
+      .subscribe();
+
+    const departmentsChannel = supabase
+      .channel('departments-changes')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'departments' }, () => {
+        fetchCounts();
+      })
+      .subscribe();
+
+    const announcementsChannel = supabase
+      .channel('announcements-changes')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'announcements' }, () => {
+        fetchSentNotices();
+      })
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(profilesChannel);
+      supabase.removeChannel(studentsChannel);
+      supabase.removeChannel(departmentsChannel);
+      supabase.removeChannel(announcementsChannel);
+    };
   }, [user, userRole]);
   const fetchAdminUsers = async () => {
     try {
@@ -152,6 +190,15 @@ const SuperAdminDashboard = () => {
         head: true
       });
       setStudentCount(studentCount || 0);
+
+      // Fetch active users (users with active status)
+      const {
+        count: activeUsers
+      } = await supabase.from('profiles').select('*', {
+        count: 'exact',
+        head: true
+      }).eq('status', 'active');
+      setActiveUserCount(activeUsers || 0);
 
       // Fetch total departments
       const {
@@ -395,7 +442,7 @@ const SuperAdminDashboard = () => {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-green-100 text-sm font-medium">Active Users</p>
-                  <p className="text-3xl font-bold">{systemData?.active_users || 0}</p>
+                  <p className="text-3xl font-bold">{activeUserCount}</p>
                 </div>
                 <Activity className="h-8 w-8 text-green-200" />
               </div>
