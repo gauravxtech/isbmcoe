@@ -147,10 +147,10 @@ const SuperAdminDashboard = () => {
       // Fetch total students
       const {
         count: studentCount
-      } = await supabase.from('profiles').select('*', {
+      } = await supabase.from('students').select('*', {
         count: 'exact',
         head: true
-      }).eq('role', 'student');
+      });
       setStudentCount(studentCount || 0);
 
       // Fetch total departments
