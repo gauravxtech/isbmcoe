@@ -221,11 +221,12 @@ const BannerManager = () => {
               <CardContent className="p-0">
                 <div className="flex">
                   <div className="w-48 h-32 bg-gray-100 flex-shrink-0">
-                    {banner.image_url ? (
+                {banner.image_url ? (
                       <img 
                         src={banner.image_url} 
                         alt={banner.title}
                         className="w-full h-full object-cover"
+                        onLoad={() => console.log('Image loaded successfully:', banner.image_url)}
                         onError={(e) => {
                           console.error('Image failed to load:', banner.image_url);
                           const target = e.target as HTMLImageElement;
@@ -238,7 +239,14 @@ const BannerManager = () => {
                       />
                     ) : null}
                     <div className="w-full h-full flex items-center justify-center text-gray-400" style={{display: banner.image_url ? 'none' : 'flex'}}>
-                      No Image
+                      {banner.image_url ? (
+                        <div className="text-center">
+                          <div className="text-red-500 text-xs">Failed to load</div>
+                          <div className="text-xs truncate max-w-32">{banner.image_url}</div>
+                        </div>
+                      ) : (
+                        'No Image'
+                      )}
                     </div>
                   </div>
                   <div className="flex-1 p-4">
@@ -365,6 +373,29 @@ const BannerManager = () => {
                     Upload
                   </Button>
                 </div>
+                {formData.image_url && (
+                  <div className="mt-2 border rounded-lg overflow-hidden">
+                    <div className="bg-gray-50 p-2 text-sm font-medium">Preview:</div>
+                    <div className="relative h-32 bg-gray-100">
+                      <img 
+                        src={formData.image_url} 
+                        alt="Preview"
+                        className="w-full h-full object-cover"
+                        onError={(e) => {
+                          const target = e.target as HTMLImageElement;
+                          target.style.display = 'none';
+                          const nextElement = target.nextElementSibling as HTMLElement;
+                          if (nextElement) {
+                            nextElement.style.display = 'flex';
+                          }
+                        }}
+                      />
+                      <div className="absolute inset-0 flex items-center justify-center text-red-500 text-sm" style={{display: 'none'}}>
+                        Failed to load image
+                      </div>
+                    </div>
+                  </div>
+                )}
                 <p className="text-sm text-gray-500 mt-1">
                   Enter URL directly or use the upload button to add a new image
                 </p>
