@@ -21,19 +21,26 @@ const FileUploadDialog = ({ open, onClose, onUploadComplete, folder = 'uploads' 
   const [altText, setAltText] = useState('');
   const { toast } = useToast();
 
+  const getFileCategory = (mimeType: string) => {
+    if (mimeType.startsWith('image/')) return 'img';
+    if (mimeType.startsWith('video/')) return 'vid';
+    if (mimeType.includes('pdf') || mimeType.includes('document') || mimeType.includes('word') || mimeType.includes('text')) return 'doc';
+    return 'misc';
+  };
+
+  const generateSequentialPath = async (fileType: string, folder: string, extension: string) => {
+    // Get existing files in the folder to determine next number
+    const { data: existingFiles } = await supabase.storage
+      .from('website-files')
+      .list(`uploads/${fileType}/${folder}`);
+    
+    const nextNumber = (existingFiles?.length || 0) + 1;
+    return `uploads/${fileType}/${folder}/${folder}-${nextNumber}.${extension}`;
+  };
+
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = event.target.files?.[0];
     if (selectedFile) {
-      // Validate file type
-      if (!selectedFile.type.startsWith('image/')) {
-        toast({
-          title: "Error",
-          description: "Please select an image file",
-          variant: "destructive"
-        });
-        return;
-      }
-      
       // Validate file size (max 10MB)
       if (selectedFile.size > 10 * 1024 * 1024) {
         toast({
@@ -55,12 +62,14 @@ const FileUploadDialog = ({ open, onClose, onUploadComplete, folder = 'uploads' 
     try {
       console.log('Starting file upload...');
       
-      // Generate unique filename
-      const fileExt = file.name.split('.').pop();
-      const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`;
-      const filePath = `${folder}/${fileName}`;
+      // Get file extension and category
+      const fileExt = file.name.split('.').pop()?.toLowerCase();
+      const fileCategory = getFileCategory(file.type);
+      
+      // Generate structured path: uploads/img/banner/banner-1.jpg
+      const filePath = await generateSequentialPath(fileCategory, folder, fileExt || 'bin');
 
-      console.log('Uploading to path:', filePath);
+      console.log('Uploading to structured path:', filePath);
 
       // Upload to Supabase Storage
       const { data: uploadData, error: uploadError } = await supabase.storage
@@ -85,17 +94,18 @@ const FileUploadDialog = ({ open, onClose, onUploadComplete, folder = 'uploads' 
       console.log('Public URL:', urlData.publicUrl);
 
       // Save to media library
+      const fileName = filePath.split('/').pop() || 'unknown';
       const { error: dbError } = await supabase
         .from('media_library')
         .insert([{
           filename: fileName,
           original_filename: file.name,
           file_url: urlData.publicUrl,
-          file_type: 'image',
+          file_type: fileCategory,
           file_size: file.size,
           mime_type: file.type,
           alt_text: altText || file.name,
-          folder: folder
+          folder: `${fileCategory}/${folder}`
         }]);
 
       if (dbError) {

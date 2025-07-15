@@ -448,7 +448,7 @@ const BannerManager = () => {
         open={showUploadDialog}
         onClose={() => setShowUploadDialog(false)}
         onUploadComplete={handleImageUpload}
-        folder="banners"
+        folder="banner"
       />
     </div>
   );
