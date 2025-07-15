@@ -23,8 +23,8 @@ const Index = () => {
       "name": "ISBM College of Engineering",
       "alternateName": "ISBM COE",
       "url": "https://isbmcoe.netlify.app",
-      "logo": "/assets/logo.png",
-      "image": "/assets/logo.png",
+      "logo": "/lovable-uploads/18fee38c-1acf-462a-825a-cda10c5e7381.png",
+      "image": "/lovable-uploads/18fee38c-1acf-462a-825a-cda10c5e7381.png",
       "description": "Premier engineering institution affiliated to Savitribai Phule Pune University with NAAC B++ accreditation",
       "address": {
         "@type": "PostalAddress",
