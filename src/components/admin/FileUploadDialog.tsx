@@ -15,7 +15,7 @@ interface FileUploadDialogProps {
   folder?: string;
 }
 
-const FileUploadDialog = ({ open, onClose, onUploadComplete, folder = 'banners' }: FileUploadDialogProps) => {
+const FileUploadDialog = ({ open, onClose, onUploadComplete, folder = 'uploads' }: FileUploadDialogProps) => {
   const [uploading, setUploading] = useState(false);
   const [file, setFile] = useState<File | null>(null);
   const [altText, setAltText] = useState('');

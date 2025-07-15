@@ -240,9 +240,12 @@ const BannerManager = () => {
                     ) : null}
                     <div className="w-full h-full flex items-center justify-center text-gray-400" style={{display: banner.image_url ? 'none' : 'flex'}}>
                       {banner.image_url ? (
-                        <div className="text-center">
-                          <div className="text-red-500 text-xs">Failed to load</div>
-                          <div className="text-xs truncate max-w-32">{banner.image_url}</div>
+                        <div className="text-center p-2">
+                          <div className="text-red-500 text-xs mb-1">Image load failed</div>
+                          <div className="text-xs text-gray-500 break-all max-w-full overflow-hidden">
+                            URL: {banner.image_url.length > 50 ? banner.image_url.substring(0, 50) + '...' : banner.image_url}
+                          </div>
+                          <div className="text-xs text-blue-500 mt-1">Check if image URL is accessible</div>
                         </div>
                       ) : (
                         'No Image'
