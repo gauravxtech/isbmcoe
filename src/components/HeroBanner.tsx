@@ -1,59 +1,99 @@
 import React, { useState, useEffect } from 'react';
 import { ChevronLeft, ChevronRight, Bell, FileText, Phone, Download, Star } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { supabase } from '@/integrations/supabase/client';
+
+interface Banner {
+  id: string;
+  title: string;
+  subtitle: string | null;
+  image_url: string | null;
+  cta_text: string | null;
+  cta_link: string | null;
+  highlight_text: string | null;
+  status: string;
+  display_order: number;
+}
 
 const HeroBanner = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [banners, setBanners] = useState<Banner[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const banners = [
+  // Fallback banners in case database is empty
+  const fallbackBanners = [
     {
-      id: 1,
+      id: "fallback-1",
       title: "Excellence in Engineering Education",
       subtitle: "Shaping Future Engineers with Innovation and Technology",
-      image: "/assets/slider-1.png",
-      cta: "Explore Programs",
-      highlight: "NAAC B++ Accredited"
+      image_url: "/assets/slider-1.png",
+      cta_text: "Explore Programs",
+      cta_link: "/programs",
+      highlight_text: "NAAC B++ Accredited",
+      status: "active",
+      display_order: 1
     },
     {
-      id: 2,
+      id: "fallback-2",
       title: "World-Class Infrastructure", 
       subtitle: "State-of-the-art Labs and Modern Campus Facilities",
-      image: "/assets/slider-2.png",
-      cta: "Campus Tour",
-      highlight: "17 Acre Campus"
+      image_url: "/assets/slider-2.png",
+      cta_text: "Campus Tour",
+      cta_link: "/virtual-tour",
+      highlight_text: "17 Acre Campus",
+      status: "active",
+      display_order: 2
     },
     {
-      id: 3,
+      id: "fallback-3",
       title: "Industry Recognition",
       subtitle: "Approved by AICTE, Affiliated to SPPU & Promoted by IIT-ians",
-      image: "/assets/slider-3.png",
-      cta: "Our Accreditations",
-      highlight: "Promoted by IIT-ians"
-    },
-    {
-      id: 4,
-      title: "Industry-Ready Graduates",
-      subtitle: "75% Placement Rate with Top Companies",
-      image: "https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=1920&q=80",
-      cta: "Placement Records",
-      highlight: "₹16 Lakhs Highest Package"
-    },
-    {
-      id: 5,
-      title: "Research & Innovation",
-      subtitle: "Pioneering Technology Solutions for Tomorrow",
-      image: "https://images.unsplash.com/photo-1562774053-701939374585?auto=format&fit=crop&w=1920&q=80",
-      cta: "Research Programs",
-      highlight: "Leading Innovation"
+      image_url: "/assets/slider-3.png",
+      cta_text: "Our Accreditations",
+      cta_link: "/about",
+      highlight_text: "Promoted by IIT-ians",
+      status: "active",
+      display_order: 3
     }
   ];
 
   useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % banners.length);
-    }, 5000);
-    return () => clearInterval(timer);
+    fetchBanners();
   }, []);
+
+  const fetchBanners = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('banners')
+        .select('*')
+        .eq('status', 'active')
+        .order('display_order', { ascending: true });
+
+      if (error) {
+        console.error('Error fetching banners:', error);
+        setBanners(fallbackBanners);
+      } else if (data && data.length > 0) {
+        setBanners(data);
+      } else {
+        console.log('No active banners found, using fallback');
+        setBanners(fallbackBanners);
+      }
+    } catch (error) {
+      console.error('Error fetching banners:', error);
+      setBanners(fallbackBanners);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (banners.length > 0) {
+      const timer = setInterval(() => {
+        setCurrentSlide((prev) => (prev + 1) % banners.length);
+      }, 5000);
+      return () => clearInterval(timer);
+    }
+  }, [banners.length]);
 
   const nextSlide = () => {
     setCurrentSlide((prev) => (prev + 1) % banners.length);
@@ -62,6 +102,14 @@ const HeroBanner = () => {
   const prevSlide = () => {
     setCurrentSlide((prev) => (prev - 1 + banners.length) % banners.length);
   };
+
+  if (loading) {
+    return (
+      <div className="relative h-[60vh] sm:h-[70vh] bg-gradient-to-r from-college-primary to-college-secondary flex items-center justify-center">
+        <div className="text-white text-xl">Loading banners...</div>
+      </div>
+    );
+  }
 
   return (
     <div className="relative">
@@ -76,27 +124,42 @@ const HeroBanner = () => {
           >
             <div
               className="w-full h-full bg-cover bg-center relative"
-              style={{ backgroundImage: `url(${banner.image})` }}
+              style={{ backgroundImage: `url(${banner.image_url || '/assets/slider-1.png'})` }}
             >
               <div className="absolute inset-0 bg-gradient-to-r from-college-primary/80 via-college-secondary/60 to-transparent" />
               <div className="relative z-10 flex items-center h-full">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
                   <div className="max-w-3xl text-white">
-                    <div className="inline-flex items-center bg-college-accent/90 px-3 sm:px-4 py-2 rounded-full mb-4 sm:mb-6 animate-fade-in">
-                      <Star className="h-3 w-3 sm:h-4 sm:w-4 mr-2" />
-                      <span className="font-semibold text-sm sm:text-base">{banner.highlight}</span>
-                    </div>
+                    {banner.highlight_text && (
+                      <div className="inline-flex items-center bg-college-accent/90 px-3 sm:px-4 py-2 rounded-full mb-4 sm:mb-6 animate-fade-in">
+                        <Star className="h-3 w-3 sm:h-4 sm:w-4 mr-2" />
+                        <span className="font-semibold text-sm sm:text-base">{banner.highlight_text}</span>
+                      </div>
+                    )}
                     <h1 className="text-2xl sm:text-4xl md:text-6xl font-bold mb-4 sm:mb-6 animate-slide-up leading-tight">
                       {banner.title}
                     </h1>
-                    <p className="text-lg sm:text-xl md:text-2xl mb-6 sm:mb-8 animate-slide-up opacity-90 leading-relaxed">
-                      {banner.subtitle}
-                    </p>
-                    <Button 
-                      className="bg-gradient-to-r from-college-accent to-college-warning hover:from-orange-600 hover:to-red-500 text-white px-6 sm:px-8 py-3 sm:py-4 text-base sm:text-lg rounded-full transform transition-all duration-300 hover:scale-105 shadow-2xl animate-slide-up"
-                    >
-                      {banner.cta}
-                    </Button>
+                    {banner.subtitle && (
+                      <p className="text-lg sm:text-xl md:text-2xl mb-6 sm:mb-8 animate-slide-up opacity-90 leading-relaxed">
+                        {banner.subtitle}
+                      </p>
+                    )}
+                    {banner.cta_text && (
+                      <Button 
+                        className="bg-gradient-to-r from-college-accent to-college-warning hover:from-orange-600 hover:to-red-500 text-white px-6 sm:px-8 py-3 sm:py-4 text-base sm:text-lg rounded-full transform transition-all duration-300 hover:scale-105 shadow-2xl animate-slide-up"
+                        onClick={() => {
+                          if (banner.cta_link) {
+                            if (banner.cta_link.startsWith('http')) {
+                              window.open(banner.cta_link, '_blank');
+                            } else {
+                              window.location.href = banner.cta_link;
+                            }
+                          }
+                        }}
+                      >
+                        {banner.cta_text}
+                      </Button>
+                    )}
                   </div>
                 </div>
               </div>
